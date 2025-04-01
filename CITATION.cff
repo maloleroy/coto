@@ -7,7 +7,7 @@ authors:
     family-names: Leroy
     email: malo.leroy@student-cs.fr
     affiliation: CentraleSupélec & INRIA
-repository-code: 'https://github.com/Firefnix/coto/'
+repository-code: 'https://github.com/maloleroy/coto/'
 abstract: >-
   Abstract additive quantum decision diagrams theoretical
   model and efficient implementation for quantum states and

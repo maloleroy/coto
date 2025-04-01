@@ -1,8 +1,8 @@
 # Coto - Abstract Additive Quantum Decision Diagrams
 
-[![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/Firefnix/coto)
-[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/Firefnix/coto/actions)
-[![Build Status (GitHub Actions)](https://github.com/Firefnix/coto/workflows/CMake%20Tests/badge.svg)](https://github.com/Firefnix/coto/actions?query=workflow%3A"CMake%20Tests")
+[![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/maloleroy/coto)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/maloleroy/coto/actions)
+[![Build Status (GitHub Actions)](https://github.com/maloleroy/coto/workflows/CMake%20Tests/badge.svg)](https://github.com/maloleroy/coto/actions?query=workflow%3A"CMake%20Tests")
 [![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)](https://en.cppreference.com/w/cpp/23)
 <a href="https://gitmoji.dev">
   <img
@@ -64,7 +64,7 @@ The `prompt` executable can also take a `.qasm` file path as an argument, in thi
 Presentation of this repository's main directories:
 -  `.github/workflows` GitHub actions continuous integration (CI) and continous deployment (CD) configuration files
     - Runs the unit tests that are in the `test` directory and marked as ready for testing in `CMakeLists.txt`
-    - Generate the docs using Doxygen and publish them to [firefnix.github.io/coto](https://firefnix.github.io/coto/) using GitHub Pages
+    - Generate the docs using Doxygen and publish them to [maloleroy.github.io/coto](https://maloleroy.github.io/coto/) using GitHub Pages
 -  `archives` Legacy documents or code, that still should be indexed
 -  `doc` Theory documents (basically, LaTeX)
 -  `include` Code header files (`.h` C++ files)
