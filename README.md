@@ -10,6 +10,7 @@
     alt="Gitmoji"
   />
 </a>
+[![PlantUML](https://img.shields.io/badge/PlantUML-FABD14?logo=uml&logoColor=000)](http://www.plantuml.com/)
 
 Theoretical research, experiments and implementation of _abstract additive quantum decision diagrams_, as part of a student research project.
 
