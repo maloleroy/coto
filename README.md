@@ -17,8 +17,8 @@ Theoretical research, experiments and implementation of _abstract additive quant
 ## Building
 
 To build the project, you must have Clang, CMake and Ninja installed. The code uses some C++23 features, so a recent version of `clang++` is required. *Other versions probably work*, but I personally use the following on my machine:
-* Clang 19.1.6
-* CMake 3.31.3
+* Clang 19.1.7
+* CMake 3.31.6
 * Ninja 1.12.1
 
 1. Configure the project
