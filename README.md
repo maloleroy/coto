@@ -50,13 +50,12 @@ h b;
 
 This prompt utility comes with a few available **run statements** that should be `;`-terminated:
 * `@build`, `@inst`, `@instantiate` - create a new diagram
-* `@run`, `@sim`, `@simulate` - simulate the current diagram
 * `@list`, `@actions` - list the actions (gate applicaitons) to be performed
 * `@display`, `@evaluate`, `@eval` - display the evaluation of the current diagram
 * `@describe`, `@desc` - display the description of the current diagram
 * `@help`, `@man`, `@manual` - display a help message
 
-Applying gates to qubits is not performed immediately after the statement is entered, and should be triggered by a `@run;`.
+Applying gates to qubits is not performed immediately after the statement is entered, and should be triggered by a `@display;`.
 
 The `prompt` executable can also take a `.qasm` file path as an argument, in this case it quits after executing all statements in the file, without entering interactive mode.
 
