@@ -100,8 +100,8 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <h1><a class="anchor" id="autotoc_md1"></a>
 Building</h1>
 <p>To build the project, you must have Clang, CMake and Ninja installed. The code uses some C++23 features, so a recent version of <code>clang++</code> is required. <em>Other versions probably work</em>, but I personally use the following on my machine:</p><ul>
-<li>Clang 19.1.6</li>
-<li>CMake 3.31.3</li>
+<li>Clang 19.1.7</li>
+<li>CMake 3.31.6</li>
 <li>Ninja 1.12.1</li>
 </ul>
 <ol type="1">
@@ -124,13 +124,12 @@ QASM interactive interpreter</h1>
 <div class="line">h b;</div>
 </div><!-- fragment --><p>This prompt utility comes with a few available <b>run statements</b> that should be <code>;</code>-terminated:</p><ul>
 <li><code>@build</code>, <code>@inst</code>, <code>@instantiate</code> - create a new diagram</li>
-<li><code>@run</code>, <code>@sim</code>, <code>@simulate</code> - simulate the current diagram</li>
 <li><code>@list</code>, <code>@actions</code> - list the actions (gate applicaitons) to be performed</li>
 <li><code>@display</code>, <code>@evaluate</code>, <code>@eval</code> - display the evaluation of the current diagram</li>
 <li><code>@describe</code>, <code>@desc</code> - display the description of the current diagram</li>
 <li><code>@help</code>, <code>@man</code>, <code>@manual</code> - display a help message</li>
 </ul>
-<p>Applying gates to qubits is not performed immediately after the statement is entered, and should be triggered by a <code>@run;</code>.</p>
+<p>Applying gates to qubits is not performed immediately after the statement is entered, and should be triggered by a <code>@display;</code>.</p>
 <p>The <code>prompt</code> executable can also take a <code>.qasm</code> file path as an argument, in this case it quits after executing all statements in the file, without entering interactive mode.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
 Repository architecture</h1>
