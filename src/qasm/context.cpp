@@ -7,7 +7,7 @@
 
 struct action
 {
-    const Gate *gate;
+    const Gate gate;
     qubit q;
 };
 
@@ -49,7 +49,7 @@ QasmContext& QasmContext::operator=(QasmContext&& other) noexcept
     return *this;
 }
 
-void QasmContext::apply_gate(const Gate *gate, const std::vector<varname> &qubits_names)
+void QasmContext::apply_gate(const Gate& gate, const std::vector<varname> &qubits_names)
 {
     std::vector<qubit> q;
     for (const auto &name : qubits_names)
@@ -59,14 +59,14 @@ void QasmContext::apply_gate(const Gate *gate, const std::vector<varname> &qubit
     apply_gate(gate, q);
 }
 
-void QasmContext::apply_gate(const Gate *gate, const std::vector<qubit> &qubits)
+void QasmContext::apply_gate(const Gate& gate, const std::vector<qubit> &qubits)
 {
-    if (gate->size() != qubits.size())
+    if (gate.size != qubits.size())
     {
-        throw SizeError("Trying to apply a gate of size " + std::to_string(gate->size()) + " to " + std::to_string(qubits.size()) + " qubits");
+        throw SizeError("Trying to apply a gate of size " + std::to_string(gate.size) + " to " + std::to_string(qubits.size()) + " qubits");
     }
 
-    // std::cout << "Applying gate " << gate->name << " to qubits " << qubits[0] << " "; // for debugging, will delete later
+    std::cout << "Applying gate " << gate.name << " to qubits " << qubits[0] << " "; // for debugging, will delete later
     actions.push_back(std::make_unique<struct action>(gate, qubits[0]));
 }
 
@@ -91,30 +91,29 @@ void QasmContext::simulate()
     }
     for (const auto& a : actions)
     {
-        if (a->gate->name == "x")
+        if (a->gate.name == "x")
         {
             gateappliers::apply_x(diagram, a->q);
         }
-        else if (a->gate->name == "h")
+        else if (a->gate.name == "h")
         {
             gateappliers::apply_h(diagram, a->q);
         }
-        else if (a->gate->name == "s")
+        else if (a->gate.name == "s")
         {
             gateappliers::apply_s(diagram, a->q, a->q + 1);
         }
-        else if (a->gate->name == "cx")
+        else if (a->gate.name == "cx")
         {
             gateappliers::apply_cx(diagram, a->q, a->q + 1);
         }
-        else if (a->gate->name[0] == 'p')
+        else if (a->gate.name[0] == 'p')
         {
-            int phase = dynamic_cast<const PhaseGate *>(a->gate)->phase;
-            gateappliers::apply_phase(diagram, a->q, phase);
+            gateappliers::apply_phase(diagram, a->q, a->gate.parameter.value_or(1));
         }
         else
         {
-            std::cout << "Unimplemented gate application in context handling: " << a->gate->name << std::endl;
+            std::cout << "Unimplemented gate application in context handling: " << a->gate.name << std::endl;
         }
     }
     actions.clear();
@@ -124,7 +123,7 @@ void QasmContext::print_list_of_actions() const
 {
     for (const auto &a : actions)
     {
-        std::cout << "~ " << a->gate->name << " " << a->q << std::endl;
+        std::cout << "~ " << a->gate.name << " " << a->q << std::endl;
     }
 }
 

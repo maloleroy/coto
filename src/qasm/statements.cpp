@@ -143,8 +143,7 @@ public:
 
     void execute(QasmContext& context) const override
     {
-        auto gate = Gate::from_name(gateName);
-        context.apply_gate(&gate, qubits_names);
+        context.apply_gate(Gate::from_name(gateName), qubits_names);
     };
 
     string gateName;

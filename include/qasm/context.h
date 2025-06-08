@@ -24,9 +24,9 @@ public:
     QasmContext(const QasmContext&) = delete;
     QasmContext& operator=(const QasmContext&) = delete;
 
-    void apply_gate(const Gate *gate, const std::vector<varname> &qubits_names);
+    void apply_gate(const Gate& gate, const std::vector<varname> &qubits_names);
 
-    void apply_gate(const Gate *gate, const std::vector<qubit> &qubits);
+    void apply_gate(const Gate& gate, const std::vector<qubit> &qubits);
 
     void create_diagram(bool implicit = false);
 
