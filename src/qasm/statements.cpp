@@ -224,10 +224,6 @@ public:
         {
             create_diagram();
         }
-        else if (content == "@run" || content == "@sim" || content == "@simulate")
-        {
-            simulate();
-        }
         else if (content == "@list" || content == "@actions")
         {
             print_list_of_actions();

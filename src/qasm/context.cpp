@@ -181,7 +181,6 @@ void print_run_statements_help()
 {
     std::cout << "Available run statements:\n"
               << "  @build, @inst, @instantiate - create a new diagram\n"
-              << "  @run, @sim, @simulate - simulate the current diagram\n"
               << "  @list, @actions - list the actions to be performed\n"
               << "  @display, @evaluate, @eval - display the evaluation of the current diagram\n"
               << "  @describe, @desc - display the description of the current diagram\n"
