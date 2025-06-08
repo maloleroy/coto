@@ -101,22 +101,21 @@ $(document).ready(function(){initNavTree('gate_8h.html',''); initResizable(); })
 
 <p>Handling QASM gates.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;<a class="el" href="variables_8h_source.html">qasm/variables.h</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;string&gt;</code><br />
+<code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for gate.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="gate_8h__incl.png" border="0" usemap="#ainclude_2qasm_2gate_8h" alt=""/></div>
 <map name="ainclude_2qasm_2gate_8h" id="ainclude_2qasm_2gate_8h">
-<area shape="rect" title="Handling QASM gates." alt="" coords="57,5,211,31"/>
-<area shape="rect" href="variables_8h.html" title="Handling QASM variables." alt="" coords="5,79,140,104"/>
-<area shape="poly" title=" " alt="" coords="126,33,94,70,90,66,122,29"/>
-<area shape="rect" title=" " alt="" coords="164,79,227,104"/>
-<area shape="poly" title=" " alt="" coords="146,29,178,66,174,70,142,33"/>
-<area shape="rect" title=" " alt="" coords="6,152,65,177"/>
-<area shape="poly" title=" " alt="" coords="69,106,50,141,45,139,64,103"/>
-<area shape="rect" title=" " alt="" coords="89,152,131,177"/>
-<area shape="poly" title=" " alt="" coords="81,103,100,139,95,141,76,106"/>
+<area shape="rect" title="Handling QASM gates." alt="" coords="48,5,203,31"/>
+<area shape="rect" title=" " alt="" coords="5,79,64,104"/>
+<area shape="poly" title=" " alt="" coords="112,33,62,72,59,68,109,29"/>
+<area shape="rect" title=" " alt="" coords="88,79,163,104"/>
+<area shape="poly" title=" " alt="" coords="128,31,128,65,123,65,123,31"/>
+<area shape="rect" title=" " alt="" coords="187,79,250,104"/>
+<area shape="poly" title=" " alt="" coords="142,29,194,68,191,72,139,33"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -124,9 +123,15 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="gate_8h__dep__incl.png" border="0" usemap="#ainclude_2qasm_2gate_8hdep" alt=""/></div>
 <map name="ainclude_2qasm_2gate_8hdep" id="ainclude_2qasm_2gate_8hdep">
-<area shape="rect" title="Handling QASM gates." alt="" coords="15,5,170,31"/>
-<area shape="rect" href="context_8h.html" title="Interface between the QASM interpreter and diagrams." alt="" coords="5,79,180,104"/>
-<area shape="poly" title=" " alt="" coords="95,44,95,79,90,79,90,44"/>
+<area shape="rect" title="Handling QASM gates." alt="" coords="162,5,317,31"/>
+<area shape="rect" href="context_8h.html" title="Interface between the QASM interpreter and diagrams." alt="" coords="152,79,327,104"/>
+<area shape="poly" title=" " alt="" coords="242,44,242,79,237,79,237,44"/>
+<area shape="rect" href="qasm_8h.html" title="General header for the QASM library." alt="" coords="5,152,127,177"/>
+<area shape="poly" title=" " alt="" coords="200,112,95,154,93,149,198,107"/>
+<area shape="rect" href="execute_8h.html" title="Execution of QASM statements as strings." alt="" coords="151,152,327,177"/>
+<area shape="poly" title=" " alt="" coords="242,118,242,152,237,152,237,118"/>
+<area shape="rect" href="statements_8h.html" title="Parsing statements from QASM strings." alt="" coords="352,152,551,177"/>
+<area shape="poly" title=" " alt="" coords="287,106,418,149,416,154,285,111"/>
 </map>
 </div>
 </div>
@@ -136,9 +141,6 @@ This graph shows which files directly or indirectly include this file:</div>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGate.html">Gate</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A quantum gate.  <a href="classGate.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhaseGate.html">PhaseGate</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A phase gate.  <a href="classPhaseGate.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>

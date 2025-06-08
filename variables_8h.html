@@ -94,8 +94,7 @@ $(document).ready(function(){initNavTree('variables_8h.html',''); initResizable(
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">variables.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -104,16 +103,19 @@ $(document).ready(function(){initNavTree('variables_8h.html',''); initResizable(
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;string&gt;</code><br />
 <code>#include &lt;set&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for variables.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="variables_8h__incl.png" border="0" usemap="#ainclude_2qasm_2variables_8h" alt=""/></div>
 <map name="ainclude_2qasm_2variables_8h" id="ainclude_2qasm_2variables_8h">
-<area shape="rect" title="Handling QASM variables." alt="" coords="5,5,191,31"/>
-<area shape="rect" title=" " alt="" coords="31,79,90,104"/>
-<area shape="poly" title=" " alt="" coords="94,32,75,68,71,65,89,30"/>
-<area shape="rect" title=" " alt="" coords="114,79,157,104"/>
-<area shape="poly" title=" " alt="" coords="107,30,125,65,121,68,102,32"/>
+<area shape="rect" title="Handling QASM variables." alt="" coords="17,5,202,31"/>
+<area shape="rect" title=" " alt="" coords="5,79,64,104"/>
+<area shape="poly" title=" " alt="" coords="99,33,59,71,55,67,96,29"/>
+<area shape="rect" title=" " alt="" coords="88,79,131,104"/>
+<area shape="poly" title=" " alt="" coords="112,31,112,65,107,65,107,31"/>
+<area shape="rect" title=" " alt="" coords="155,79,218,104"/>
+<area shape="poly" title=" " alt="" coords="124,29,166,67,162,71,120,33"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -121,13 +123,17 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="variables_8h__dep__incl.png" border="0" usemap="#ainclude_2qasm_2variables_8hdep" alt=""/></div>
 <map name="ainclude_2qasm_2variables_8hdep" id="ainclude_2qasm_2variables_8hdep">
-<area shape="rect" title="Handling QASM variables." alt="" coords="88,5,273,31"/>
+<area shape="rect" title="Handling QASM variables." alt="" coords="93,5,279,31"/>
 <area shape="rect" href="gateappliers_8h.html" title="Contains functions to apply quantum gates to a diagram." alt="" coords="5,79,172,104"/>
-<area shape="poly" title=" " alt="" coords="157,41,105,81,102,76,154,37"/>
-<area shape="rect" href="gate_8h.html" title="Handling QASM gates." alt="" coords="197,79,351,104"/>
-<area shape="poly" title=" " alt="" coords="208,37,260,76,257,81,205,41"/>
-<area shape="rect" href="context_8h.html" title="Interface between the QASM interpreter and diagrams." alt="" coords="187,152,361,177"/>
-<area shape="poly" title=" " alt="" coords="277,118,277,152,271,152,271,118"/>
+<area shape="poly" title=" " alt="" coords="161,41,106,81,103,76,158,37"/>
+<area shape="rect" href="context_8h.html" title="Interface between the QASM interpreter and diagrams." alt="" coords="196,79,371,104"/>
+<area shape="poly" title=" " alt="" coords="214,37,269,76,266,81,211,41"/>
+<area shape="rect" href="qasm_8h.html" title="General header for the QASM library." alt="" coords="49,152,171,177"/>
+<area shape="poly" title=" " alt="" coords="244,112,139,154,137,149,242,107"/>
+<area shape="rect" href="execute_8h.html" title="Execution of QASM statements as strings." alt="" coords="195,152,371,177"/>
+<area shape="poly" title=" " alt="" coords="286,118,286,152,281,152,281,118"/>
+<area shape="rect" href="statements_8h.html" title="Parsing statements from QASM strings." alt="" coords="396,152,595,177"/>
+<area shape="poly" title=" " alt="" coords="331,106,462,149,460,154,329,111"/>
 </map>
 </div>
 </div>
@@ -137,6 +143,8 @@ This graph shows which files directly or indirectly include this file:</div>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVar.html">Var&lt; T &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A template structure representing a variable.  <a href="structVar.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVariableStorage.html">VariableStorage</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -150,24 +158,6 @@ typedef bool&#160;</td><td class="memItemRight" valign="bottom"><b>bit</b></td><
 <tr class="memitem:adb0606859a0366a8167d9fa64f671b01" id="r_adb0606859a0366a8167d9fa64f671b01"><td class="memItemLeft" align="right" valign="top"><a id="adb0606859a0366a8167d9fa64f671b01" name="adb0606859a0366a8167d9fa64f671b01"></a>
 typedef unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>qubit</b></td></tr>
 <tr class="separator:adb0606859a0366a8167d9fa64f671b01"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a7f5e714f6b5316bf711141ff984947fd" id="r_a7f5e714f6b5316bf711141ff984947fd"><td class="memItemLeft" align="right" valign="top"><a id="a7f5e714f6b5316bf711141ff984947fd" name="a7f5e714f6b5316bf711141ff984947fd"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_name_reserved</b> (const varname &amp;name) noexcept</td></tr>
-<tr class="separator:a7f5e714f6b5316bf711141ff984947fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a444ab473e348ba366ddbc6e6eff54d22" id="r_a444ab473e348ba366ddbc6e6eff54d22"><td class="memItemLeft" align="right" valign="top"><a id="a444ab473e348ba366ddbc6e6eff54d22" name="a444ab473e348ba366ddbc6e6eff54d22"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>var_to_string</b> (const varname &amp;name)</td></tr>
-<tr class="separator:a444ab473e348ba366ddbc6e6eff54d22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9d97cc55310420894aa90b4ca95cd41" id="r_ac9d97cc55310420894aa90b4ca95cd41"><td class="memItemLeft" align="right" valign="top"><a id="ac9d97cc55310420894aa90b4ca95cd41" name="ac9d97cc55310420894aa90b4ca95cd41"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>define_var</b> (const string &amp;type_name, const varname &amp;name, bool is_const=false)</td></tr>
-<tr class="separator:ac9d97cc55310420894aa90b4ca95cd41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c81b8e5728975f4d9adca93292bb040" id="r_a0c81b8e5728975f4d9adca93292bb040"><td class="memItemLeft" align="right" valign="top"><a id="a0c81b8e5728975f4d9adca93292bb040" name="a0c81b8e5728975f4d9adca93292bb040"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>assign_var</b> (const varname &amp;name, const string &amp;value)</td></tr>
-<tr class="separator:a0c81b8e5728975f4d9adca93292bb040"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e7b7652246f8f3de077246b797851c9" id="r_a5e7b7652246f8f3de077246b797851c9"><td class="memItemLeft" align="right" valign="top"><a id="a5e7b7652246f8f3de077246b797851c9" name="a5e7b7652246f8f3de077246b797851c9"></a>
-qubit&#160;</td><td class="memItemRight" valign="bottom"><b>get_qubit</b> (const varname &amp;name)</td></tr>
-<tr class="separator:a5e7b7652246f8f3de077246b797851c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Handling QASM variables. </p>

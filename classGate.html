@@ -97,7 +97,6 @@ $(document).ready(function(){initNavTree('classGate.html',''); initResizable(); 
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classGate-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">Gate Class Reference</div></div>
 </div><!--header-->
@@ -108,28 +107,18 @@ $(document).ready(function(){initNavTree('classGate.html',''); initResizable(); 
 
 <p><code>#include &lt;<a class="el" href="gate_8h_source.html">gate.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for Gate:</div>
+Collaboration diagram for Gate:</div>
 <div class="dyncontent">
-<div class="center"><img src="classGate__inherit__graph.png" border="0" usemap="#aGate_inherit__map" alt="Inheritance graph"/></div>
-<map name="aGate_inherit__map" id="aGate_inherit__map">
-<area shape="rect" title="A quantum gate." alt="" coords="25,5,78,31"/>
-<area shape="rect" href="classPhaseGate.html" title="A phase gate." alt="" coords="5,79,97,104"/>
-<area shape="poly" title=" " alt="" coords="54,44,54,79,49,79,49,44"/>
+<div class="center"><img src="classGate__coll__graph.png" border="0" usemap="#aGate_coll__map" alt="Collaboration graph"/></div>
+<map name="aGate_coll__map" id="aGate_coll__map">
+<area shape="rect" title="A quantum gate." alt="" coords="9,93,62,119"/>
+<area shape="rect" title=" " alt="" coords="5,5,65,31"/>
+<area shape="poly" title=" " alt="" coords="38,45,38,93,33,93,33,45"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8e554950b890366e7bd7156d328a51ee" id="r_a8e554950b890366e7bd7156d328a51ee"><td class="memItemLeft" align="right" valign="top"><a id="a8e554950b890366e7bd7156d328a51ee" name="a8e554950b890366e7bd7156d328a51ee"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>apply_to</b> (const std::vector&lt; varname &gt; &amp;qubits_names) const</td></tr>
-<tr class="separator:a8e554950b890366e7bd7156d328a51ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c31cffd120e24c813a1a233ad73d520" id="r_a9c31cffd120e24c813a1a233ad73d520"><td class="memItemLeft" align="right" valign="top"><a id="a9c31cffd120e24c813a1a233ad73d520" name="a9c31cffd120e24c813a1a233ad73d520"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>apply_to</b> (const std::vector&lt; qubit &gt; &amp;qubits) const</td></tr>
-<tr class="separator:a9c31cffd120e24c813a1a233ad73d520"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac02d390260058cb581bded8e38c0e791" id="r_ac02d390260058cb581bded8e38c0e791"><td class="memItemLeft" align="right" valign="top"><a id="ac02d390260058cb581bded8e38c0e791" name="ac02d390260058cb581bded8e38c0e791"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const noexcept</td></tr>
-<tr class="memdesc:ac02d390260058cb581bded8e38c0e791"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of qubits of the gate. <br /></td></tr>
-<tr class="separator:ac02d390260058cb581bded8e38c0e791"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81cd8f31550bc928dc7fb848b1950279" id="r_a81cd8f31550bc928dc7fb848b1950279"><td class="memItemLeft" align="right" valign="top"><a id="a81cd8f31550bc928dc7fb848b1950279" name="a81cd8f31550bc928dc7fb848b1950279"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>to_string</b> () const noexcept</td></tr>
 <tr class="separator:a81cd8f31550bc928dc7fb848b1950279"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -147,19 +136,22 @@ static const <a class="el" href="classGate.html">Gate</a>&#160;</td><td class="m
 Public Attributes</h2></td></tr>
 <tr class="memitem:a282eaa89c915f92da138bf3a333bf8e9" id="r_a282eaa89c915f92da138bf3a333bf8e9"><td class="memItemLeft" align="right" valign="top"><a id="a282eaa89c915f92da138bf3a333bf8e9" name="a282eaa89c915f92da138bf3a333bf8e9"></a>
 const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>name</b></td></tr>
+<tr class="memdesc:a282eaa89c915f92da138bf3a333bf8e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The name of the gate. <br /></td></tr>
 <tr class="separator:a282eaa89c915f92da138bf3a333bf8e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affd4ad9ac79d3f8eff7d78023ee8c60e" id="r_affd4ad9ac79d3f8eff7d78023ee8c60e"><td class="memItemLeft" align="right" valign="top"><a id="affd4ad9ac79d3f8eff7d78023ee8c60e" name="affd4ad9ac79d3f8eff7d78023ee8c60e"></a>
+const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b></td></tr>
+<tr class="memdesc:affd4ad9ac79d3f8eff7d78023ee8c60e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of qubits of the gate. <br /></td></tr>
+<tr class="separator:affd4ad9ac79d3f8eff7d78023ee8c60e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac07801ba85165ad81ad6b8e19dccd2e8" id="r_ac07801ba85165ad81ad6b8e19dccd2e8"><td class="memItemLeft" align="right" valign="top"><a id="ac07801ba85165ad81ad6b8e19dccd2e8" name="ac07801ba85165ad81ad6b8e19dccd2e8"></a>
+const std::optional&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>parameter</b></td></tr>
+<tr class="memdesc:ac07801ba85165ad81ad6b8e19dccd2e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional parameter for gates like phase gates. <br /></td></tr>
+<tr class="separator:ac07801ba85165ad81ad6b8e19dccd2e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a1441e1e2eb8c90a784acd463083cf7b1" id="r_a1441e1e2eb8c90a784acd463083cf7b1"><td class="memItemLeft" align="right" valign="top"><a id="a1441e1e2eb8c90a784acd463083cf7b1" name="a1441e1e2eb8c90a784acd463083cf7b1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Gate</b> (const std::string &amp;name, const std::size_t <a class="el" href="classGate.html#ac02d390260058cb581bded8e38c0e791">size</a>)</td></tr>
-<tr class="separator:a1441e1e2eb8c90a784acd463083cf7b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:a9cc46bd347b74b23618166205f3c55c2" id="r_a9cc46bd347b74b23618166205f3c55c2"><td class="memItemLeft" align="right" valign="top"><a id="a9cc46bd347b74b23618166205f3c55c2" name="a9cc46bd347b74b23618166205f3c55c2"></a>
-const std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>gate_size</b></td></tr>
-<tr class="separator:a9cc46bd347b74b23618166205f3c55c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a556c0dba4f3e373ee260dfafac9f5ae8" id="r_a556c0dba4f3e373ee260dfafac9f5ae8"><td class="memItemLeft" align="right" valign="top"><a id="a556c0dba4f3e373ee260dfafac9f5ae8" name="a556c0dba4f3e373ee260dfafac9f5ae8"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Gate</b> (const std::string &amp;<a class="el" href="classGate.html#a282eaa89c915f92da138bf3a333bf8e9">name</a>, const std::size_t <a class="el" href="classGate.html#affd4ad9ac79d3f8eff7d78023ee8c60e">size</a>, const std::optional&lt; int &gt; &amp;<a class="el" href="classGate.html#ac07801ba85165ad81ad6b8e19dccd2e8">parameter</a>=std::nullopt) noexcept</td></tr>
+<tr class="separator:a556c0dba4f3e373ee260dfafac9f5ae8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A quantum gate. </p>

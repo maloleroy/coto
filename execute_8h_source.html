@@ -102,14 +102,14 @@ $(document).ready(function(){initNavTree('execute_8h_source.html',''); initResiz
 <div class="contents">
 <a href="execute_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;<a class="code" href="statements_8h.html">qasm/statements.h</a>&gt;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keywordtype">void</span> execute(<span class="keyword">const</span> std::string&amp; content);</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keywordtype">void</span> execute(std::istream&amp; stream);</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keywordtype">void</span> execute(<span class="keyword">const</span> std::vector&lt;std::unique_ptr&lt;Statement&gt;&gt;&amp; statements);</div>
-<div class="ttc" id="astatements_8h_html"><div class="ttname"><a href="statements_8h.html">statements.h</a></div><div class="ttdoc">Parsing statements from QASM strings.</div></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;istream&gt;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;<a class="code" href="context_8h.html">qasm/context.h</a>&gt;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keywordtype">void</span> execute(<span class="keyword">const</span> std::string&amp; content, <a class="code hl_class" href="classQasmContext.html">QasmContext</a>&amp; context);</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keywordtype">void</span> execute(std::istream&amp; stream, <a class="code hl_class" href="classQasmContext.html">QasmContext</a>&amp; context);</div>
+<div class="ttc" id="aclassQasmContext_html"><div class="ttname"><a href="classQasmContext.html">QasmContext</a></div><div class="ttdef"><b>Definition</b> context.h:13</div></div>
+<div class="ttc" id="acontext_8h_html"><div class="ttname"><a href="context_8h.html">context.h</a></div><div class="ttdoc">Interface between the QASM interpreter and diagrams.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

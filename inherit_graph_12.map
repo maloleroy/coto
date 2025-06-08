@@ -1,15 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,104,144,129"/>
-<area shape="rect" id="Node000001" href="$classParsingError.html" title="Exception thrown when a parsing error occurs." alt="" coords="192,104,292,129"/>
-<area shape="poly" id="edge2_Node000000_Node000001" title=" " alt="" coords="158,114,192,114,192,119,158,119"/>
-<area shape="rect" id="Node000002" href="$classFileError.html" title="Exception thrown when a file error occurs." alt="" coords="355,5,431,31"/>
-<area shape="poly" id="edge3_Node000001_Node000002" title=" " alt="" coords="267,93,300,66,339,40,360,28,362,33,341,44,303,71,270,97"/>
-<area shape="rect" id="Node000003" href="$classSizeError.html" title="Exception thrown when trying to apply a gate to an incorrect number of qubits." alt="" coords="353,55,433,80"/>
-<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="294,97,352,78,354,83,295,102"/>
-<area shape="rect" id="Node000004" href="$classSyntaxError.html" title="Exception thrown when an incorrect syntax is used." alt="" coords="344,104,443,129"/>
-<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="306,114,344,114,344,119,306,119"/>
-<area shape="rect" id="Node000005" href="$classVariableError.html" title="Exception thrown when a variable error occurs (e.g. not found)" alt="" coords="340,153,447,179"/>
-<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="295,131,354,151,352,156,294,136"/>
-<area shape="rect" id="Node000006" href="$classVersionError.html" title="Exception thrown when trying to use an unsupportedOpenQASM version." alt="" coords="343,203,444,228"/>
-<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="271,136,341,188,365,200,362,205,339,192,268,141"/>
+<area shape="rect" id="Node000000" href="$classStatement.html" title=" " alt="" coords="5,5,96,31"/>
 </map>

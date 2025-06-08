@@ -4,5 +4,6 @@ var searchData=
   ['var_1',['Var',['../structVar.html',1,'']]],
   ['variableerror_2',['VariableError',['../classVariableError.html',1,'']]],
   ['variables_2eh_3',['variables.h',['../variables_8h.html',1,'']]],
-  ['versionerror_4',['VersionError',['../classVersionError.html',1,'']]]
+  ['variablestorage_4',['VariableStorage',['../classVariableStorage.html',1,'']]],
+  ['versionerror_5',['VersionError',['../classVersionError.html',1,'']]]
 ];

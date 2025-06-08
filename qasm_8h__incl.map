@@ -1,5 +1,45 @@
 <map id="include/qasm.h" name="include/qasm.h">
-<area shape="rect" id="Node000001" title="General header for the QASM library." alt="" coords="5,5,127,31"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="30,79,102,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="69,31,69,65,63,65,63,31"/>
+<area shape="rect" id="Node000001" title="General header for the QASM library." alt="" coords="94,5,215,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="59,79,131,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="147,33,115,70,111,66,143,29"/>
+<area shape="rect" id="Node000003" href="$context_8h.html" title="Interface between the QASM interpreter and diagrams." alt="" coords="155,79,277,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="167,29,199,66,195,70,163,33"/>
+<area shape="rect" id="Node000004" href="$gate_8h.html" title="Handling QASM gates." alt="" coords="15,152,118,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="193,106,105,148,102,144,191,102"/>
+<area shape="rect" id="Node000008" href="$variables_8h.html" title="Handling QASM variables." alt="" coords="149,152,283,177"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="219,104,219,138,213,138,213,104"/>
+<area shape="rect" id="Node000010" href="$diagram_8h.html" title="Abstract&#45;interpreted additive diagrams." alt="" coords="332,152,420,177"/>
+<area shape="poly" id="edge11_Node000003_Node000010" title=" " alt="" coords="243,102,338,144,336,149,241,106"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="120,225,179,251"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="82,175,127,214,124,218,78,179"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="21,225,96,251"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="68,178,64,212,59,212,63,177"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="243,445,306,471"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="51,179,34,193,18,211,9,230,12,250,32,284,58,315,87,343,118,368,181,409,236,437,233,442,179,414,115,373,83,347,54,319,28,287,7,252,4,229,14,208,30,190,48,175"/>
+<area shape="poly" id="edge8_Node000008_Node000005" title=" " alt="" coords="207,179,171,217,168,213,203,176"/>
+<area shape="poly" id="edge10_Node000008_Node000007" title=" " alt="" coords="221,177,272,431,267,432,216,178"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="253,225,296,251"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="228,176,259,213,255,217,224,179"/>
+<area shape="poly" id="edge12_Node000010_Node000007" title=" " alt="" coords="375,178,286,433,281,431,370,177"/>
+<area shape="rect" id="Node000011" href="$absi_8h.html" title="This file includes the necessary headers for working with ABStract Interpretation." alt="" coords="380,225,441,251"/>
+<area shape="poly" id="edge13_Node000010_Node000011" title=" " alt="" coords="384,176,401,212,397,214,379,179"/>
+<area shape="rect" id="Node000014" href="$amplitude_8h_source.html" title=" " alt="" coords="539,372,639,397"/>
+<area shape="poly" id="edge24_Node000010_Node000014" title=" " alt="" coords="421,173,471,188,527,213,581,249,605,271,624,297,629,314,627,331,611,362,606,360,621,330,623,314,619,300,601,275,578,253,525,217,469,193,419,178"/>
+<area shape="rect" id="Node000012" href="$polar_8h_source.html" title=" " alt="" coords="362,299,459,324"/>
+<area shape="poly" id="edge14_Node000011_Node000012" title=" " alt="" coords="413,251,413,285,408,285,408,251"/>
+<area shape="rect" id="Node000018" href="$cartesian_8h_source.html" title=" " alt="" coords="484,299,609,324"/>
+<area shape="poly" id="edge21_Node000011_Node000018" title=" " alt="" coords="434,248,514,290,511,295,431,253"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="369,372,437,397"/>
+<area shape="poly" id="edge15_Node000012_Node000013" title=" " alt="" coords="412,325,408,359,403,358,407,324"/>
+<area shape="poly" id="edge16_Node000012_Node000014" title=" " alt="" coords="440,322,549,364,547,369,438,327"/>
+<area shape="poly" id="edge17_Node000014_Node000007" title=" " alt="" coords="540,400,320,449,319,444,539,395"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="605,445,683,471"/>
+<area shape="poly" id="edge18_Node000014_Node000015" title=" " alt="" coords="600,396,629,433,625,436,596,399"/>
+<area shape="rect" id="Node000016" href="$powarray_8h_source.html" title=" " alt="" coords="487,445,580,471"/>
+<area shape="poly" id="edge19_Node000014_Node000016" title=" " alt="" coords="582,399,553,436,549,433,578,396"/>
+<area shape="rect" id="Node000017" title=" " alt="" coords="495,519,572,544"/>
+<area shape="poly" id="edge20_Node000016_Node000017" title=" " alt="" coords="536,471,536,505,531,505,531,471"/>
+<area shape="poly" id="edge22_Node000018_Node000014" title=" " alt="" coords="556,323,578,359,573,362,551,326"/>
+<area shape="rect" id="Node000019" title=" " alt="" coords="461,372,515,397"/>
+<area shape="poly" id="edge23_Node000018_Node000019" title=" " alt="" coords="539,326,508,363,504,360,535,323"/>
 </map>

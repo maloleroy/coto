@@ -15,19 +15,23 @@ var annotated_dup =
       [ "Interval", "classpolar_1_1Interval.html", "classpolar_1_1Interval" ],
       [ "PositiveInterval", "classpolar_1_1PositiveInterval.html", null ]
     ] ],
+    [ "qasm", "namespaceqasm.html", [
+      [ "Runtime", "classqasm_1_1Runtime.html", null ]
+    ] ],
     [ "selection", null, [
       [ "Mergees", "structselection_1_1Mergees.html", null ]
     ] ],
     [ "FileError", "classFileError.html", null ],
     [ "Gate", "classGate.html", "classGate" ],
     [ "ParsingError", "classParsingError.html", null ],
-    [ "PhaseGate", "classPhaseGate.html", null ],
     [ "PowMatrix", "classPowMatrix.html", "classPowMatrix" ],
+    [ "QasmContext", "classQasmContext.html", null ],
     [ "SizeError", "classSizeError.html", null ],
     [ "Statement", "classStatement.html", null ],
     [ "StatementString", "structStatementString.html", null ],
     [ "SyntaxError", "classSyntaxError.html", null ],
     [ "Var", "structVar.html", "structVar" ],
     [ "VariableError", "classVariableError.html", null ],
+    [ "VariableStorage", "classVariableStorage.html", null ],
     [ "VersionError", "classVersionError.html", null ]
 ];

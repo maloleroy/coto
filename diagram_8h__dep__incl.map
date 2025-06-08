@@ -1,11 +1,17 @@
 <map id="include/diagram.h" name="include/diagram.h">
-<area shape="rect" id="Node000001" title="Abstract&#45;interpreted additive diagrams." alt="" coords="214,5,353,31"/>
-<area shape="rect" id="Node000002" href="$gateappliers_8h.html" title="Contains functions to apply quantum gates to a diagram." alt="" coords="5,79,172,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="240,38,121,81,120,76,239,33"/>
-<area shape="rect" id="Node000003" href="$context_8h.html" title="Interface between the QASM interpreter and diagrams." alt="" coords="196,79,371,104"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="286,44,286,79,281,79,281,44"/>
-<area shape="rect" id="Node000004" href="$selection_8h.html" title="Contains functions and classes related to selection operations on mergees in diagrams." alt="" coords="395,79,539,104"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="327,33,438,76,436,81,325,38"/>
-<area shape="rect" id="Node000005" href="$reduction_8h.html" title="Reducing abstract&#45;interpreted additive diagrams." alt="" coords="394,152,541,177"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="470,118,470,152,465,152,465,118"/>
+<area shape="rect" id="Node000001" title="Abstract&#45;interpreted additive diagrams." alt="" coords="226,5,365,31"/>
+<area shape="rect" id="Node000002" href="$gateappliers_8h.html" title="Contains functions to apply quantum gates to a diagram." alt="" coords="17,79,184,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="252,38,133,81,132,76,251,33"/>
+<area shape="rect" id="Node000003" href="$context_8h.html" title="Interface between the QASM interpreter and diagrams." alt="" coords="208,79,383,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="298,44,298,79,293,79,293,44"/>
+<area shape="rect" id="Node000007" href="$selection_8h.html" title="Contains functions and classes related to selection operations on mergees in diagrams." alt="" coords="519,79,663,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="357,31,544,76,543,81,355,36"/>
+<area shape="rect" id="Node000004" href="$qasm_8h.html" title="General header for the QASM library." alt="" coords="5,152,127,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="246,111,104,154,102,149,244,106"/>
+<area shape="rect" id="Node000005" href="$execute_8h.html" title="Execution of QASM statements as strings." alt="" coords="151,152,327,177"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="280,117,250,154,246,150,275,113"/>
+<area shape="rect" id="Node000006" href="$statements_8h.html" title="Parsing statements from QASM strings." alt="" coords="352,152,551,177"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="334,107,427,149,425,154,332,112"/>
+<area shape="rect" id="Node000008" href="$reduction_8h.html" title="Reducing abstract&#45;interpreted additive diagrams." alt="" coords="575,152,722,177"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="611,113,641,150,637,154,607,116"/>
 </map>

@@ -1,9 +1,13 @@
 <map id="include/qasm/variables.h" name="include/qasm/variables.h">
-<area shape="rect" id="Node000001" title="Handling QASM variables." alt="" coords="88,5,273,31"/>
+<area shape="rect" id="Node000001" title="Handling QASM variables." alt="" coords="93,5,279,31"/>
 <area shape="rect" id="Node000002" href="$gateappliers_8h.html" title="Contains functions to apply quantum gates to a diagram." alt="" coords="5,79,172,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,41,105,81,102,76,154,37"/>
-<area shape="rect" id="Node000003" href="$gate_8h.html" title="Handling QASM gates." alt="" coords="197,79,351,104"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="208,37,260,76,257,81,205,41"/>
-<area shape="rect" id="Node000004" href="$context_8h.html" title="Interface between the QASM interpreter and diagrams." alt="" coords="187,152,361,177"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="277,118,277,152,271,152,271,118"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="161,41,106,81,103,76,158,37"/>
+<area shape="rect" id="Node000003" href="$context_8h.html" title="Interface between the QASM interpreter and diagrams." alt="" coords="196,79,371,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="214,37,269,76,266,81,211,41"/>
+<area shape="rect" id="Node000004" href="$qasm_8h.html" title="General header for the QASM library." alt="" coords="49,152,171,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="244,112,139,154,137,149,242,107"/>
+<area shape="rect" id="Node000005" href="$execute_8h.html" title="Execution of QASM statements as strings." alt="" coords="195,152,371,177"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="286,118,286,152,281,152,281,118"/>
+<area shape="rect" id="Node000006" href="$statements_8h.html" title="Parsing statements from QASM strings." alt="" coords="396,152,595,177"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="331,106,462,149,460,154,329,111"/>
 </map>

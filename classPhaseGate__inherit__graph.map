@@ -1,5 +1,0 @@
-<map id="PhaseGate" name="PhaseGate">
-<area shape="rect" id="Node000001" title="A phase gate." alt="" coords="5,79,97,104"/>
-<area shape="rect" id="Node000002" href="$classGate.html" title="A quantum gate." alt="" coords="25,5,78,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="54,44,54,79,49,79,49,44"/>
-</map>
