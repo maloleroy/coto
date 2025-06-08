@@ -67,7 +67,7 @@ Runtime&& Runtime::fexec(const std::string &file_path)
     }
     catch (const FileError &e)
     {
-        std::cerr << e.what() << '\\n';
+        std::cerr << e.what() << '\n';
     }
     return std::move(*this);
 }
