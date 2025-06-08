@@ -4,14 +4,16 @@
 
 #include <algorithm>
 
-Gate::Gate(const std::string &name, const std::size_t size)
-    : gate_size(size), name(name)
+Gate::Gate(const std::string &name, const std::size_t size, const std::optional<int> &parameter) noexcept
+    : parameter(parameter),
+      size(size),
+      name(name)
 {
 }
 
 std::string Gate::to_string() const noexcept
 {
-    return "gate: " + name + "[" + std::to_string(size()) + "]";
+    return "gate: " + name + "[" + std::to_string(size) + "]";
 }
 
 static int parse_phase_gate_phase(const std::string &gateName)
@@ -45,7 +47,8 @@ static std::string get_phase_gate_name(int phase)
     return "p(2pi/" + std::to_string(phase) + ")";
 }
 
-bool PhaseGate::is(const std::string &gateName)
+[[nodiscard]]
+bool is_phase_gate(const std::string &gateName)
 {
     if (gateName == "p(0)" || gateName == "p(pi)" || gateName == "p(2pi)")
         return true;
@@ -64,26 +67,16 @@ bool PhaseGate::is(const std::string &gateName)
                        { return std::isdigit(static_cast<unsigned char>(c)); });
 }
 
-PhaseGate::PhaseGate(const std::string &gateName)
-    : PhaseGate(parse_phase_gate_phase(gateName))
-{
-}
-
-PhaseGate::PhaseGate(int phase)
-    : Gate(get_phase_gate_name(phase), 1), phase(phase)
-{
-}
-
 bool Gate::exists(const std::string &gateName) noexcept
 {
-    return is_name_reserved(gateName) || PhaseGate::is(gateName);
+    return VariableStorage::is_name_reserved(gateName) || is_phase_gate(gateName);
 }
 
 const Gate Gate::from_name(const std::string &gateName)
 {
-    if (PhaseGate::is(gateName))
+    if (is_phase_gate(gateName))
     {
-        return PhaseGate(gateName);
+        return Gate(gateName, 1, parse_phase_gate_phase(gateName));
     }
     else if (gateName == "x" || gateName == "h")
     {
@@ -96,25 +89,6 @@ const Gate Gate::from_name(const std::string &gateName)
     throw VariableError("Undefined gate " + gateName);
 }
 
-void Gate::apply_to(const std::vector<varname> &qubits_names) const
-{
-    std::vector<qubit> qubits;
-    for (auto name : qubits_names)
-    {
-        qubits.push_back(get_qubit(name));
-    }
-    apply_to(qubits);
-}
-
-void Gate::apply_to(const std::vector<qubit> &qubits) const
-{
-    if (size() != qubits.size())
-    {
-        throw SizeError("Trying to apply a gate of size " + std::to_string(size()) + " to " + std::to_string(qubits.size()) + " qubits");
-    }
-    apply_gate(this, qubits);
-}
-
 std::string gate_to_string_from_name(const std::string &name)
 {
     if (Gate::exists(name))
@@ -122,9 +96,4 @@ std::string gate_to_string_from_name(const std::string &name)
         return Gate::from_name(name).to_string();
     }
     throw VariableError("Undefined gate: " + name);
-}
-
-std::size_t Gate::size() const noexcept
-{
-    return gate_size;
 }

@@ -1,19 +1,22 @@
 #include <qasm/execute.h>
+#include <qasm/statements.h>
 
-void execute(const std::string &content)
+static void execute(const std::vector<std::unique_ptr<Statement>> &statements, QasmContext& context);
+
+void execute(const std::string &content, QasmContext& context)
 {
-    execute(parse_statements(content));
+    execute(parse_statements(content), context);
 }
 
-void execute(std::istream &stream)
+void execute(std::istream &stream, QasmContext& context)
 {
-    execute(parse_statements(stream));
+    execute(parse_statements(stream), context);
 }
 
-void execute(const std::vector<std::unique_ptr<Statement>> &statements)
+static void execute(const std::vector<std::unique_ptr<Statement>> &statements, QasmContext& context)
 {
     for (const auto &s : statements)
     {
-        s->execute();
+        s->execute(context);
     }
 }

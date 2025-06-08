@@ -52,9 +52,9 @@ public:
         }
     }
 
-    void execute() const override
+    void execute(QasmContext& context) const override
     {
-        define_var(type_name, name, false);
+        context.storage.define_var(type_name, name, false);
     }
 
     const string type_name;
@@ -97,13 +97,13 @@ public:
         value = content.substr(eqPos + 1);
     }
 
-    void execute() const override
+    void execute(QasmContext& context) const override
     {
         if (type_name.has_value())
         {
-            define_var(type_name.value(), name);
+            context.storage.define_var(type_name.value(), name);
         }
-        assign_var(name, value);
+        context.storage.assign_var(name, value);
     };
 
     std::optional<string> type_name;
@@ -141,10 +141,9 @@ public:
         }
     }
 
-    void execute() const override
+    void execute(QasmContext& context) const override
     {
-        auto gate = Gate::from_name(gateName);
-        gate.apply_to(qubits_names);
+        context.apply_gate(Gate::from_name(gateName), qubits_names);
     };
 
     string gateName;
@@ -167,7 +166,7 @@ public:
         return content.starts_with("OPENQASM ");
     }
 
-    void execute() const override {};
+    void execute(QasmContext& context) const override {};
 
     const string version;
 };
@@ -182,7 +181,7 @@ public:
         return content.starts_with("include \"");
     }
 
-    void execute() const override {};
+    void execute(QasmContext& context) const override {};
 
 private:
     const string file_path;
@@ -193,7 +192,7 @@ class ForBeginStatement : public Statement
 public:
     ForBeginStatement(const string &content) : content(content) {};
 
-    void execute() const override {};
+    void execute(QasmContext& context) const override {};
 
     const string content;
 };
@@ -203,7 +202,7 @@ class ForEndStatement : public Statement
 public:
     ForEndStatement(const string &content) : content(content) {};
 
-    void execute() const override {};
+    void execute(QasmContext& context) const override {};
 
     const string content;
 };
@@ -218,31 +217,27 @@ public:
         return content.starts_with("@") && is_valid_identifier(content.substr(1));
     }
 
-    void execute() const override
+    void execute(QasmContext& context) const override
     {
         if (content == "@build" || content == "@inst" || content == "@instantiate")
         {
-            create_diagram();
-        }
-        else if (content == "@run" || content == "@sim" || content == "@simulate")
-        {
-            simulate();
+            context.create_diagram();
         }
         else if (content == "@list" || content == "@actions")
         {
-            print_list_of_actions();
+            context.print_list_of_actions();
         }
         else if (content == "@display" || content == "@evaluate" || content == "@eval")
         {
-            print_evaluation();
+            context.print_evaluation(); // implicitely runs unexecuted actions
         }
         else if (content == "@describe" || content == "@desc")
         {
-            print_diagram_description();
+            context.print_diagram_description();
         }
         else if (content == "@help" || content == "@man" || content == "@manual")
         {
-            print_run_statements_help();
+            context.print_run_statements_help();
         }
         else
         {

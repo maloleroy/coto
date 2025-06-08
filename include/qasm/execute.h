@@ -4,10 +4,9 @@
  */
 
 #pragma once
-#include <qasm/statements.h>
+#include <istream>
+#include <qasm/context.h>
 
-void execute(const std::string& content);
+void execute(const std::string& content, QasmContext& context);
 
-void execute(std::istream& stream);
-
-void execute(const std::vector<std::unique_ptr<Statement>>& statements);
+void execute(std::istream& stream, QasmContext& context);
