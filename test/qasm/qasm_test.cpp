@@ -4,6 +4,15 @@
 
 using namespace qasm;
 
+TEST(QasmTest, empty)
+{
+    EXPECT_NO_THROW(exec(""));
+    EXPECT_THROW(exec(";"), SyntaxError);
+    EXPECT_THROW(exec("  ;"), SyntaxError);
+    EXPECT_THROW(exec("  \n;"), SyntaxError);
+    EXPECT_THROW(exec("  \t;"), SyntaxError);
+}
+
 TEST(QasmTest, definition)
 {
     EXPECT_THROW(exec("bit 6a;"), SyntaxError);
