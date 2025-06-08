@@ -1,5 +1,7 @@
 #include <iostream>
+#include <functional>
 #include <qasm.h>
+#include <qasm/error.h>
 
 /// @brief Main loop for the interpreter (interative mode)
 void interpreter_main_loop();
@@ -14,11 +16,21 @@ bool process_line(const std::string &line);
 
 bool is_quit_line(const std::string &line);
 
+/// @brief Try to execute a function and catch any exceptions, returning a default value if an exception occurs
+template <typename T>
+T try_catch_qasm(const std::function<T()> &func, const T &default_value);
+
 int main(int argc, char *argv[])
 {
     if (argc > 1)
     {
-        qasm::fexec(argv[1]);
+        return try_catch_qasm<int>(
+            [&]()
+            {
+                qasm::fexec(argv[1]);
+                return 0;
+            },
+            1);
     }
     else
     {
@@ -44,7 +56,6 @@ void interpreter_main_loop()
 void print_prompt()
 {
     std::cout << "| " << std::flush;
-    ;
 }
 
 void print_result(const std::string &result)
@@ -55,36 +66,58 @@ void print_result(const std::string &result)
     }
 }
 
+template <typename T>
+T try_catch_qasm(const std::function<T()> &func, const T &default_value)
+{
+    try
+    {
+        return func();
+    }
+    catch (const SyntaxError &e)
+    {
+        std::cerr << "Syntax error: " << e.what() << '\n';
+        return default_value;
+    }
+    catch (const std::runtime_error &e)
+    {
+        std::cerr << "Execution error: " << e.what() << '\n';
+        return default_value;
+    }
+}
+
 bool process_line(const std::string &line)
 {
+    static qasm::Runtime runtime = try_catch_qasm<qasm::Runtime>(
+        [&]()
+        {
+            return qasm::exec(line);
+        },
+        qasm::exec(""));
+
+    static bool is_first_line = true;
+    if (is_first_line)
+    {
+        is_first_line = false;
+        return false;
+    }
+
     if (is_quit_line(line))
     {
         return true;
     }
     if (line.ends_with(';'))
     {
-        try
-        {
-            qasm::exec(line);
-        }
-        catch (const std::runtime_error &e)
-        {
-            std::cerr << "Failed executing line: " << e.what() << '\n';
-        }
+        runtime = try_catch_qasm<qasm::Runtime>(
+            [&]()
+            { return runtime.exec(line); },
+            runtime);
         return false;
     }
-    try
-    {
-        if (line == "quit" || line == "exit")
-        {
-            return true;
-        }
-        print_result(qasm::eval(line));
-    }
-    catch (const std::runtime_error &e)
-    {
-        std::cerr << "Failed evaluating line: " << e.what() << '\n';
-    }
+    print_result(
+        try_catch_qasm<std::string>(
+            [&]()
+            { return runtime.eval(line); },
+            ""));
     return false;
 }
 
