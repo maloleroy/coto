@@ -44,7 +44,7 @@ std::string to_string(const Var<T> variable)
     return variable.type_name + ": " + std::to_string(variable.value);
 }
 
-std::string var_to_string(const varname &name)
+std::string VariableStorage::var_to_string(const varname &name) const
 {
     for (const auto &v : int_vars)
     {
@@ -64,13 +64,18 @@ std::string var_to_string(const varname &name)
     throw VariableError("No such variable: " + name);
 }
 
-bool is_name_reserved(const varname &name) noexcept
+bool VariableStorage::is_name_reserved(const varname &name) noexcept
 {
     static const std::set<std::string> reserved_names{"x", "h", "cx", "s"};
     return reserved_names.contains(name);
 }
 
-void define_var(const std::string &type_name, const varname &name, bool is_const)
+qubit VariableStorage::get_qubit_count() const noexcept
+{
+    return qubit_count;
+}
+
+void VariableStorage::define_var(const std::string &type_name, const varname &name, bool is_const)
 {
     if (is_name_reserved(name))
     {
@@ -86,7 +91,8 @@ void define_var(const std::string &type_name, const varname &name, bool is_const
     }
     else if (type_name == "qubit")
     {
-        qubit_vars.push_back(Var<qubit>{type_name, name, true, true, add_qubit()});
+        qubit_vars.push_back(Var<qubit>{type_name, name, true, true, get_qubit_count()});
+        qubit_count++;
     }
     else
     {
@@ -111,7 +117,7 @@ void set_value(const varname &name, std::vector<Var<T>> *vars, const T &value)
     }
 }
 
-void assign_var(const varname &name, const std::string &value)
+void VariableStorage::assign_var(const varname &name, const std::string &value)
 {
     switch (varType(name))
     {
@@ -128,7 +134,7 @@ void assign_var(const varname &name, const std::string &value)
     }
 }
 
-qubit get_qubit(const varname &name)
+qubit VariableStorage::get_qubit(const varname &name)
 {
     for (auto v : qubit_vars)
     {

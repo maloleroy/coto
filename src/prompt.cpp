@@ -18,7 +18,7 @@ bool is_quit_line(const std::string &line);
 
 /// @brief Try to execute a function and catch any exceptions, returning a default value if an exception occurs
 template <typename T>
-T try_catch_qasm(const std::function<T()> &func, const T &default_value);
+T try_catch_qasm(const std::function<T()> &func, T default_value); // Changed: T default_value (by value)
 
 int main(int argc, char *argv[])
 {
@@ -67,7 +67,7 @@ void print_result(const std::string &result)
 }
 
 template <typename T>
-T try_catch_qasm(const std::function<T()> &func, const T &default_value)
+T try_catch_qasm(const std::function<T()> &func, T default_value) // Changed: T default_value (by value)
 {
     try
     {
@@ -76,13 +76,25 @@ T try_catch_qasm(const std::function<T()> &func, const T &default_value)
     catch (const SyntaxError &e)
     {
         std::cerr << "Syntax error: " << e.what() << '\n';
-        return default_value;
+        return std::move(default_value); // Changed: std::move
     }
     catch (const std::runtime_error &e)
     {
         std::cerr << "Execution error: " << e.what() << '\n';
-        return default_value;
+        return std::move(default_value); // Changed: std::move
     }
+}
+
+// Overload for void return type, no default value needed
+void try_catch_qasm(const std::function<void()> &func)
+{
+    try_catch_qasm<bool>(
+        [&]() -> bool
+        {
+            func();
+            return true;
+        },
+        false);
 }
 
 bool process_line(const std::string &line)
@@ -92,7 +104,7 @@ bool process_line(const std::string &line)
         {
             return qasm::exec(line);
         },
-        qasm::exec(""));
+        qasm::exec("")); // This is an rvalue, fine for by-value parameter
 
     static bool is_first_line = true;
     if (is_first_line)
@@ -107,10 +119,9 @@ bool process_line(const std::string &line)
     }
     if (line.ends_with(';'))
     {
-        runtime = try_catch_qasm<qasm::Runtime>(
+        try_catch_qasm(
             [&]()
-            { return runtime.exec(line); },
-            runtime);
+            { runtime = runtime.exec(line); });
         return false;
     }
     print_result(

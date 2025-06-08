@@ -5,7 +5,7 @@
 #include <algorithm>
 
 Gate::Gate(const std::string &name, const std::size_t size)
-    : gate_size(size), name(name)
+    : size_(size), name(name)
 {
 }
 
@@ -76,7 +76,7 @@ PhaseGate::PhaseGate(int phase)
 
 bool Gate::exists(const std::string &gateName) noexcept
 {
-    return is_name_reserved(gateName) || PhaseGate::is(gateName);
+    return VariableStorage::is_name_reserved(gateName) || PhaseGate::is(gateName);
 }
 
 const Gate Gate::from_name(const std::string &gateName)
@@ -96,25 +96,6 @@ const Gate Gate::from_name(const std::string &gateName)
     throw VariableError("Undefined gate " + gateName);
 }
 
-void Gate::apply_to(const std::vector<varname> &qubits_names) const
-{
-    std::vector<qubit> qubits;
-    for (auto name : qubits_names)
-    {
-        qubits.push_back(get_qubit(name));
-    }
-    apply_to(qubits);
-}
-
-void Gate::apply_to(const std::vector<qubit> &qubits) const
-{
-    if (size() != qubits.size())
-    {
-        throw SizeError("Trying to apply a gate of size " + std::to_string(size()) + " to " + std::to_string(qubits.size()) + " qubits");
-    }
-    apply_gate(this, qubits);
-}
-
 std::string gate_to_string_from_name(const std::string &name)
 {
     if (Gate::exists(name))
@@ -126,5 +107,5 @@ std::string gate_to_string_from_name(const std::string &name)
 
 std::size_t Gate::size() const noexcept
 {
-    return gate_size;
+    return size_;
 }

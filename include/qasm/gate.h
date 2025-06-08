@@ -3,7 +3,7 @@
  * @brief Handling QASM gates
  */
 #pragma once
-#include <qasm/variables.h>
+#include <string>
 
 #include <vector>
 
@@ -11,13 +11,14 @@
 class Gate
 {
 public:
-    [[nodiscard]] static bool exists(const std::string &gateName) noexcept;
-    [[nodiscard]] static const Gate from_name(const std::string &gateName);
-    void apply_to(const std::vector<varname> &qubits_names) const;
-    virtual void apply_to(const std::vector<qubit> &qubits) const;
+    [[nodiscard]]
+    static bool exists(const std::string &gateName) noexcept;
+
+    [[nodiscard]]
+    static const Gate from_name(const std::string &gateName);
 
     /// @brief The number of qubits of the gate
-    std::size_t size() const noexcept;
+    virtual std::size_t size() const noexcept;
 
     std::string to_string() const noexcept;
 
@@ -25,7 +26,8 @@ public:
 
 protected:
     Gate(const std::string &name, const std::size_t size);
-    const std::size_t gate_size;
+
+    size_t size_;
 };
 
 /// @brief A phase gate

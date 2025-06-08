@@ -3,6 +3,7 @@
 #include <qasm/context.h>
 #include <reduction.h>
 #include <gateappliers.h>
+#include <qasm/error.h>
 
 struct action
 {
@@ -10,108 +11,127 @@ struct action
     qubit q;
 };
 
-const struct action NO_ACTION = {nullptr, 0};
-const struct action CLEAR_ACTION = {nullptr, 1};
-
-static diagram::Diagram *main_diagram = nullptr;
-
-static qubit update_qubit(bool addOne)
+QasmContext::QasmContext()
 {
-    static qubit count = 0;
-    if (addOne)
+    diagram = nullptr;
+}
+
+QasmContext::~QasmContext()
+{
+    delete diagram;
+}
+
+// Move constructor
+QasmContext::QasmContext(QasmContext&& other) noexcept
+    : storage(std::move(other.storage)),       // Move storage
+      diagram(other.diagram),                 // Transfer ownership of diagram pointer
+      actions(std::move(other.actions))       // Move actions vector
+{
+    other.diagram = nullptr; // Leave other in a valid state (no longer owns diagram)
+}
+
+// Move assignment operator
+QasmContext& QasmContext::operator=(QasmContext&& other) noexcept
+{
+    if (this != &other) // Protect against self-assignment
     {
-        count++;
+        // Release existing resources
+        delete diagram;
+
+        // Move resources from other
+        storage = std::move(other.storage);
+        diagram = other.diagram;
+        actions = std::move(other.actions);
+
+        // Leave other in a valid state
+        other.diagram = nullptr;
     }
-    return count ? count - 1 : count;
+    return *this;
 }
 
-qubit add_qubit()
+void QasmContext::apply_gate(const Gate *gate, const std::vector<varname> &qubits_names)
 {
-    return update_qubit(true);
-}
-
-std::vector<struct action> *update_action(struct action a)
-{
-    static std::vector<struct action> actions;
-    if (a.gate == nullptr)
+    std::vector<qubit> q;
+    for (const auto &name : qubits_names)
     {
-        if (a.q == CLEAR_ACTION.q)
-            actions.clear();
+        q.push_back(storage.get_qubit(name));
     }
-    else
+    apply_gate(gate, q);
+}
+
+void QasmContext::apply_gate(const Gate *gate, const std::vector<qubit> &qubits)
+{
+    if (gate->size() != qubits.size())
     {
-        actions.push_back(a);
+        throw SizeError("Trying to apply a gate of size " + std::to_string(gate->size()) + " to " + std::to_string(qubits.size()) + " qubits");
     }
-    return &actions;
+
+    // std::cout << "Applying gate " << gate->name << " to qubits " << qubits[0] << " "; // for debugging, will delete later
+    actions.push_back(std::make_unique<struct action>(gate, qubits[0]));
 }
 
-void apply_gate(const Gate *gate, const std::vector<qubit> &qubits)
+void QasmContext::create_diagram(bool implicit)
 {
-    update_action({gate, qubits[0]});
-}
-
-void create_diagram(bool implicit)
-{
-    if (main_diagram != nullptr)
+    if (diagram != nullptr)
     {
-        delete main_diagram;
+        delete diagram;
+        diagram = nullptr;
         std::cout << "(Deleted the previous diagram)" << std::endl;
     }
     if (implicit)
         std::cout << "(Built the diagram)" << std::endl;
-    main_diagram = diagram::Diagram::eig0(update_qubit(false) + 1);
+    diagram = diagram::Diagram::eig0(storage.get_qubit_count());
 }
 
-void simulate()
+void QasmContext::simulate()
 {
-    if (main_diagram == nullptr)
+    if (diagram == nullptr)
     {
         create_diagram(true);
     }
-    for (struct action a : *update_action(NO_ACTION))
+    for (const auto& a : actions)
     {
-        if (a.gate->name == "x")
+        if (a->gate->name == "x")
         {
-            gateappliers::apply_x(main_diagram, a.q);
+            gateappliers::apply_x(diagram, a->q);
         }
-        else if (a.gate->name == "h")
+        else if (a->gate->name == "h")
         {
-            gateappliers::apply_h(main_diagram, a.q);
+            gateappliers::apply_h(diagram, a->q);
         }
-        else if (a.gate->name == "s")
+        else if (a->gate->name == "s")
         {
-            gateappliers::apply_s(main_diagram, a.q, a.q + 1);
+            gateappliers::apply_s(diagram, a->q, a->q + 1);
         }
-        else if (a.gate->name == "cx")
+        else if (a->gate->name == "cx")
         {
-            gateappliers::apply_cx(main_diagram, a.q, a.q + 1);
+            gateappliers::apply_cx(diagram, a->q, a->q + 1);
         }
-        else if (a.gate->name[0] == 'p')
+        else if (a->gate->name[0] == 'p')
         {
-            int phase = dynamic_cast<const PhaseGate *>(a.gate)->phase;
-            gateappliers::apply_phase(main_diagram, a.q, phase);
+            int phase = dynamic_cast<const PhaseGate *>(a->gate)->phase;
+            gateappliers::apply_phase(diagram, a->q, phase);
         }
         else
         {
-            std::cout << "Unimplemented gate application in context handling: " << a.gate->name << std::endl;
+            std::cout << "Unimplemented gate application in context handling: " << a->gate->name << std::endl;
         }
     }
-    update_action(CLEAR_ACTION);
+    actions.clear();
 }
 
-void print_list_of_actions()
+void QasmContext::print_list_of_actions() const
 {
-    for (struct action a : *update_action(NO_ACTION))
+    for (const auto &a : actions)
     {
-        std::cout << "~ " << a.gate->name << " " << a.q << std::endl;
+        std::cout << "~ " << a->gate->name << " " << a->q << std::endl;
     }
 }
 
-void print_evaluation()
+void QasmContext::print_evaluation()
 {
-    if (main_diagram == nullptr)
-        create_diagram(true);
-    diagram::Evaluation eval = main_diagram->evaluate();
+    simulate();
+    diagram::Evaluation eval = diagram->evaluate();
     std::cout << "\n";
     for (auto &amp : eval)
     {
@@ -120,7 +140,7 @@ void print_evaluation()
     std::cout << std::endl;
 }
 
-static void register_nodes(diagram::Diagram *d, std::set<diagram::Diagram *> &seen)
+static void register_nodes(const diagram::Diagram *d, std::set<const diagram::Diagram *> &seen)
 {
     seen.insert(d);
     for (auto &b : d->left)
@@ -157,27 +177,21 @@ static size_t get_branch_count(diagram::Diagram *d)
     return count;
 }
 
-void print_diagram_description()
+void QasmContext::print_diagram_description() const
 {
-    if (main_diagram == nullptr)
+    if (diagram == nullptr)
     {
         std::cout << "(null)" << std::endl;
         return;
     }
-    std::set<diagram::Diagram *> seen;
-    register_nodes(main_diagram, seen);
-    std::cout << "~ height " << main_diagram->height << std::endl;
+    std::set<const diagram::Diagram *> seen;
+    register_nodes(diagram, seen);
+    std::cout << "~ height " << diagram->height << std::endl;
     std::cout << "~ nodes " << seen.size() << std::endl;
-    std::cout << "~ branches " << get_branch_count(main_diagram) << std::endl;
+    std::cout << "~ branches " << get_branch_count(diagram) << std::endl;
 }
 
-void free_diagram()
-{
-    delete main_diagram;
-    main_diagram = nullptr;
-}
-
-void print_run_statements_help()
+void QasmContext::print_run_statements_help()
 {
     std::cout << "Available run statements:\n"
               << "  @build, @inst, @instantiate - create a new diagram\n"

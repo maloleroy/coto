@@ -3,15 +3,40 @@
  * @brief General header for the QASM library
  */
 #pragma once
-#include <istream>
 
+#include <istream>
+#include <qasm/context.h> // Needed for QasmContext
+
+/// @brief Handles everything related to QASM parsing and execution
 namespace qasm
 {
-    void exec(const std::string& content);
+    class Runtime
+    {
+    public:
+        Runtime();
 
-    void exec(std::istream& stream);
+        // Move constructor and move assignment operator
+        Runtime(Runtime&& other) noexcept;
+        Runtime& operator=(Runtime&& other) noexcept;
 
-    void fexec(const std::string& file_path);
+        // Delete copy constructor and copy assignment operator
+        Runtime(const Runtime&) = delete;
+        Runtime& operator=(const Runtime&) = delete;
 
-    std::string eval(const std::string& identifier);
+        Runtime&& exec(const std::string &content);
+        Runtime&& exec(std::istream &stream);
+        Runtime&& fexec(const std::string &file_path);
+        std::string eval(const std::string &identifier) const;
+
+    private:
+        QasmContext context; // Direct member
+    };
+
+    Runtime exec(const std::string &content);
+
+    Runtime exec(std::istream &stream);
+
+    Runtime fexec(const std::string &file_path);
+
+    std::string eval(const std::string &identifier);
 }
