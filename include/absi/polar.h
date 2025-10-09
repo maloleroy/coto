@@ -25,7 +25,7 @@ namespace polar
 
         [[nodiscard]] bool operator==(const PositiveInterval &other) const;
 
-    protected:
+    // protected:
         Real min;
         Real max;
     };
@@ -43,21 +43,23 @@ namespace polar
 
         [[nodiscard]] AngleInterval operator+(const AngleInterval &other) const noexcept;
 
-        [[nodiscard]] AngleInterval operator*(const AngleInterval &other) const noexcept;
-
         [[nodiscard]] AngleInterval operator|(const AngleInterval &other) const noexcept;
 
         [[nodiscard]] bool operator==(const AngleInterval &other) const noexcept;
 
+        Real min() const noexcept;
+        Real delta() const noexcept;
+        Real max() const noexcept;
+
     protected:
         /// @brief The minimal value of the interval
         /// `0 < @ref min < 2` is expressed in radians to limit
-        Real min;
+        Real _min;
 
         /// @brief The wideness/uncertainty of the interval
         /// Values in the interval are between @ref min and @ref min + @ref delta
         /// Moreover, 0 <= @ref delta <= 2
-        Real delta;
+        Real _delta;
         void set_remainder() noexcept;
     };
 
@@ -89,7 +91,7 @@ namespace polar
 
         polar::Real norm();
 
-    protected:
+    // protected:
         /**
          * @brief Checks if the number is real.
          *
@@ -107,4 +109,4 @@ namespace polar
     const Interval zero = 0.;
 
     const Interval one = 1.;
-}
+};
