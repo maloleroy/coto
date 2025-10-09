@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['to_5fstring_0',['to_string',['../namespaceampl.html#ad8308fd980b9bcbc3df1d71e48b66f8d',1,'ampl']]],
-  ['top_5fright_1',['top_right',['../classcartesian_1_1Interval.html#aa2078272bbe0f8bf350474f5996e8139',1,'cartesian::Interval']]],
-  ['type_5fname_2',['type_name',['../structVar.html#a093017c90454fcf36fb61e0f0ab581d4',1,'Var']]]
+  ['value_0',['value',['../structVar.html#a238c8e9c568b881590a407184cfd05d2',1,'Var::value'],['../classPowMatrix.html#a4dfebe1d85bc1bea2a1e4fa9788d7498',1,'PowMatrix::value()']]],
+  ['var_1',['Var',['../structVar.html',1,'']]],
+  ['variableerror_2',['VariableError',['../classVariableError.html',1,'']]],
+  ['variables_2eh_3',['variables.h',['../variables_8h.html',1,'']]],
+  ['variablestorage_4',['VariableStorage',['../classVariableStorage.html',1,'']]],
+  ['versionerror_5',['VersionError',['../classVersionError.html',1,'']]]
 ];

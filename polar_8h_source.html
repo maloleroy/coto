@@ -128,7 +128,7 @@ $(document).ready(function(){initNavTree('polar_8h_source.html',''); initResizab
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        [[nodiscard]] <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1PositiveInterval.html">PositiveInterval</a> &amp;other) <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="comment">// protected:</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keyword">protected</span>:</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        Real min;</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        Real max;</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    };</div>
@@ -140,7 +140,7 @@ $(document).ready(function(){initNavTree('polar_8h_source.html',''); initResizab
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a>;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a>(Real min, Real delta);</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a>(Real <a class="code hl_variable" href="classpolar_1_1AngleInterval.html#adda4bbaee7079e0f6023233a6589f388">min</a>, Real <a class="code hl_variable" href="classpolar_1_1AngleInterval.html#a0a279383004f19b84f72f8e9ac30e408">delta</a>);</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a>(Real a);</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
@@ -148,67 +148,65 @@ $(document).ready(function(){initNavTree('polar_8h_source.html',''); initResizab
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        [[nodiscard]] <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> operator+(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        [[nodiscard]] <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> operator|(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        [[nodiscard]] <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> operator*(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        [[nodiscard]] <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        [[nodiscard]] <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> operator|(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        Real min() <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        Real delta() <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        Real max() <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keyword">protected</span>:</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="classpolar_1_1AngleInterval.html#a7a8403285de297486f4772532484e990">   57</a></span>        Real <a class="code hl_variable" href="classpolar_1_1AngleInterval.html#a7a8403285de297486f4772532484e990">_min</a>;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="classpolar_1_1AngleInterval.html#ab0faa1543464c8007f487f6338663bdb">   62</a></span>        Real <a class="code hl_variable" href="classpolar_1_1AngleInterval.html#ab0faa1543464c8007f487f6338663bdb">_delta</a>;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="keywordtype">void</span> set_remainder() noexcept;</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    };</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        [[nodiscard]] <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">protected</span>:</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="classpolar_1_1AngleInterval.html#adda4bbaee7079e0f6023233a6589f388">   55</a></span>        Real <a class="code hl_variable" href="classpolar_1_1AngleInterval.html#adda4bbaee7079e0f6023233a6589f388">min</a>;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="classpolar_1_1AngleInterval.html#a0a279383004f19b84f72f8e9ac30e408">   60</a></span>        Real <a class="code hl_variable" href="classpolar_1_1AngleInterval.html#a0a279383004f19b84f72f8e9ac30e408">delta</a>;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="keywordtype">void</span> set_remainder() noexcept;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    };</div>
 </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="foldopen" id="foldopen00066" data-start="{" data-end="};">
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="classpolar_1_1Interval.html">   66</a></span>    class <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a></div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    {</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="classpolar_1_1Interval.html#a201c996ba7eca6376309ec65d8b9fd73">   70</a></span>        <a class="code hl_function" href="classpolar_1_1Interval.html#a201c996ba7eca6376309ec65d8b9fd73">Interval</a>();</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="classpolar_1_1Interval.html#ab20c76c4909c1bd6a76f24926a21f256">   73</a></span>        <a class="code hl_function" href="classpolar_1_1Interval.html#ab20c76c4909c1bd6a76f24926a21f256">Interval</a>(<span class="keyword">const</span> Real value);</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="classpolar_1_1Interval.html#a3b027734d21d3466961481b50caeaafc">   76</a></span>        <a class="code hl_function" href="classpolar_1_1Interval.html#a3b027734d21d3466961481b50caeaafc">Interval</a>(<span class="keyword">const</span> <a class="code hl_typedef" href="namespaceampl.html#ad48e9b6b4577c5936f3459f599550b01">ampl::Amplitude</a> z);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="foldopen" id="foldopen00064" data-start="{" data-end="};">
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="classpolar_1_1Interval.html">   64</a></span>    class <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    {</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="classpolar_1_1Interval.html#a201c996ba7eca6376309ec65d8b9fd73">   68</a></span>        <a class="code hl_function" href="classpolar_1_1Interval.html#a201c996ba7eca6376309ec65d8b9fd73">Interval</a>();</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="classpolar_1_1Interval.html#ab20c76c4909c1bd6a76f24926a21f256">   71</a></span>        <a class="code hl_function" href="classpolar_1_1Interval.html#ab20c76c4909c1bd6a76f24926a21f256">Interval</a>(<span class="keyword">const</span> Real value);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="classpolar_1_1Interval.html#a3b027734d21d3466961481b50caeaafc">   74</a></span>        <a class="code hl_function" href="classpolar_1_1Interval.html#a3b027734d21d3466961481b50caeaafc">Interval</a>(<span class="keyword">const</span> <a class="code hl_typedef" href="namespaceampl.html#ad48e9b6b4577c5936f3459f599550b01">ampl::Amplitude</a> z);</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a>(<a class="code hl_class" href="classpolar_1_1PositiveInterval.html">PositiveInterval</a> mod, <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> arg);</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a>(<a class="code hl_class" href="classpolar_1_1PositiveInterval.html">PositiveInterval</a> mod, <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> arg);</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        [[nodiscard]] <span class="keyword">static</span> <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> exp_2ipi_over(<span class="keywordtype">int</span> n);</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        [[nodiscard]] <span class="keyword">static</span> <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> exp_2ipi_over(<span class="keywordtype">int</span> n);</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        [[nodiscard]] <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> operator+(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> &amp;other) <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        [[nodiscard]] <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> operator+(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> &amp;other) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        [[nodiscard]] <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> operator*(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        [[nodiscard]] <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> operator*(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        [[nodiscard]] <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> operator|(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        [[nodiscard]] <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> operator|(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        [[nodiscard]] <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        [[nodiscard]] <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> &amp;other) <span class="keyword">const</span> <span class="keyword">noexcept</span>;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        std::string to_string(<span class="keywordtype">bool</span> strict = <span class="keyword">false</span>) const noexcept;</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        std::string to_string(<span class="keywordtype">bool</span> strict = <span class="keyword">false</span>) const noexcept;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        polar::Real norm();</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        polar::Real norm();</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="comment">// protected:</span></div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno"><a class="line" href="classpolar_1_1Interval.html#a2f1a31da2a0c787b37aa935183e1b46e">  100</a></span>        [[nodiscard]] <span class="keywordtype">bool</span> is_real() const noexcept;</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    protected:</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="classpolar_1_1Interval.html#a2f1a31da2a0c787b37aa935183e1b46e">   98</a></span>        [[nodiscard]] <span class="keywordtype">bool</span> is_real() const noexcept;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        [[nodiscard]] polar::Real to_real() const;</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        [[nodiscard]] polar::Real to_real() const;</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        <a class="code hl_class" href="classpolar_1_1PositiveInterval.html">PositiveInterval</a> mod;</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        <a class="code hl_class" href="classpolar_1_1PositiveInterval.html">PositiveInterval</a> mod;</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> arg;</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    };</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        <a class="code hl_class" href="classpolar_1_1AngleInterval.html">AngleInterval</a> arg;</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    };</div>
 </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    const <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> zero = 0.;</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    const <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> zero = 0.;</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    const <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> one = 1.;</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>};</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    const <a class="code hl_class" href="classpolar_1_1Interval.html">Interval</a> one = 1.;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>}</div>
 <div class="ttc" id="aclasspolar_1_1AngleInterval_html"><div class="ttname"><a href="classpolar_1_1AngleInterval.html">polar::AngleInterval</a></div><div class="ttdef"><b>Definition</b> polar.h:34</div></div>
-<div class="ttc" id="aclasspolar_1_1AngleInterval_html_a7a8403285de297486f4772532484e990"><div class="ttname"><a href="classpolar_1_1AngleInterval.html#a7a8403285de297486f4772532484e990">polar::AngleInterval::_min</a></div><div class="ttdeci">Real _min</div><div class="ttdoc">The minimal value of the interval 0 &lt; @ref min &lt; 2 is expressed in radians to limit.</div><div class="ttdef"><b>Definition</b> polar.h:57</div></div>
-<div class="ttc" id="aclasspolar_1_1AngleInterval_html_ab0faa1543464c8007f487f6338663bdb"><div class="ttname"><a href="classpolar_1_1AngleInterval.html#ab0faa1543464c8007f487f6338663bdb">polar::AngleInterval::_delta</a></div><div class="ttdeci">Real _delta</div><div class="ttdoc">The wideness/uncertainty of the interval Values in the interval are between min and min + delta Moreo...</div><div class="ttdef"><b>Definition</b> polar.h:62</div></div>
-<div class="ttc" id="aclasspolar_1_1Interval_html"><div class="ttname"><a href="classpolar_1_1Interval.html">polar::Interval</a></div><div class="ttdef"><b>Definition</b> polar.h:67</div></div>
+<div class="ttc" id="aclasspolar_1_1AngleInterval_html_a0a279383004f19b84f72f8e9ac30e408"><div class="ttname"><a href="classpolar_1_1AngleInterval.html#a0a279383004f19b84f72f8e9ac30e408">polar::AngleInterval::delta</a></div><div class="ttdeci">Real delta</div><div class="ttdoc">The wideness/uncertainty of the interval Values in the interval are between min and min + delta Moreo...</div><div class="ttdef"><b>Definition</b> polar.h:60</div></div>
+<div class="ttc" id="aclasspolar_1_1AngleInterval_html_adda4bbaee7079e0f6023233a6589f388"><div class="ttname"><a href="classpolar_1_1AngleInterval.html#adda4bbaee7079e0f6023233a6589f388">polar::AngleInterval::min</a></div><div class="ttdeci">Real min</div><div class="ttdoc">The minimal value of the interval 0 &lt; @ref min &lt; 2 is expressed in radians to limit.</div><div class="ttdef"><b>Definition</b> polar.h:55</div></div>
+<div class="ttc" id="aclasspolar_1_1Interval_html"><div class="ttname"><a href="classpolar_1_1Interval.html">polar::Interval</a></div><div class="ttdef"><b>Definition</b> polar.h:65</div></div>
 <div class="ttc" id="aclasspolar_1_1Interval_html_a201c996ba7eca6376309ec65d8b9fd73"><div class="ttname"><a href="classpolar_1_1Interval.html#a201c996ba7eca6376309ec65d8b9fd73">polar::Interval::Interval</a></div><div class="ttdeci">Interval()</div><div class="ttdoc">The singleton of 0.</div></div>
 <div class="ttc" id="aclasspolar_1_1Interval_html_a3b027734d21d3466961481b50caeaafc"><div class="ttname"><a href="classpolar_1_1Interval.html#a3b027734d21d3466961481b50caeaafc">polar::Interval::Interval</a></div><div class="ttdeci">Interval(const ampl::Amplitude z)</div><div class="ttdoc">The singleton of an amplitude.</div></div>
 <div class="ttc" id="aclasspolar_1_1Interval_html_ab20c76c4909c1bd6a76f24926a21f256"><div class="ttname"><a href="classpolar_1_1Interval.html#ab20c76c4909c1bd6a76f24926a21f256">polar::Interval::Interval</a></div><div class="ttdeci">Interval(const Real value)</div><div class="ttdoc">The singleton of a real number.</div></div>

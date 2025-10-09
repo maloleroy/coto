@@ -1,10 +1,6 @@
 var searchData=
 [
-  ['absi_2eh_0',['absi.h',['../absi_8h.html',1,'']]],
-  ['abstract_20additive_20quantum_20decision_20diagrams_1',['Coto - Abstract Additive Quantum Decision Diagrams',['../index.html',1,'']]],
-  ['additive_20quantum_20decision_20diagrams_2',['Coto - Abstract Additive Quantum Decision Diagrams',['../index.html',1,'']]],
-  ['ampl_3',['ampl',['../namespaceampl.html',1,'']]],
-  ['amplitude_4',['Amplitude',['../namespaceampl.html#ad48e9b6b4577c5936f3459f599550b01',1,'ampl']]],
-  ['angleinterval_5',['AngleInterval',['../classpolar_1_1AngleInterval.html',1,'polar']]],
-  ['architecture_6',['Repository architecture',['../index.html#autotoc_md3',1,'']]]
+  ['begin_0',['begin',['../classampl_1_1PowArray.html#a147482322cf490a1b82c5acf93ac44dc',1,'ampl::PowArray::begin() noexcept'],['../classampl_1_1PowArray.html#a8196aba8e7f2d00fa18c4f1195d0b16b',1,'ampl::PowArray::begin() const noexcept']]],
+  ['branch_1',['Branch',['../structdiagram_1_1Branch.html',1,'diagram']]],
+  ['building_2',['Building',['../index.html#autotoc_md1',1,'']]]
 ];
