@@ -17,10 +17,10 @@ Runtime::Runtime()
 }
 
 // Move constructor
-Runtime::Runtime(Runtime&& other) noexcept : context(std::move(other.context)) {}
+Runtime::Runtime(Runtime &&other) noexcept : context(std::move(other.context)) {}
 
 // Move assignment operator
-Runtime& Runtime::operator=(Runtime&& other) noexcept
+Runtime &Runtime::operator=(Runtime &&other) noexcept
 {
     if (this != &other)
     {
@@ -33,19 +33,19 @@ Runtime& Runtime::operator=(Runtime&& other) noexcept
 // Runtime::Runtime(const Runtime&) = delete; // These are in the header
 // Runtime& Runtime::operator=(const Runtime&) = delete; // These are in the header
 
-Runtime&& Runtime::exec(const std::string &content)
+Runtime &&Runtime::exec(const std::string &content)
 {
     execute(content, context); // Was impl->exec(content)
     return std::move(*this);
 }
 
-Runtime&& Runtime::exec(std::istream &stream)
+Runtime &&Runtime::exec(std::istream &stream)
 {
     execute(stream, context); // Was impl->exec(stream)
     return std::move(*this);
 }
 
-Runtime&& Runtime::fexec(const std::string &file_path)
+Runtime &&Runtime::fexec(const std::string &file_path)
 {
     // Logic from former RuntimeImpl::fexec
     if (!std::filesystem::exists(file_path))
@@ -97,18 +97,21 @@ Runtime qasm::exec(const std::string &content)
     return rt;
 }
 
-Runtime qasm::exec(std::istream &stream) {
+Runtime qasm::exec(std::istream &stream)
+{
     Runtime rt;
     rt.exec(stream);
     return rt;
 }
 
-Runtime qasm::fexec(const std::string &file_path) {
+Runtime qasm::fexec(const std::string &file_path)
+{
     Runtime rt;
     rt.fexec(file_path);
     return rt;
 }
 
-std::string qasm::eval(const std::string &identifier) {
+std::string qasm::eval(const std::string &identifier)
+{
     return Runtime().eval(identifier);
 }

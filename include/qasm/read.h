@@ -9,13 +9,14 @@
 
 using std::string;
 
-struct StatementString {
+struct StatementString
+{
     string content;
     char delimiter;
 };
 
-std::ifstream open_file(const string& file_path);
+std::ifstream open_file(const string &file_path);
 
-std::vector<struct StatementString> parse_statements_strings(std::istream& stream);
+std::vector<struct StatementString> parse_statements_strings(std::istream &stream);
 
-bool is_only_empty_characters(const string& str) noexcept;
+bool is_only_empty_characters(const string &str) noexcept;

@@ -7,6 +7,6 @@
 #include <istream>
 #include <qasm/context.h>
 
-void execute(const std::string& content, QasmContext& context);
+void execute(const std::string &content, QasmContext &context);
 
-void execute(std::istream& stream, QasmContext& context);
+void execute(std::istream &stream, QasmContext &context);

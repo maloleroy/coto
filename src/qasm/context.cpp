@@ -22,16 +22,16 @@ QasmContext::~QasmContext()
 }
 
 // Move constructor
-QasmContext::QasmContext(QasmContext&& other) noexcept
-    : storage(std::move(other.storage)),       // Move storage
-      diagram(other.diagram),                 // Transfer ownership of diagram pointer
-      actions(std::move(other.actions))       // Move actions vector
+QasmContext::QasmContext(QasmContext &&other) noexcept
+    : storage(std::move(other.storage)), // Move storage
+      diagram(other.diagram),            // Transfer ownership of diagram pointer
+      actions(std::move(other.actions))  // Move actions vector
 {
     other.diagram = nullptr; // Leave other in a valid state (no longer owns diagram)
 }
 
 // Move assignment operator
-QasmContext& QasmContext::operator=(QasmContext&& other) noexcept
+QasmContext &QasmContext::operator=(QasmContext &&other) noexcept
 {
     if (this != &other) // Protect against self-assignment
     {
@@ -49,7 +49,7 @@ QasmContext& QasmContext::operator=(QasmContext&& other) noexcept
     return *this;
 }
 
-void QasmContext::apply_gate(const Gate& gate, const std::vector<varname> &qubits_names)
+void QasmContext::apply_gate(const Gate &gate, const std::vector<varname> &qubits_names)
 {
     std::vector<qubit> q;
     for (const auto &name : qubits_names)
@@ -59,7 +59,7 @@ void QasmContext::apply_gate(const Gate& gate, const std::vector<varname> &qubit
     apply_gate(gate, q);
 }
 
-void QasmContext::apply_gate(const Gate& gate, const std::vector<qubit> &qubits)
+void QasmContext::apply_gate(const Gate &gate, const std::vector<qubit> &qubits)
 {
     if (gate.size != qubits.size())
     {
@@ -89,7 +89,7 @@ void QasmContext::simulate()
     {
         create_diagram(true);
     }
-    for (const auto& a : actions)
+    for (const auto &a : actions)
     {
         if (a->gate.name == "x")
         {

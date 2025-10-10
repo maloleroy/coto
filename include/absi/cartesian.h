@@ -13,7 +13,8 @@ namespace cartesian
     typedef std::tuple<ampl::Real, ampl::Real> RealInterval;
 
     /// @brief Represents an interval in the Cartesian coordinate system.
-    class Interval {
+    class Interval
+    {
     public:
         /// @brief The singleton of 0.
         Interval();
@@ -95,7 +96,7 @@ namespace cartesian
 
     protected:
         ampl::Amplitude bottom_left; /// The bottom-left complex point of the interval.
-        ampl::Amplitude top_right; /// The top-right complex point of the interval.
+        ampl::Amplitude top_right;   /// The top-right complex point of the interval.
     };
 
     const cartesian::Interval zero = ampl::zero;

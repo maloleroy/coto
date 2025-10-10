@@ -16,17 +16,17 @@ public:
     ~QasmContext();
 
     // Move constructor
-    QasmContext(QasmContext&& other) noexcept;
+    QasmContext(QasmContext &&other) noexcept;
     // Move assignment operator
-    QasmContext& operator=(QasmContext&& other) noexcept;
+    QasmContext &operator=(QasmContext &&other) noexcept;
 
     // Explicitly delete copy constructor and copy assignment operator
-    QasmContext(const QasmContext&) = delete;
-    QasmContext& operator=(const QasmContext&) = delete;
+    QasmContext(const QasmContext &) = delete;
+    QasmContext &operator=(const QasmContext &) = delete;
 
-    void apply_gate(const Gate& gate, const std::vector<varname> &qubits_names);
+    void apply_gate(const Gate &gate, const std::vector<varname> &qubits_names);
 
-    void apply_gate(const Gate& gate, const std::vector<qubit> &qubits);
+    void apply_gate(const Gate &gate, const std::vector<qubit> &qubits);
 
     void create_diagram(bool implicit = false);
 

@@ -11,11 +11,13 @@ TEST(AmplitudeTest, pow2)
 TEST(AmplitudeTest, random)
 {
     std::vector<ampl::Amplitude> values;
-    for (auto i = 0; i < 500; i++) {
+    for (auto i = 0; i < 500; i++)
+    {
         auto a = ampl::random();
         EXPECT_GE(abs(a), 0);
         EXPECT_LE(abs(a), 1);
-        for (auto j = 0; j < i; j++) {
+        for (auto j = 0; j < i; j++)
+        {
             EXPECT_NE(values.at(j), a)
                 << "Got the same value" << ampl::to_string(a)
                 << " at indexes " << j << " and " << i;
@@ -30,8 +32,10 @@ TEST(AmplitudeTest, randomize_state)
     EXPECT_EQ(state.size(), 1 << 6);
     EXPECT_EQ(state[0], state[1]);
     EXPECT_NO_THROW(ampl::randomize_state(state));
-    for (auto i = 0; i < state.size(); i++) {
-        for (auto j = 0; j < i; j++) {
+    for (auto i = 0; i < state.size(); i++)
+    {
+        for (auto j = 0; j < i; j++)
+        {
             EXPECT_NE(state[i], state[j]);
         }
     }

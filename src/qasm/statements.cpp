@@ -52,7 +52,7 @@ public:
         }
     }
 
-    void execute(QasmContext& context) const override
+    void execute(QasmContext &context) const override
     {
         context.storage.define_var(type_name, name, false);
     }
@@ -97,7 +97,7 @@ public:
         value = content.substr(eqPos + 1);
     }
 
-    void execute(QasmContext& context) const override
+    void execute(QasmContext &context) const override
     {
         if (type_name.has_value())
         {
@@ -141,7 +141,7 @@ public:
         }
     }
 
-    void execute(QasmContext& context) const override
+    void execute(QasmContext &context) const override
     {
         context.apply_gate(Gate::from_name(gateName), qubits_names);
     };
@@ -166,7 +166,7 @@ public:
         return content.starts_with("OPENQASM ");
     }
 
-    void execute(QasmContext& context) const override {};
+    void execute(QasmContext &context) const override {};
 
     const string version;
 };
@@ -181,7 +181,7 @@ public:
         return content.starts_with("include \"");
     }
 
-    void execute(QasmContext& context) const override {};
+    void execute(QasmContext &context) const override {};
 
 private:
     const string file_path;
@@ -192,7 +192,7 @@ class ForBeginStatement : public Statement
 public:
     ForBeginStatement(const string &content) : content(content) {};
 
-    void execute(QasmContext& context) const override {};
+    void execute(QasmContext &context) const override {};
 
     const string content;
 };
@@ -202,7 +202,7 @@ class ForEndStatement : public Statement
 public:
     ForEndStatement(const string &content) : content(content) {};
 
-    void execute(QasmContext& context) const override {};
+    void execute(QasmContext &context) const override {};
 
     const string content;
 };
@@ -217,7 +217,7 @@ public:
         return content.starts_with("@") && is_valid_identifier(content.substr(1));
     }
 
-    void execute(QasmContext& context) const override
+    void execute(QasmContext &context) const override
     {
         if (content == "@build" || content == "@inst" || content == "@instantiate")
         {
