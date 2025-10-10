@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['enclosure_0',['enclosure',['../classdiagram_1_1Diagram.html#a526eeef7686212d737b8b6411a212267',1,'diagram::Diagram']]],
-  ['end_1',['end',['../classampl_1_1PowArray.html#a9bbe2cc2d0b0198c28289e29ab9ab1c1',1,'ampl::PowArray::end() noexcept'],['../classampl_1_1PowArray.html#a713b46e8c740f87412e8abdf4605d9bc',1,'ampl::PowArray::end() const noexcept']]],
-  ['error_2eh_2',['error.h',['../error_8h.html',1,'']]],
-  ['evaluate_3',['evaluate',['../classdiagram_1_1Diagram.html#a61be4c7bc2502073b1c1591f6d8a6ca9',1,'diagram::Diagram']]],
-  ['execute_2eh_4',['execute.h',['../execute_8h.html',1,'']]]
+  ['d_0',['d',['../structdiagram_1_1Branch.html#ab8e3f593780781deb66a75ad0d1f1a28',1,'diagram::Branch']]],
+  ['decision_20diagrams_1',['Coto - Abstract Additive Quantum Decision Diagrams',['../index.html',1,'']]],
+  ['diagram_2',['diagram',['../classdiagram_1_1Diagram.html',1,'diagram::Diagram'],['../namespacediagram.html',1,'diagram'],['../classdiagram_1_1Diagram.html#a85c80043f05936174e35ac4a76dd2c3f',1,'diagram::Diagram::Diagram()']]],
+  ['diagram_2eh_3',['diagram.h',['../diagram_8h.html',1,'']]],
+  ['diagrams_4',['Coto - Abstract Additive Quantum Decision Diagrams',['../index.html',1,'']]]
 ];

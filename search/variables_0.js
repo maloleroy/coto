@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['cached_5fenclosure_0',['cached_enclosure',['../classdiagram_1_1Diagram.html#a7ea8e5d8f552c12ec971ee16565ad4aa',1,'diagram::Diagram']]]
+  ['_5fdelta_0',['_delta',['../classpolar_1_1AngleInterval.html#ab0faa1543464c8007f487f6338663bdb',1,'polar::AngleInterval']]],
+  ['_5fmin_1',['_min',['../classpolar_1_1AngleInterval.html#a7a8403285de297486f4772532484e990',1,'polar::AngleInterval']]]
 ];
