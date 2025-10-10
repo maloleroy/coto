@@ -25,7 +25,7 @@ namespace polar
 
         [[nodiscard]] bool operator==(const PositiveInterval &other) const;
 
-    // protected:
+    protected:
         Real min;
         Real max;
     };
@@ -91,7 +91,7 @@ namespace polar
 
         polar::Real norm();
 
-    // protected:
+    protected:
         /**
          * @brief Checks if the number is real.
          *
