@@ -257,8 +257,7 @@ TEST(GateAppliersTest, apply_h)
     }
 }
 
-/*
-TEST_F(GateAppliersTest, debug)
+TEST(GateAppliersTest, h_then_cx)
 {
     const ampl::Amplitude v[] = {1, 0, 0, 0};
     const ampl::Amplitude after_h[] = {ampl::inv_sqrt2, 0, ampl::inv_sqrt2, 0};
@@ -269,7 +268,7 @@ TEST_F(GateAppliersTest, debug)
     std::cout << "- - - - - Creating d2 - - - - -" << std::endl;
     auto d2 = Diagram::from_state_vector(ampl::ConcreteState(2, after_h));
 
-    std::cout << "- - - - - Applying H - - - - -" << std::endl;
+    std::cout << "- - - - - Applying H on d - - - - -" << std::endl;
     gateappliers::apply_h(d, 0);
     auto ev = d->evaluate();
     auto ev2 = d2->evaluate();
@@ -308,4 +307,3 @@ TEST_F(GateAppliersTest, debug)
             << ", expected " << expected[i].to_string();
     }
 }
-// */
