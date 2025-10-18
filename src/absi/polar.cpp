@@ -414,7 +414,7 @@ Interval polar::Interval::operator+(const Interval &other) const
     {
         return Interval(to_real() + other.to_real());
     }
-    throw std::logic_error("Sum of polar intervals");
+    throw std::logic_error("Sum of polar intervals: " + to_string() + " + " + other.to_string());
 }
 
 Interval Interval::operator*(const Interval &other) const noexcept

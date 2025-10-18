@@ -66,7 +66,6 @@ void QasmContext::apply_gate(const Gate &gate, const std::vector<qubit> &qubits)
         throw SizeError("Trying to apply a gate of size " + std::to_string(gate.size) + " to " + std::to_string(qubits.size()) + " qubits");
     }
 
-    std::cout << "Applying gate " << gate.name << " to qubits " << qubits[0] << " "; // for debugging, will delete later
     actions.push_back(std::make_unique<struct action>(gate, qubits[0]));
 }
 
