@@ -248,13 +248,24 @@ void Diagram::forget_child(Diagram *d) noexcept
 
 Diagram::~Diagram()
 {
+    // Track already-deleted children to avoid double-deletion
+    std::vector<Diagram *> deleted;
+
     for (Branch b : left)
     {
-        delete b.d;
+        if (b.d != leaf && std::find(deleted.begin(), deleted.end(), b.d) == deleted.end())
+        {
+            deleted.push_back(b.d);
+            delete b.d;
+        }
     }
     for (Branch b : right)
     {
-        delete b.d;
+        if (b.d != leaf && std::find(deleted.begin(), deleted.end(), b.d) == deleted.end())
+        {
+            deleted.push_back(b.d);
+            delete b.d;
+        }
     }
     for (Diagram *p : parents)
     {
