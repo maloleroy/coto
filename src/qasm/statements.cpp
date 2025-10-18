@@ -119,14 +119,92 @@ public:
 
     static bool is(const string &content)
     {
-        return std::ranges::count(content, ' ') >= 1 && Gate::exists(content.substr(0, content.find(' ')));
+        // Check if there are parentheses (indicating parameters)
+        size_t paren_start = content.find('(');
+
+        if (paren_start == string::npos)
+        {
+            // No parameters - simple gate name followed by space and qubits
+            size_t gate_end = content.find(' ');
+            if (gate_end == string::npos)
+                return false;
+
+            string gate_name = content.substr(0, gate_end);
+            return Gate::exists(gate_name);
+        }
+        else
+        {
+            // Gate has parameters, find the closing parenthesis
+            size_t paren_end = content.find(')', paren_start);
+            if (paren_end == string::npos)
+                return false;
+
+            // Check what comes after the closing paren
+            size_t after_paren = paren_end + 1;
+            while (after_paren < content.size() && std::isspace(static_cast<unsigned char>(content[after_paren])))
+                after_paren++;
+
+            // If nothing after paren (e.g., gphase(pi/2)), extract full gate name with params
+            if (after_paren >= content.size())
+            {
+                string gate_name = content.substr(0, paren_end + 1);
+                return Gate::exists(gate_name);
+            }
+
+            // Otherwise, find the space separating gate from qubits
+            // The gate name is everything from start to paren_end (inclusive)
+            // Then there might be a space, then qubits
+            size_t space_pos = content.find(' ', paren_end);
+            if (space_pos == string::npos)
+                return false;
+
+            string gate_name = content.substr(0, space_pos);
+            return Gate::exists(gate_name);
+        }
     }
 
     GateApplyStatement(const string &content)
     {
-        auto first_space_pos = content.find(' ');
-        auto qubits_str = content.substr(first_space_pos + 1);
-        gateName = content.substr(0, first_space_pos);
+        // Find the end of the gate name (including parameters if present)
+        size_t paren_start = content.find('(');
+        size_t gate_end;
+
+        if (paren_start == string::npos)
+        {
+            // No parameters - simple gate name
+            gate_end = content.find(' ');
+            if (gate_end == string::npos)
+                gate_end = content.size();
+        }
+        else
+        {
+            // Gate has parameters, find the closing parenthesis
+            size_t paren_end = content.find(')', paren_start);
+            gate_end = paren_end + 1;
+
+            // Check if there's a space after the closing paren (indicating qubits follow)
+            while (gate_end < content.size() && std::isspace(static_cast<unsigned char>(content[gate_end])))
+                gate_end++;
+
+            // If we're at the end, this is a 0-qubit gate (like gphase)
+            if (gate_end >= content.size())
+            {
+                gateName = content.substr(0, paren_end + 1);
+                return;
+            }
+
+            // Find the space that separates gate from qubits
+            gate_end = content.find(' ', paren_end);
+            if (gate_end == string::npos)
+                gate_end = content.size();
+        }
+
+        auto qubits_str = content.substr(gate_end + 1);
+        gateName = content.substr(0, gate_end);
+        // Trim whitespace from gateName
+        while (!gateName.empty() && std::isspace(static_cast<unsigned char>(gateName.back())))
+            gateName.pop_back();
+
         qubits_names.reserve(std::ranges::count(qubits_str, ',') + 1);
 
         while (qubits_str.size() > 0)

@@ -191,12 +191,25 @@ TEST(GateAppliersTest, apply_h_consistency)
 
 TEST(GateAppliersTest, apply_s)
 {
+    ampl::Amplitude v[] = {1, 0, 0, 0};
+    ampl::ConcreteState base(1, v);
+
+    auto d = Diagram::from_state_vector(base);
+
+    gateappliers::apply_s(d, 0);
+
+    auto ev = d->evaluate();
+    EXPECT_EQ(ev[0], 1) << ev[0].to_string() << " != 1";
+}
+
+TEST(GateAppliersTest, apply_swap)
+{
     ampl::Amplitude v[] = {1, 2, 3, 4};
     ampl::ConcreteState base(2, v);
 
     auto d = Diagram::from_state_vector(base);
 
-    gateappliers::apply_s(d, 0, 1);
+    gateappliers::apply_swap(d, 0, 1);
 
     auto ev = d->evaluate();
     EXPECT_EQ(ev[0], 1) << ev[0].to_string() << " != 1";

@@ -66,7 +66,17 @@ std::string VariableStorage::var_to_string(const varname &name) const
 
 bool VariableStorage::is_name_reserved(const varname &name) noexcept
 {
-    static const std::set<std::string> reserved_names{"x", "h", "cx", "s"};
+    static const std::set<std::string> reserved_names{
+        // Single-qubit Pauli gates
+        "x", "y", "z",
+        // Single-qubit Clifford gates
+        "h", "s", "sdg", "t", "tdg",
+        // Single-qubit sqrt gates
+        "sx",
+        // Two-qubit gates
+        "swap", "cx", "cy", "cz", "ch",
+        // Three-qubit gates
+        "ccx", "cswap"};
     return reserved_names.contains(name);
 }
 

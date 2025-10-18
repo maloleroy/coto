@@ -25,11 +25,15 @@ public:
     /// @brief The number of qubits of the gate
     const size_t size;
 
-    /// @brief Optional parameter for gates like phase gates
+    /// @brief Optional integer parameter for gates like phase gates
     const std::optional<int> parameter;
 
+    /// @brief Optional floating-point parameters for rotation gates
+    const std::vector<double> float_parameters;
+
 protected:
-    Gate(const std::string &name, const std::size_t size, const std::optional<int> &parameter = std::nullopt) noexcept;
+    Gate(const std::string &name, const std::size_t size, const std::optional<int> &parameter = std::nullopt,
+         const std::vector<double> &float_params = {}) noexcept;
 };
 
 std::string gate_to_string_from_name(const std::string &name);

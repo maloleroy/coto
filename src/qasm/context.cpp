@@ -8,7 +8,7 @@
 struct action
 {
     const Gate gate;
-    qubit q;
+    std::vector<qubit> qubits;
 };
 
 QasmContext::QasmContext()
@@ -66,7 +66,7 @@ void QasmContext::apply_gate(const Gate &gate, const std::vector<qubit> &qubits)
         throw SizeError("Trying to apply a gate of size " + std::to_string(gate.size) + " to " + std::to_string(qubits.size()) + " qubits");
     }
 
-    actions.push_back(std::make_unique<struct action>(gate, qubits[0]));
+    actions.push_back(std::make_unique<struct action>(gate, qubits));
 }
 
 void QasmContext::create_diagram(bool implicit)
@@ -90,25 +90,135 @@ void QasmContext::simulate()
     }
     for (const auto &a : actions)
     {
+        // Single-qubit Pauli gates
         if (a->gate.name == "x")
         {
-            gateappliers::apply_x(diagram, a->q);
+            gateappliers::apply_x(diagram, a->qubits[0]);
+        }
+        else if (a->gate.name == "y")
+        {
+            gateappliers::apply_y(diagram, a->qubits[0]);
+        }
+        else if (a->gate.name == "z")
+        {
+            gateappliers::apply_z(diagram, a->qubits[0]);
         }
         else if (a->gate.name == "h")
         {
-            gateappliers::apply_h(diagram, a->q);
+            gateappliers::apply_h(diagram, a->qubits[0]);
         }
         else if (a->gate.name == "s")
         {
-            gateappliers::apply_s(diagram, a->q, a->q + 1);
+            gateappliers::apply_s(diagram, a->qubits[0]);
+        }
+        else if (a->gate.name == "sdg")
+        {
+            gateappliers::apply_sdg(diagram, a->qubits[0]);
+        }
+        else if (a->gate.name == "t")
+        {
+            gateappliers::apply_t(diagram, a->qubits[0]);
+        }
+        else if (a->gate.name == "tdg")
+        {
+            gateappliers::apply_tdg(diagram, a->qubits[0]);
+        }
+        else if (a->gate.name == "sx")
+        {
+            gateappliers::apply_sx(diagram, a->qubits[0]);
+        }
+        // Single-qubit rotation gates
+        else if (a->gate.name.starts_with("rx("))
+        {
+            double theta = a->gate.float_parameters.empty() ? 0.0 : a->gate.float_parameters[0];
+            gateappliers::apply_rx(diagram, a->qubits[0], theta);
+        }
+        else if (a->gate.name.starts_with("ry("))
+        {
+            double theta = a->gate.float_parameters.empty() ? 0.0 : a->gate.float_parameters[0];
+            gateappliers::apply_ry(diagram, a->qubits[0], theta);
+        }
+        else if (a->gate.name.starts_with("rz("))
+        {
+            double theta = a->gate.float_parameters.empty() ? 0.0 : a->gate.float_parameters[0];
+            gateappliers::apply_rz(diagram, a->qubits[0], theta);
+        }
+        // Two-qubit gates
+        else if (a->gate.name == "swap")
+        {
+            gateappliers::apply_swap(diagram, a->qubits[0], a->qubits[1]);
         }
         else if (a->gate.name == "cx")
         {
-            gateappliers::apply_cx(diagram, a->q, a->q + 1);
+            gateappliers::apply_cx(diagram, a->qubits[0], a->qubits[1]);
         }
+        else if (a->gate.name == "cy")
+        {
+            gateappliers::apply_cy(diagram, a->qubits[0], a->qubits[1]);
+        }
+        else if (a->gate.name == "cz")
+        {
+            gateappliers::apply_cz(diagram, a->qubits[0], a->qubits[1]);
+        }
+        else if (a->gate.name == "ch")
+        {
+            gateappliers::apply_ch(diagram, a->qubits[0], a->qubits[1]);
+        }
+        // Controlled rotation gates
+        else if (a->gate.name.starts_with("cp("))
+        {
+            double theta = a->gate.float_parameters.empty() ? 0.0 : a->gate.float_parameters[0];
+            gateappliers::apply_cp(diagram, a->qubits[0], a->qubits[1], theta);
+        }
+        else if (a->gate.name.starts_with("crx("))
+        {
+            double theta = a->gate.float_parameters.empty() ? 0.0 : a->gate.float_parameters[0];
+            gateappliers::apply_crx(diagram, a->qubits[0], a->qubits[1], theta);
+        }
+        else if (a->gate.name.starts_with("cry("))
+        {
+            double theta = a->gate.float_parameters.empty() ? 0.0 : a->gate.float_parameters[0];
+            gateappliers::apply_cry(diagram, a->qubits[0], a->qubits[1], theta);
+        }
+        else if (a->gate.name.starts_with("crz("))
+        {
+            double theta = a->gate.float_parameters.empty() ? 0.0 : a->gate.float_parameters[0];
+            gateappliers::apply_crz(diagram, a->qubits[0], a->qubits[1], theta);
+        }
+        else if (a->gate.name.starts_with("cu("))
+        {
+            double theta = a->gate.float_parameters.size() > 0 ? a->gate.float_parameters[0] : 0.0;
+            double phi = a->gate.float_parameters.size() > 1 ? a->gate.float_parameters[1] : 0.0;
+            double lambda = a->gate.float_parameters.size() > 2 ? a->gate.float_parameters[2] : 0.0;
+            gateappliers::apply_cu(diagram, a->qubits[0], a->qubits[1], theta, phi, lambda);
+        }
+        // Three-qubit gates
+        else if (a->gate.name == "ccx")
+        {
+            gateappliers::apply_ccx(diagram, a->qubits[0], a->qubits[1], a->qubits[2]);
+        }
+        else if (a->gate.name == "cswap")
+        {
+            gateappliers::apply_cswap(diagram, a->qubits[0], a->qubits[1], a->qubits[2]);
+        }
+        // Universal single-qubit gate
+        else if (a->gate.name.starts_with("u("))
+        {
+            double theta = a->gate.float_parameters.size() > 0 ? a->gate.float_parameters[0] : 0.0;
+            double phi = a->gate.float_parameters.size() > 1 ? a->gate.float_parameters[1] : 0.0;
+            double lambda = a->gate.float_parameters.size() > 2 ? a->gate.float_parameters[2] : 0.0;
+            gateappliers::apply_u(diagram, a->qubits[0], theta, phi, lambda);
+        }
+        // Global phase gate
+        else if (a->gate.name.starts_with("gphase("))
+        {
+            double theta = a->gate.float_parameters.empty() ? 0.0 : a->gate.float_parameters[0];
+            gateappliers::apply_gphase(diagram, theta);
+        }
+        // Phase gate (legacy)
         else if (a->gate.name[0] == 'p')
         {
-            gateappliers::apply_phase(diagram, a->q, a->gate.parameter.value_or(1));
+            gateappliers::apply_phase(diagram, a->qubits[0], a->gate.parameter.value_or(1));
         }
         else
         {
@@ -122,7 +232,12 @@ void QasmContext::print_list_of_actions() const
 {
     for (const auto &a : actions)
     {
-        std::cout << "~ " << a->gate.name << " " << a->q << std::endl;
+        std::cout << "~ " << a->gate.name;
+        for (auto q : a->qubits)
+        {
+            std::cout << " " << q;
+        }
+        std::cout << std::endl;
     }
 }
 
