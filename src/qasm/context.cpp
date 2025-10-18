@@ -189,6 +189,29 @@ void QasmContext::print_diagram_description() const
     std::cout << "~ branches " << get_branch_count(diagram) << std::endl;
 }
 
+void QasmContext::print_diagram_memory_usage() const
+{
+    if (diagram == nullptr)
+    {
+        std::cout << "(null)" << std::endl;
+        return;
+    }
+    size_t memory_bytes = diagram->memory_usage();
+    double memory_kb = memory_bytes / 1024.0;
+    double memory_mb = memory_kb / 1024.0;
+
+    std::cout << "~ memory usage: " << memory_bytes << " bytes";
+    if (memory_bytes >= 1024)
+    {
+        std::cout << " (" << memory_kb << " KB)";
+    }
+    if (memory_bytes >= 1024 * 1024)
+    {
+        std::cout << " (" << memory_mb << " MB)";
+    }
+    std::cout << std::endl;
+}
+
 void QasmContext::print_run_statements_help()
 {
     std::cout << "Available run statements:\n"
@@ -196,6 +219,7 @@ void QasmContext::print_run_statements_help()
               << "  @list, @actions - list the actions to be performed\n"
               << "  @display, @evaluate, @eval - display the evaluation of the current diagram\n"
               << "  @describe, @desc - display the description of the current diagram\n"
+              << "  @memory, @mem - display the memory usage of the current diagram\n"
               << "  @help, @man, @manual - display this help message\n"
               << std::endl;
 }

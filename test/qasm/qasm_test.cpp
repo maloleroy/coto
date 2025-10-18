@@ -81,3 +81,11 @@ TEST(QasmTest, apply_gate)
     EXPECT_EQ(r.eval("a"), "qubit: 0");
     EXPECT_NO_THROW(exec("@display;"));
 }
+
+TEST(QasmTest, memory_usage)
+{
+    Runtime r = exec("qubit a;");
+    EXPECT_NO_THROW(r = r.exec("@build;"));
+    // Memory usage should be a positive number
+    EXPECT_NO_THROW(r = r.exec("@memory;"));
+}

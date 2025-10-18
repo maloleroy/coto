@@ -53,6 +53,7 @@ This prompt utility comes with a few available **run statements** that should be
 * `@list`, `@actions` - list the actions (gate applicaitons) to be performed
 * `@display`, `@evaluate`, `@eval` - display the evaluation of the current diagram
 * `@describe`, `@desc` - display the description of the current diagram
+* `@memory`, `@mem` - display the memory usage of the current diagram
 * `@help`, `@man`, `@manual` - display a help message
 
 Applying gates to qubits is not performed immediately after the statement is entered, and should be triggered by a `@display;`.

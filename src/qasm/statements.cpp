@@ -235,6 +235,10 @@ public:
         {
             context.print_diagram_description();
         }
+        else if (content == "@memory" || content == "@mem")
+        {
+            context.print_diagram_memory_usage();
+        }
         else if (content == "@help" || content == "@man" || content == "@manual")
         {
             context.print_run_statements_help();
