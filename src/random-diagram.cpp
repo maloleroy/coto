@@ -8,10 +8,10 @@ static size_t max_children_number(size_t height, size_t total_height);
 
 static size_t min_children_number(size_t height, size_t total_height);
 
-Diagram Diagram::random(const size_t height)
+Diagram *Diagram::random(const size_t height)
 {
-    Diagram d(height);
-    d.populate(height);
+    Diagram *d = new Diagram(height);
+    d->populate(height);
     return d;
 }
 

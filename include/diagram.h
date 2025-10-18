@@ -67,7 +67,7 @@ namespace diagram
         /// used to choose the number of children and the amplitudes are undefined in this
         /// interface and are left as an implementation detail that is subject to change.
         /// @return A random diagram
-        static Diagram random(const size_t height);
+        static Diagram *random(const size_t height);
 
         /// @brief Children of side @p s
         Branches *children_of_side(Side s);

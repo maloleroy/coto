@@ -171,11 +171,11 @@ TEST(GateAppliersTest, apply_h_consistency)
     for (auto q = 0; q < number_of_qubits; q++)
     {
         auto d0 = Diagram::random(number_of_qubits);
-        auto d1 = d0.clone();
-        gateappliers::apply_gate_matrix(&d0, q, h);
+        auto d1 = d0->clone();
+        gateappliers::apply_gate_matrix(d0, q, h);
         gateappliers::apply_h(d1, q);
 
-        auto e0 = d0.evaluate();
+        auto e0 = d0->evaluate();
         auto e1 = d1->evaluate();
         for (auto i = 0; i < e0.size(); i++)
         {
@@ -184,6 +184,8 @@ TEST(GateAppliersTest, apply_h_consistency)
                 << ", e0 " << e0[i].to_string()
                 << ", e1 " << e1[i].to_string();
         }
+        delete d0;
+        delete d1;
     }
 }
 

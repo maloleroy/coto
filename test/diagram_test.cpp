@@ -44,11 +44,12 @@ TEST_F(DiagramTest, testEvaluate)
 TEST_F(DiagramTest, doubleEvaluation)
 {
     auto d = Diagram::random(3);
-    auto v1 = d.evaluate(), v2 = d.evaluate();
+    auto v1 = d->evaluate(), v2 = d->evaluate();
     for (auto i = 0; i < v1.size(); i++)
     {
         EXPECT_EQ(v1[i], v2[i]);
     }
+    delete d;
 }
 
 TEST_F(DiagramTest, eig0)
@@ -127,11 +128,12 @@ TEST_F(DiagramTest, get_node_pointers_at_height)
 TEST_F(DiagramTest, random_is_norm_lower_than_one)
 {
     auto d = Diagram::random(2);
-    auto vec = d.evaluate();
+    auto vec = d->evaluate();
     for (auto i : vec)
     {
         EXPECT_LE(i.norm(), 1.);
     }
+    delete d;
 }
 
 TEST_F(DiagramTest, random_assert_variability)
@@ -144,8 +146,9 @@ TEST_F(DiagramTest, random_assert_variability)
         auto d = Diagram::random(5);
         for (auto j = 0; j < 5; j++)
         {
-            counts[i][j] = d.count_nodes_at_height(j);
+            counts[i][j] = d->count_nodes_at_height(j);
         }
+        delete d;
     }
     for (auto i = 0; i < n; i++)
     {
@@ -176,9 +179,10 @@ TEST_F(DiagramTest, random_assert_boundaries)
         auto d = Diagram::random(5);
         for (auto i = 0; i < 5; i++)
         {
-            EXPECT_GE(d.count_nodes_at_height(i), 0);
-            EXPECT_LE(d.count_nodes_at_height(i), pow(CHILDREN_NUMBER_AMBITION, i + 3));
+            EXPECT_GE(d->count_nodes_at_height(i), 0);
+            EXPECT_LE(d->count_nodes_at_height(i), pow(CHILDREN_NUMBER_AMBITION, i + 3));
         }
+        delete d;
     }
 }
 
@@ -188,7 +192,7 @@ TEST_F(DiagramTest, enclosure)
     for (auto i = 0; i < 1000; i++)
     {
         auto d = Diagram::random(n);
-        auto v = d.evaluate();
+        auto v = d->evaluate();
 
         auto real_rho = v[0];
         for (auto i = 1; i < pwrtwo(n); i++)
@@ -196,9 +200,10 @@ TEST_F(DiagramTest, enclosure)
             real_rho = real_rho | v[i];
         }
 
-        auto rho = d.enclosure();
+        auto rho = d->enclosure();
         EXPECT_EQ(rho, real_rho);
-        EXPECT_EQ(rho, d.enclosure());
+        EXPECT_EQ(rho, d->enclosure());
+        delete d;
     }
 }
 
