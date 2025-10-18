@@ -108,7 +108,7 @@ static void apply_single_qubit_gate_on_first_qubit(Diagram *diagram, const gatea
     }
     for (auto &g : baseLeft)
     {
-        diagram->righto(g.d, m10 * g.x);
+        diagram->righto(g.d->clone(), m10 * g.x);
     }
 }
 
