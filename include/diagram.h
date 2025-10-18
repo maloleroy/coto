@@ -106,6 +106,11 @@ namespace diagram
         /// @brief An interval that contains all the intervals of the evaluation.
         Interval enclosure();
 
+        /// @brief Calculate the memory usage of the diagram including all children
+        /// Takes into account all sub-children diagrams but counts each node only once
+        /// @return The total memory usage in bytes
+        size_t memory_usage() const;
+
         ~Diagram();
 
         const size_t height;

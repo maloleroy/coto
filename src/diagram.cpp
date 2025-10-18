@@ -2,6 +2,8 @@
 #include "diagram.h"
 #include <iostream>
 #include <algorithm>
+#include <set>
+#include <functional>
 
 using std::size_t;
 using namespace diagram;
@@ -225,6 +227,40 @@ absi::Interval Diagram::enclosure()
         is_up_to_date = true;
     }
     return cached_enclosure;
+}
+
+size_t Diagram::memory_usage() const
+{
+    std::set<const Diagram *> visited;
+    std::function<size_t(const Diagram *)> calculate = [&](const Diagram *d) -> size_t
+    {
+        if (visited.count(d))
+        {
+            return 0;
+        }
+        visited.insert(d);
+
+        size_t total = sizeof(Diagram);
+
+        // Account for the left and right branches vectors
+        total += d->left.capacity() * sizeof(Branch);
+        total += d->right.capacity() * sizeof(Branch);
+
+        // Account for each branch's interval (which is part of the Branch struct, already counted)
+        // But we need to recurse into children
+        for (const auto &b : d->left)
+        {
+            total += calculate(b.d);
+        }
+        for (const auto &b : d->right)
+        {
+            total += calculate(b.d);
+        }
+
+        return total;
+    };
+
+    return calculate(this);
 }
 
 void Diagram::mark_parents_as_to_be_updated() const
