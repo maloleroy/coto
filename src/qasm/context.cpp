@@ -54,7 +54,40 @@ void QasmContext::apply_gate(const Gate &gate, const std::vector<varname> &qubit
     std::vector<qubit> q;
     for (const auto &name : qubits_names)
     {
-        q.push_back(storage.get_qubit(name));
+        // Check if this is an array reference like "q[0]"
+        size_t bracket_pos = name.find('[');
+        if (bracket_pos != std::string::npos)
+        {
+            // Parse array reference
+            size_t close_bracket = name.find(']');
+            if (close_bracket == std::string::npos || close_bracket <= bracket_pos)
+            {
+                throw SyntaxError("Invalid array reference: " + name);
+            }
+
+            std::string array_name = name.substr(0, bracket_pos);
+            std::string index_str = name.substr(bracket_pos + 1, close_bracket - bracket_pos - 1);
+
+            try
+            {
+                size_t index = std::stoul(index_str);
+                q.push_back(storage.get_qubit_array_element(array_name, index));
+            }
+            catch (const VariableError &e)
+            {
+                // Re-throw VariableError as-is
+                throw;
+            }
+            catch (const std::exception &e)
+            {
+                throw SyntaxError("Invalid array index: " + index_str);
+            }
+        }
+        else
+        {
+            // Regular qubit reference
+            q.push_back(storage.get_qubit(name));
+        }
     }
     apply_gate(gate, q);
 }

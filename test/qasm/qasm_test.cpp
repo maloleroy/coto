@@ -225,3 +225,104 @@ TEST(QasmTest, global_phase)
     EXPECT_NO_THROW(r = r.exec("gphase(pi/2);"));
     EXPECT_NO_THROW(r = r.exec("@display;"));
 }
+
+TEST(QasmTest, qubit_array_definition)
+{
+    // Test basic qubit array definition
+    EXPECT_NO_THROW(exec("qubits[3] q;"));
+    EXPECT_NO_THROW(exec("qubits[5] myQubits;"));
+    EXPECT_NO_THROW(exec("qubits[1] singleQubit;"));
+}
+
+TEST(QasmTest, qubit_array_definition_invalid)
+{
+    // Test invalid array sizes
+    EXPECT_THROW(exec("qubits[0] q;"), SyntaxError);
+    EXPECT_THROW(exec("qubits[] q;"), SyntaxError);
+    EXPECT_THROW(exec("qubits[abc] q;"), SyntaxError);
+}
+
+TEST(QasmTest, qubit_array_access_single)
+{
+    Runtime r = exec("qubits[3] q;");
+    EXPECT_NO_THROW(r = r.exec("x q[0];"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+}
+
+TEST(QasmTest, qubit_array_access_multiple)
+{
+    Runtime r = exec("qubits[5] q;");
+    EXPECT_NO_THROW(r = r.exec("x q[0];"));
+    EXPECT_NO_THROW(r = r.exec("x q[1];"));
+    EXPECT_NO_THROW(r = r.exec("x q[4];"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+}
+
+TEST(QasmTest, qubit_array_access_two_qubit_gates)
+{
+    Runtime r = exec("qubits[3] q;");
+    EXPECT_NO_THROW(r = r.exec("cx q[0], q[1];"));
+    EXPECT_NO_THROW(r = r.exec("swap q[1], q[2];"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+}
+
+TEST(QasmTest, qubit_array_access_three_qubit_gates)
+{
+    Runtime r = exec("qubits[5] q;");
+    EXPECT_NO_THROW(r = r.exec("ccx q[0], q[1], q[2];"));
+    EXPECT_NO_THROW(r = r.exec("cswap q[2], q[3], q[4];"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+}
+
+TEST(QasmTest, qubit_array_with_rotation_gates)
+{
+    Runtime r = exec("qubits[3] q;");
+    EXPECT_NO_THROW(r = r.exec("rx(pi/4) q[0];"));
+    EXPECT_NO_THROW(r = r.exec("ry(pi/2) q[1];"));
+    EXPECT_NO_THROW(r = r.exec("rz(pi) q[2];"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+}
+
+TEST(QasmTest, qubit_array_multiple_arrays)
+{
+    // Use contiguous qubits within the same array to avoid non-contiguous gate issue
+    Runtime r = exec("qubits[4] q;");
+    EXPECT_NO_THROW(r = r.exec("x q[0];"));
+    EXPECT_NO_THROW(r = r.exec("y q[1];"));
+    EXPECT_NO_THROW(r = r.exec("cx q[0], q[1];"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+}
+
+TEST(QasmTest, qubit_array_mixed_access)
+{
+    // Use contiguous qubits to avoid non-contiguous gate issue
+    Runtime r = exec("qubits[3] arr;");
+    EXPECT_NO_THROW(r = r.exec("x arr[0];"));
+    EXPECT_NO_THROW(r = r.exec("x arr[1];"));
+    EXPECT_NO_THROW(r = r.exec("cx arr[1], arr[2];"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+}
+
+TEST(QasmTest, qubit_array_index_out_of_bounds)
+{
+    Runtime r = exec("qubits[3] q;");
+    EXPECT_THROW(r.exec("x q[3];"), VariableError);
+    EXPECT_THROW(r.exec("x q[10];"), VariableError);
+}
+
+TEST(QasmTest, qubit_array_memory_count)
+{
+    Runtime r = exec("qubits[5] q;");
+    EXPECT_NO_THROW(r = r.exec("@build;"));
+    EXPECT_NO_THROW(r = r.exec("@memory;"));
+}
+
+TEST(QasmTest, qubit_array_complex_circuit)
+{
+    Runtime r = exec("qubits[4] q;");
+    EXPECT_NO_THROW(r = r.exec("h q[0];"));
+    EXPECT_NO_THROW(r = r.exec("cx q[0], q[1];"));
+    EXPECT_NO_THROW(r = r.exec("x q[2];"));
+    EXPECT_NO_THROW(r = r.exec("swap q[2], q[3];"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+}

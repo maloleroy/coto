@@ -41,7 +41,8 @@ public:
 
     DefinitionStatement(string content)
         : type_name(content.substr(0, content.find(' '))),
-          name(content.substr(content.find(' ') + 1))
+          name(content.substr(content.find(' ') + 1)),
+          array_size(0)
     {
         if (!is_valid_identifier(type_name))
         {
@@ -60,6 +61,113 @@ public:
 
     const string type_name;
     const string name;
+    size_t array_size;
+};
+
+class ArrayDefinitionStatement : public Statement
+{
+public:
+    static bool is(const string &content)
+    {
+        // Check if content contains brackets, indicating an array definition
+        // Array definitions have pattern like: "qubits[5] q" or "qubit[n] varname"
+        // NOT "x q[0]" or "cx q[0], q[1]" (gate applications)
+
+        size_t bracket_start = content.find('[');
+        if (bracket_start == string::npos || content.find(']') == string::npos)
+            return false;
+
+        // For a valid array definition, the type name (before bracket) should be
+        // at the beginning of the string and followed immediately by bracket
+        // Also, there should be a space between the closing bracket and the variable name
+
+        // Get the part before the bracket
+        string before_bracket = content.substr(0, bracket_start);
+
+        // Check if this looks like a type name (no spaces, valid identifier)
+        if (before_bracket.empty() || before_bracket.find(' ') != string::npos)
+            return false;
+
+        if (!is_valid_identifier(before_bracket))
+            return false;
+
+        // Check if there's a space after the closing bracket
+        size_t bracket_end = content.find(']');
+        if (bracket_end + 1 >= content.length())
+            return false;
+
+        // Must have a space after the bracket
+        if (content[bracket_end + 1] != ' ' && !std::isspace(static_cast<unsigned char>(content[bracket_end + 1])))
+            return false;
+
+        return true;
+    }
+
+    ArrayDefinitionStatement(string content)
+    {
+        // Parse type name, array name, and size
+        // Expected format: "qubits[5] q" or "qubit[n] varname"
+
+        size_t bracket_start = content.find('[');
+        size_t bracket_end = content.find(']');
+
+        if (bracket_start == string::npos || bracket_end == string::npos || bracket_end <= bracket_start)
+        {
+            throw SyntaxError("Invalid array syntax in definition statement");
+        }
+
+        // Extract type name
+        type_name = content.substr(0, bracket_start);
+        if (type_name.empty() || !is_valid_identifier(type_name))
+        {
+            throw SyntaxError("Invalid type name identifier in array definition statement");
+        }
+
+        // Extract array size
+        string size_str = content.substr(bracket_start + 1, bracket_end - bracket_start - 1);
+        if (size_str.empty())
+        {
+            throw SyntaxError("Array size cannot be empty");
+        }
+
+        try
+        {
+            array_size = std::stoul(size_str);
+        }
+        catch (...)
+        {
+            throw SyntaxError("Invalid array size: " + size_str);
+        }
+
+        if (array_size == 0)
+        {
+            throw SyntaxError("Array size must be greater than 0");
+        }
+
+        // Extract variable name
+        string after_bracket = content.substr(bracket_end + 1);
+        // Trim leading whitespace
+        size_t name_start = after_bracket.find_first_not_of(" \t");
+        if (name_start == string::npos)
+        {
+            throw SyntaxError("Variable name missing in array definition statement");
+        }
+
+        name = after_bracket.substr(name_start);
+        if (!is_valid_identifier(name))
+        {
+            throw SyntaxError("Invalid identifier in array definition statement");
+        }
+    }
+
+    void execute(QasmContext &context) const override
+    {
+        context.storage.define_var_array(type_name, name, array_size, false);
+    }
+
+    string type_name;
+    string name;
+    size_t array_size;
 };
 
 class AssignmentStatement : public Statement
@@ -377,6 +485,10 @@ Statement::parse(const struct StatementString &ss)
         if (AssignmentStatement::is(ss.content))
         {
             return std::make_unique<AssignmentStatement>(ss.content);
+        }
+        if (ArrayDefinitionStatement::is(ss.content))
+        {
+            return std::make_unique<ArrayDefinitionStatement>(ss.content);
         }
         if (GateApplyStatement::is(ss.content))
         {
