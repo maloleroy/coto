@@ -82,6 +82,21 @@ TEST(QasmTest, apply_gate)
     EXPECT_NO_THROW(exec("@display;"));
 }
 
+TEST(QasmTest, apply_two_qubit_gate)
+{
+    Runtime r = exec("qubit a;\nqubit b;");
+    EXPECT_NO_THROW(r = r.exec("cx a, b;"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+}
+
+TEST(QasmTest, apply_two_qubit_gate_with_spaces)
+{
+    Runtime r = exec("qubit a;\nqubit b;");
+    EXPECT_NO_THROW(r = r.exec("cx a , b;"));
+    EXPECT_NO_THROW(r = r.exec("s a , b;"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+}
+
 TEST(QasmTest, memory_usage)
 {
     Runtime r = exec("qubit a;");

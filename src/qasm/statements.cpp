@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <optional>
 #include <sstream>
+#include <cctype>
 
 #include <qasm/statements.h>
 #include <qasm/variables.h>
@@ -126,17 +127,43 @@ public:
         auto first_space_pos = content.find(' ');
         auto qubits_str = content.substr(first_space_pos + 1);
         gateName = content.substr(0, first_space_pos);
-        qubits_names.reserve(std::ranges::count(qubits_str, ' ') + 1);
+        qubits_names.reserve(std::ranges::count(qubits_str, ',') + 1);
 
         while (qubits_str.size() > 0)
         {
-            auto comma_pos = qubits_str.find(' ');
+            // Skip leading whitespace
+            while (qubits_str.size() > 0 && std::isspace(static_cast<unsigned char>(qubits_str[0])))
+            {
+                qubits_str = qubits_str.substr(1);
+            }
+            if (qubits_str.empty())
+                break;
+
+            auto comma_pos = qubits_str.find(',');
             if (comma_pos == string::npos)
             {
-                qubits_names.push_back(qubits_str);
+                // Last qubit - trim trailing whitespace
+                auto trimmed = qubits_str;
+                while (!trimmed.empty() && std::isspace(static_cast<unsigned char>(trimmed.back())))
+                {
+                    trimmed.pop_back();
+                }
+                if (!trimmed.empty())
+                {
+                    qubits_names.push_back(trimmed);
+                }
                 break;
             }
-            qubits_names.push_back(qubits_str.substr(0, comma_pos));
+            auto qubit = qubits_str.substr(0, comma_pos);
+            // Trim trailing whitespace from qubit
+            while (!qubit.empty() && std::isspace(static_cast<unsigned char>(qubit.back())))
+            {
+                qubit.pop_back();
+            }
+            if (!qubit.empty())
+            {
+                qubits_names.push_back(qubit);
+            }
             qubits_str = qubits_str.substr(comma_pos + 1);
         }
     }
