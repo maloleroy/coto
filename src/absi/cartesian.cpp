@@ -1,12 +1,10 @@
 #include <string>
 #include <tuple>
+#include <limits>
 
 #include <absi/cartesian.h>
 
 using namespace cartesian;
-
-/// @brief Minimum and maximum of xy for x in [xn, xx] and y in [yn, yx]
-static cartesian::RealInterval min_max_of_product(const RealInterval x, const RealInterval y);
 
 Interval::Interval() : bottom_left{0.}, top_right{0.} {};
 
@@ -51,9 +49,36 @@ Interval Interval::operator*(const ampl::Real &other) const
 
 Interval Interval::operator*(const Interval &other) const
 {
-    return Interval(
-        min_max_of_product(reals(), other.reals()),
-        min_max_of_product(imaginaries(), other.imaginaries()));
+    // Complex multiplication: (a + bi) * (c + di) = (ac - bd) + (ad + bc)i
+    // For intervals [z1, z2] * [w1, w2], we need to compute all corners' products
+    // z1 = bottom_left, z2 = top_right, w1 = other.bottom_left, w2 = other.top_right
+
+    ampl::Amplitude corners[] = {bottom_left, top_right,
+                                 ampl::Amplitude(bottom_left.real(), top_right.imag()),
+                                 ampl::Amplitude(top_right.real(), bottom_left.imag())};
+    ampl::Amplitude other_corners[] = {other.bottom_left, other.top_right,
+                                       ampl::Amplitude(other.bottom_left.real(), other.top_right.imag()),
+                                       ampl::Amplitude(other.top_right.real(), other.bottom_left.imag())};
+
+    ampl::Real min_real = std::numeric_limits<ampl::Real>::max();
+    ampl::Real max_real = -std::numeric_limits<ampl::Real>::max();
+    ampl::Real min_imag = std::numeric_limits<ampl::Real>::max();
+    ampl::Real max_imag = -std::numeric_limits<ampl::Real>::max();
+
+    // Compute all 16 products and track min/max for real and imaginary parts
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            ampl::Amplitude product = corners[i] * other_corners[j];
+            min_real = std::min(min_real, product.real());
+            max_real = std::max(max_real, product.real());
+            min_imag = std::min(min_imag, product.imag());
+            max_imag = std::max(max_imag, product.imag());
+        }
+    }
+
+    return Interval(ampl::Amplitude(min_real, min_imag), ampl::Amplitude(max_real, max_imag));
 }
 
 ampl::Real Interval::operator^(const Interval &other) const
@@ -78,25 +103,6 @@ ampl::Real Interval::norm() const noexcept
 std::string Interval::to_string() const noexcept
 {
     return "[" + ampl::to_string(bottom_left) + ", " + ampl::to_string(top_right) + "]";
-}
-
-static RealInterval min_max_of_product(const RealInterval x, const RealInterval y)
-{
-    ampl::Real x1 = std::get<0>(x), x2 = std::get<1>(x), y1 = std::get<0>(y), y2 = std::get<1>(y);
-    ampl::Real values[4] = {x1 * y1, x1 * y2, x2 * y1, x2 * y2};
-    ampl::Real rmin = values[0], rmax = values[0];
-    for (int i = 1; i < 4; i++)
-    {
-        if (values[i] < rmin)
-        {
-            rmin = values[i];
-        }
-        else if (values[i] > rmax)
-        {
-            rmax = values[i];
-        }
-    }
-    return std::make_tuple(rmin, rmax);
 }
 
 RealInterval Interval::reals() const noexcept
