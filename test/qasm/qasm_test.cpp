@@ -150,10 +150,24 @@ TEST(QasmTest, controlled_rotation_gates)
     EXPECT_EQ(eval("crz(pi/2)"), "gate: crz(pi/2)[2]");
 }
 
+TEST(QasmTest, controlled_phase_gates_with_negative_parameters)
+{
+    // Test controlled phase gates with negative parameters
+    EXPECT_EQ(eval("cp(-pi/2)"), "gate: cp(-pi/2)[2]");
+    EXPECT_EQ(eval("cp(-pi)"), "gate: cp(-pi)[2]");
+}
+
 TEST(QasmTest, universal_gates)
 {
     EXPECT_EQ(eval("u(0, 0, 0)"), "gate: u(0, 0, 0)[1]");
     EXPECT_EQ(eval("cu(pi/2, pi/4, pi)"), "gate: cu(pi/2, pi/4, pi)[2]");
+}
+
+TEST(QasmTest, universal_gates_with_negative_parameters)
+{
+    // Test universal gates with negative parameters
+    EXPECT_EQ(eval("u(-pi/2, -pi/4, -pi)"), "gate: u(-pi/2, -pi/4, -pi)[1]");
+    EXPECT_EQ(eval("cu(-pi/2, -pi/4, -pi)"), "gate: cu(-pi/2, -pi/4, -pi)[2]");
 }
 
 TEST(QasmTest, three_qubit_gates)
@@ -188,12 +202,36 @@ TEST(QasmTest, apply_rotation_gates)
     EXPECT_NO_THROW(auto rz = r.exec("rz(pi/4) q;"); rz.exec("@display;"));
 }
 
+TEST(QasmTest, apply_rotation_gates_with_negative_parameters)
+{
+    // Test rotation gates with negative parameters
+    Runtime r = exec("qubit q;");
+    EXPECT_NO_THROW(auto rx = r.exec("rx(-pi/4) q;"); rx.exec("@display;"));
+    EXPECT_NO_THROW(auto ry = r.exec("ry(-pi/4) q;"); ry.exec("@display;"));
+    EXPECT_NO_THROW(auto rz = r.exec("rz(-pi/2) q;"); rz.exec("@display;"));
+}
+
 TEST(QasmTest, apply_controlled_gates)
 {
     Runtime r = exec("qubit a;\nqubit b;");
     EXPECT_NO_THROW(r = r.exec("cx a, b;"));
     EXPECT_NO_THROW(r = r.exec("cy a, b;"));
     EXPECT_NO_THROW(r = r.exec("cz a, b;"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+}
+
+TEST(QasmTest, apply_controlled_rotation_gates_with_negative_parameters)
+{
+    Runtime r = exec("qubit a;\nqubit b;");
+    EXPECT_NO_THROW(r = r.exec("crx(-pi/4) a, b;"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+
+    r = exec("qubit a;\nqubit b;");
+    EXPECT_NO_THROW(r = r.exec("cry(-pi/2) a, b;"));
+    EXPECT_NO_THROW(r = r.exec("@display;"));
+
+    r = exec("qubit a;\nqubit b;");
+    EXPECT_NO_THROW(r = r.exec("crz(-pi/3) a, b;"));
     EXPECT_NO_THROW(r = r.exec("@display;"));
 }
 
@@ -325,4 +363,31 @@ TEST(QasmTest, qubit_array_complex_circuit)
     EXPECT_NO_THROW(r = r.exec("x q[2];"));
     EXPECT_NO_THROW(r = r.exec("swap q[2], q[3];"));
     EXPECT_NO_THROW(r = r.exec("@display;"));
+}
+
+TEST(QasmTest, arbitrary_pi_fractions)
+{
+    // Test support for arbitrary pi fractions (not just predefined ones)
+    Runtime r = exec("qubit a;");
+    // Test pi/16 (requested case)
+    EXPECT_NO_THROW(r = r.exec("ry(pi/16) a;"));
+    // Test various other fractions
+    EXPECT_NO_THROW(r = r.exec("rx(pi/32) a;"));
+    EXPECT_NO_THROW(r = r.exec("rz(pi/64) a;"));
+    // Test multiplied fractions
+    EXPECT_NO_THROW(r = r.exec("ry(3*pi/8) a;"));
+    EXPECT_NO_THROW(r = r.exec("rx(5*pi/6) a;"));
+    EXPECT_NO_THROW(r = r.exec("rz(7*pi/12) a;"));
+    // Test with negative multiplied fractions
+    EXPECT_NO_THROW(r = r.exec("ry(-2*pi/5) a;"));
+    EXPECT_NO_THROW(r = r.exec("rx(-7*pi/16) a;"));
+
+    // Test with controlled gates
+    r = exec("qubit a;\nqubit b;");
+    EXPECT_NO_THROW(r = r.exec("crx(pi/16) a, b;"));
+    EXPECT_NO_THROW(r = r.exec("cry(3*pi/8) a, b;"));
+    EXPECT_NO_THROW(r = r.exec("crz(-5*pi/12) a, b;"));
+
+    // Test with phase gates
+    EXPECT_NO_THROW(r = r.exec("cp(pi/24) a, b;"));
 }

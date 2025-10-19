@@ -94,11 +94,82 @@ bool Gate::exists(const std::string &gateName) noexcept
     return false;
 }
 
+// Helper to parse a single parameter expression (supporting negation and pi expressions)
+static double parse_parameter_expression(const std::string &param_str)
+{
+    // Trim whitespace
+    std::string param = param_str;
+    param.erase(0, param.find_first_not_of(" \t"));
+    param.erase(param.find_last_not_of(" \t") + 1);
+
+    if (param.empty())
+        throw std::invalid_argument("Empty parameter");
+
+    // Check for negative sign
+    bool is_negative = false;
+    if (param[0] == '-')
+    {
+        is_negative = true;
+        param = param.substr(1);
+        // Trim whitespace after minus sign
+        param.erase(0, param.find_first_not_of(" \t"));
+    }
+
+    double value = 0.0;
+
+    // Check if it contains 'pi' (general pi expression handler)
+    if (param.find("pi") != std::string::npos)
+    {
+        // Format can be: pi, N*pi, pi/D, N*pi/D
+        // Examples: pi, 2*pi, pi/4, 3*pi/16, 2*pi/3
+
+        size_t pi_pos = param.find("pi");
+
+        // Parse the part before "pi"
+        double multiplier = 1.0;
+        if (pi_pos > 0)
+        {
+            std::string before_pi = param.substr(0, pi_pos);
+            // Remove the '*' if present
+            if (before_pi.back() == '*')
+                before_pi.pop_back();
+            if (!before_pi.empty())
+            {
+                multiplier = std::stod(before_pi);
+            }
+        }
+
+        // Parse the part after "pi"
+        double divisor = 1.0;
+        if (pi_pos + 2 < param.length())
+        {
+            std::string after_pi = param.substr(pi_pos + 2);
+            if (after_pi[0] == '/')
+            {
+                divisor = std::stod(after_pi.substr(1));
+            }
+            else
+            {
+                throw std::invalid_argument("Invalid pi expression format: " + param);
+            }
+        }
+
+        value = (multiplier / divisor) * M_PI;
+    }
+    else
+    {
+        // Try to parse as a numeric literal
+        value = std::stod(param);
+    }
+
+    return is_negative ? -value : value;
+}
+
 // Helper to parse rotation gate parameters like rx(0.5), ry(pi/4), etc.
 static std::vector<double> parse_rotation_gate_params(const std::string &gateName, size_t param_count)
 {
     // Format: gateName(param1, param2, ..., paramN)
-    // For now, support numeric literals and simple expressions
+    // Supports numeric literals and pi-related expressions, including negative values
     std::vector<double> params;
 
     size_t open_paren = gateName.find('(');
@@ -111,24 +182,12 @@ static std::vector<double> parse_rotation_gate_params(const std::string &gateNam
 
     std::string params_str = gateName.substr(open_paren + 1, close_paren - open_paren - 1);
 
-    // For now, only support numeric literals (no expressions)
-    // This is a simplified version - full QASM would support expressions
     try
     {
         // Handle simple case of single parameter (for rotation gates)
         if (param_count == 1)
         {
-            // Check for pi-related expressions
-            if (params_str == "pi")
-                params.push_back(M_PI);
-            else if (params_str == "pi/2")
-                params.push_back(M_PI / 2);
-            else if (params_str == "pi/4")
-                params.push_back(M_PI / 4);
-            else if (params_str == "2*pi")
-                params.push_back(2 * M_PI);
-            else
-                params.push_back(std::stod(params_str));
+            params.push_back(parse_parameter_expression(params_str));
         }
         else
         {
@@ -141,21 +200,7 @@ static std::vector<double> parse_rotation_gate_params(const std::string &gateNam
                                         ? params_str.substr(pos)
                                         : params_str.substr(pos, comma_pos - pos);
 
-                // Trim whitespace
-                param.erase(0, param.find_first_not_of(" \t"));
-                param.erase(param.find_last_not_of(" \t") + 1);
-
-                // Parse parameter
-                if (param == "pi")
-                    params.push_back(M_PI);
-                else if (param == "pi/2")
-                    params.push_back(M_PI / 2);
-                else if (param == "pi/4")
-                    params.push_back(M_PI / 4);
-                else if (param == "2*pi")
-                    params.push_back(2 * M_PI);
-                else
-                    params.push_back(std::stod(param));
+                params.push_back(parse_parameter_expression(param));
 
                 if (comma_pos == std::string::npos)
                     break;
