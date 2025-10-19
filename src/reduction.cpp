@@ -5,7 +5,7 @@
 
 using diagram::Diagram, diagram::Branch, diagram::Branches, selection::MergeesChoiceStrategy;
 
-static void force_merge_at_height(Diagram d, const size_t h, MergeesChoiceStrategy strategy);
+static void force_merge_at_height(Diagram *d, const size_t h, MergeesChoiceStrategy strategy);
 
 static absi::Interval child_amplitude(const Branches brs, const Diagram *possible_child);
 
@@ -42,11 +42,11 @@ void reduction::cut_dead_branches(Diagram *d)
  * there is less than `maxNodes[i]` at this level.
  */
 template <size_t height>
-void reduction::max_nodes_level(Diagram d, std::array<size_t, height> maxNodes, MergeesChoiceStrategy strategy)
+void reduction::max_nodes_level(Diagram *d, std::array<size_t, height> maxNodes, MergeesChoiceStrategy strategy)
 {
     for (size_t i = 0; i < height; i++)
     {
-        while (d.count_nodes_at_height(i) > maxNodes[i])
+        while (d->count_nodes_at_height(i) > maxNodes[i])
         {
             force_merge_at_height(d, i, strategy);
         }
@@ -54,11 +54,11 @@ void reduction::max_nodes_level(Diagram d, std::array<size_t, height> maxNodes, 
 }
 
 template <size_t height>
-static void force_merge_at_height(Diagram d, const size_t h, MergeesChoiceStrategy strategy)
+static void force_merge_at_height(Diagram *d, const size_t h, MergeesChoiceStrategy strategy)
 {
     auto mergees = selection::get_mergees_at_height(h, d, strategy);
     auto result = reduction::force_merge(*mergees.a, *mergees.b);
-    d.replace_nodes_at_height(h, mergees.a, mergees.b, &result);
+    d->replace_nodes_at_height(h, mergees.a, mergees.b, &result);
 }
 
 /// @brief An approximation algorithm for non-additive QDDs
@@ -66,11 +66,11 @@ static void force_merge_at_height(Diagram d, const size_t h, MergeesChoiceStrate
 /// @tparam height The height of the diagram we want to reduce
 /// @param d The diagram we want to reduce
 template <size_t height>
-void algo1(Diagram d, std::array<size_t, height> maxNodes, MergeesChoiceStrategy strategy)
+void algo1(Diagram *d, std::array<size_t, height> maxNodes, MergeesChoiceStrategy strategy)
 {
     for (size_t i = 0; i < height; i++)
     {
-        while (d.count_nodes_at_height(i) > maxNodes[i])
+        while (d->count_nodes_at_height(i) > maxNodes[i])
         {
             force_merge_at_height(d, i, strategy);
         }

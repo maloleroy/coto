@@ -21,7 +21,7 @@ TEST_F(SelectionTest, Random)
     EXPECT_EQ(dgm->count_nodes_at_height(1), 2);
 
     struct selection::Mergees expectedMergees{eig0, eig1};
-    struct selection::Mergees m = selection::get_mergees_at_height(1, *dgm, selection::MergeesChoiceStrategy::RANDOM);
+    struct selection::Mergees m = selection::get_mergees_at_height(1, dgm, selection::MergeesChoiceStrategy::RANDOM);
 
     EXPECT_EQ(m.a->height, eig0->height);
     EXPECT_EQ(m.b->height, eig0->height);

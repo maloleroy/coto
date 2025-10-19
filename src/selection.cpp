@@ -33,14 +33,14 @@ void get_mergees_with_min_nodes(std::vector<Diagram *> candidates, selection::Me
     throw std::runtime_error("Not implemented");
 }
 
-selection::Mergees selection::get_mergees_at_height(const size_t h, Diagram &d, MergeesChoiceStrategy strategy)
+selection::Mergees selection::get_mergees_at_height(const size_t h, const Diagram *d, MergeesChoiceStrategy strategy)
 {
     if (h == 0)
     {
         throw std::invalid_argument("0-height diagrams have no mergees");
     }
     struct Mergees result;
-    std::vector<Diagram *> candidates = d.get_node_pointers_at_height(h);
+    std::vector<Diagram *> candidates = d->get_node_pointers_at_height(h);
     switch (strategy)
     {
     case RANDOM:

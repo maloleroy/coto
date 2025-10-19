@@ -98,7 +98,7 @@ namespace diagram
         size_t count_nodes_at_height(size_t h);
 
         /// @brief Get all nodes at a given height
-        std::vector<Diagram *> get_node_pointers_at_height(const size_t h);
+        std::vector<Diagram *> get_node_pointers_at_height(const size_t h) const;
 
         /// @brief Replace nodes @p f1 and @p f2 by @p r at a given height
         void replace_nodes_at_height(const size_t h, Diagram *f1, Diagram *f2, Diagram *r);

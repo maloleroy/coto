@@ -5,16 +5,17 @@
 #pragma once
 #include <diagram.h>
 
-namespace selection {
+namespace selection
+{
     using diagram::Diagram;
-      /**
+    /**
      * @brief Enumeration of strategies for choosing mergees.
      */
     enum MergeesChoiceStrategy
     {
-        RANDOM,         /**< Randomly choose mergees. */
-        MAX_AMPLITUDE,  /**< Choose mergees with maximum amplitude. */
-        MIN_AMPLITUDE,  /**< Choose mergees with minimum amplitude. */
+        RANDOM,        /**< Randomly choose mergees. */
+        MAX_AMPLITUDE, /**< Choose mergees with maximum amplitude. */
+        MIN_AMPLITUDE, /**< Choose mergees with minimum amplitude. */
         MAX_NODES,     /**< Choose mergees with maximum number of nodes. */
         MIN_NODES      /**< Choose mergees with minimum number of nodes. */
     };
@@ -25,10 +26,10 @@ namespace selection {
      */
     struct Mergees
     {
-        Diagram* a;
-        Diagram* b;
+        Diagram *a;
+        Diagram *b;
 
-        bool operator==(const Mergees& m) const noexcept
+        bool operator==(const Mergees &m) const noexcept
         {
             return (a == m.a && b == m.b) || (a == m.b && b == m.a);
         }
@@ -43,5 +44,5 @@ namespace selection {
      * @param strategy The strategy to use for choosing the mergees.
      * @return struct Mergees<h> The Mergees.
      */
-    Mergees get_mergees_at_height(const size_t h, Diagram& d, MergeesChoiceStrategy strategy);
+    Mergees get_mergees_at_height(const size_t h, const Diagram *d, MergeesChoiceStrategy strategy);
 };

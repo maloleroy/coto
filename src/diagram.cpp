@@ -160,7 +160,7 @@ size_t Diagram::count_nodes_at_height(size_t h)
 }
 
 // TODO: Implement this function in-place, not by copying vectors
-std::vector<Diagram *> Diagram::get_node_pointers_at_height(const size_t h)
+std::vector<Diagram *> Diagram::get_node_pointers_at_height(const size_t h) const
 {
     std::vector<Diagram *> nodes;
     if (h > height)
@@ -169,7 +169,7 @@ std::vector<Diagram *> Diagram::get_node_pointers_at_height(const size_t h)
     }
     if (h == height)
     {
-        nodes.push_back(this);
+        nodes.push_back(const_cast<Diagram *>(this));
         return nodes;
     }
     for (Branch b : left)
