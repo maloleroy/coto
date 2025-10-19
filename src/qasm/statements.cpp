@@ -11,22 +11,20 @@
 
 bool is_valid_identifier(string identifier)
 {
-    bool is_first_char = true;
-    for (char c : identifier)
+    if (identifier.empty())
+        return false;
+
+    // First character must be a letter or underscore
+    char first = identifier[0];
+    if (!((first >= 'a' && first <= 'z') || (first >= 'A' && first <= 'Z') || first == '_'))
+        return false;
+
+    // Subsequent characters can be letters, digits, or underscores
+    for (size_t i = 1; i < identifier.length(); i++)
     {
-        if (c < 'A' || c > 'z')
-        {
-            if (c == '_')
-            {
-                continue;
-            }
-            if (!is_first_char && c > '0' && c < '9')
-            {
-                continue;
-            }
+        char c = identifier[i];
+        if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_'))
             return false;
-        }
-        is_first_char = false;
     }
     return true;
 }
