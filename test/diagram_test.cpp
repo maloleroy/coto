@@ -14,7 +14,7 @@ public:
     Diagram *dgm = new Diagram(2);
 };
 
-TEST_F(DiagramTest, testStateVector)
+TEST_F(DiagramTest, state_vector_consistency)
 {
     for (auto i = 0; i < 100; i++)
     {
@@ -30,7 +30,7 @@ TEST_F(DiagramTest, testStateVector)
     }
 }
 
-TEST_F(DiagramTest, testEvaluate)
+TEST_F(DiagramTest, evaluate)
 {
     eig0->lefto(leaf);
     dgm->lefto(eig0);
@@ -41,7 +41,7 @@ TEST_F(DiagramTest, testEvaluate)
     EXPECT_EQ(absi::zero, c);
 }
 
-TEST_F(DiagramTest, doubleEvaluation)
+TEST_F(DiagramTest, double_evaluation)
 {
     auto d = Diagram::random(3);
     auto v1 = d->evaluate(), v2 = d->evaluate();
@@ -75,7 +75,7 @@ TEST_F(DiagramTest, build)
     EXPECT_EQ(absi::zero, vec[3]) << vec[3].to_string();
 }
 
-TEST_F(DiagramTest, testClone)
+TEST_F(DiagramTest, cloning)
 {
     eig0->lefto(leaf);
     dgm->lefto(eig0);
