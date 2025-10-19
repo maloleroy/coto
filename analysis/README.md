@@ -6,3 +6,7 @@ This analysis focuses on three metrics:
 - Memory usage
 - Computing time
 - Fidelity
+
+## Implementation Details
+
+- QASMBench is QASM 2, and we support a subset of QASM 3, so we have a in-house compatibility layer to translate between the two versions
