@@ -1,5 +1,6 @@
 #include <iostream>
 #include <functional>
+#include <cstdlib>
 #include <qasm.h>
 #include <qasm/error.h>
 
@@ -18,11 +19,25 @@ bool is_quit_line(const std::string &line);
 
 /// @brief Try to execute a function and catch any exceptions, returning a default value if an exception occurs
 template <typename T>
-T try_catch_qasm(const std::function<T()> &func, T default_value); // Changed: T default_value (by value)
+T try_catch_qasm(const std::function<T()> &func, T default_value, bool interactive = false); // Changed: T default_value (by value)
+
+// Global flag to track if we're in interactive mode
+bool g_interactive_mode = false;
 
 int main(int argc, char *argv[])
 {
-    if (argc > 1)
+    // Check for interactive flag
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string arg = argv[i];
+        if (arg == "-i" || arg == "--interactive")
+        {
+            g_interactive_mode = true;
+            break;
+        }
+    }
+
+    if (argc > 1 && argv[1][0] != '-')
     {
         return try_catch_qasm<int>(
             [&]()
@@ -30,7 +45,8 @@ int main(int argc, char *argv[])
                 qasm::fexec(argv[1]);
                 return 0;
             },
-            1);
+            1,
+            g_interactive_mode);
     }
     else
     {
@@ -41,7 +57,10 @@ int main(int argc, char *argv[])
 
 void interpreter_main_loop()
 {
-    std::cout << "Coto QASM Interpreter" << std::endl;
+    if (g_interactive_mode)
+    {
+        std::cout << "Coto QASM Interpreter" << std::endl;
+    }
     print_prompt();
     for (std::string line; std::getline(std::cin, line);)
     {
@@ -55,7 +74,10 @@ void interpreter_main_loop()
 
 void print_prompt()
 {
-    std::cout << "| " << std::flush;
+    if (g_interactive_mode)
+    {
+        std::cout << "| " << std::flush;
+    }
 }
 
 void print_result(const std::string &result)
@@ -67,7 +89,7 @@ void print_result(const std::string &result)
 }
 
 template <typename T>
-T try_catch_qasm(const std::function<T()> &func, T default_value) // Changed: T default_value (by value)
+T try_catch_qasm(const std::function<T()> &func, T default_value, bool interactive)
 {
     try
     {
@@ -76,17 +98,25 @@ T try_catch_qasm(const std::function<T()> &func, T default_value) // Changed: T 
     catch (const SyntaxError &e)
     {
         std::cerr << "Syntax error: " << e.what() << '\n';
+        if (!interactive)
+        {
+            std::exit(1);
+        }
         return std::move(default_value); // Changed: std::move
     }
     catch (const std::runtime_error &e)
     {
         std::cerr << "Execution error: " << e.what() << '\n';
+        if (!interactive)
+        {
+            std::exit(1);
+        }
         return std::move(default_value); // Changed: std::move
     }
 }
 
 // Overload for void return type, no default value needed
-void try_catch_qasm(const std::function<void()> &func)
+void try_catch_qasm(const std::function<void()> &func, bool interactive)
 {
     try_catch_qasm<bool>(
         [&]() -> bool
@@ -94,7 +124,8 @@ void try_catch_qasm(const std::function<void()> &func)
             func();
             return true;
         },
-        false);
+        false,
+        interactive);
 }
 
 bool process_line(const std::string &line)
@@ -104,7 +135,8 @@ bool process_line(const std::string &line)
         {
             return qasm::exec(line);
         },
-        qasm::exec("")); // This is an rvalue, fine for by-value parameter
+        qasm::exec(""),
+        g_interactive_mode); // This is an rvalue, fine for by-value parameter
 
     static bool is_first_line = true;
     if (is_first_line)
@@ -121,14 +153,16 @@ bool process_line(const std::string &line)
     {
         try_catch_qasm(
             [&]()
-            { runtime = runtime.exec(line); });
+            { runtime = runtime.exec(line); },
+            g_interactive_mode);
         return false;
     }
     print_result(
         try_catch_qasm<std::string>(
             [&]()
             { return runtime.eval(line); },
-            ""));
+            "",
+            g_interactive_mode));
     return false;
 }
 
