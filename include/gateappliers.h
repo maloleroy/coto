@@ -57,4 +57,71 @@ namespace gateappliers
 
     // Matrix application helper
     void apply_gate_matrix(Diagram *d, qubit q, const GateMatrix &m);
+
+    // Internal helper for swapping qubits to make them consecutive and applying gates
+    namespace internal
+    {
+        // Helper to perform SWAPs to make two qubits consecutive, then apply a gate function
+        template <typename GateFunc>
+        void apply_gate_with_swaps(Diagram *d, qubit a, qubit b, GateFunc gate_func)
+        {
+            if (a > b)
+                std::swap(a, b);
+
+            // Bring qubits a and b to be consecutive by swapping b towards a
+            std::vector<qubit> swap_sequence;
+            for (qubit i = b; i > a + 1; i--)
+            {
+                swap_sequence.push_back(i - 1);
+                apply_swap(d, i - 1, i);
+            }
+
+            // Now a and a+1 are the qubits we want to work with
+            gate_func(d, a);
+
+            // Reverse the swaps to restore the original layout
+            for (auto it = swap_sequence.rbegin(); it != swap_sequence.rend(); ++it)
+            {
+                apply_swap(d, *it, *it + 1);
+            }
+        }
+
+        // Similar helper for three qubits
+        template <typename GateFunc>
+        void apply_gate_with_swaps_three(Diagram *d, qubit a, qubit b, qubit c, GateFunc gate_func)
+        {
+            // Sort the qubits to find min, mid, max
+            std::vector<qubit> qubits = {a, b, c};
+            std::sort(qubits.begin(), qubits.end());
+            qubit min_q = qubits[0];
+            qubit mid_q = qubits[1];
+            qubit max_q = qubits[2];
+
+            std::vector<std::pair<qubit, qubit>> swap_sequence;
+
+            // Bring all qubits to be consecutive starting at min_q
+            // First, move max_q to min_q + 2
+            for (qubit i = max_q; i > min_q + 2; i--)
+            {
+                swap_sequence.push_back({i - 1, i});
+                apply_swap(d, i - 1, i);
+            }
+
+            // Then, move mid_q to min_q + 1
+            for (qubit i = mid_q; i > min_q + 1; i--)
+            {
+                swap_sequence.push_back({i - 1, i});
+                apply_swap(d, i - 1, i);
+            }
+
+            // Now min_q, min_q+1, min_q+2 are consecutive
+            gate_func(d, min_q);
+
+            // Reverse the swaps to restore the original layout
+            for (auto it = swap_sequence.rbegin(); it != swap_sequence.rend(); ++it)
+            {
+                apply_swap(d, it->first, it->second);
+            }
+        }
+    }
 }

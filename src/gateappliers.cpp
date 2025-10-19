@@ -1,5 +1,6 @@
 #include <gateappliers.h>
 #include <cmath>
+#include <algorithm>
 
 using diagram::Diagram;
 
@@ -187,11 +188,27 @@ void gateappliers::apply_swap(Diagram *d, qubit a, qubit b)
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
 
-    if (b != a + 1)
+    if (b == a + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else if (a == b + 1)
+    {
+        apply_gate_matrix(d, b, gm);
+    }
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps(d, a, b, [](Diagram *d, qubit q)
+                                        {
+            static const absi::Interval coeffs[] = {
+                1, 0, 0, 0,
+                0, 0, 1, 0,
+                0, 1, 0, 0,
+                0, 0, 0, 1};
+            static const gateappliers::GateMatrix gm(2, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 void gateappliers::apply_cx(Diagram *d, qubit a, qubit b)
@@ -205,11 +222,27 @@ void gateappliers::apply_cx(Diagram *d, qubit a, qubit b)
     static const gateappliers::GateMatrix gm(2, coeffs);
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
-    if (b != a + 1)
+    if (b == a + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else if (a == b + 1)
+    {
+        apply_gate_matrix(d, b, gm);
+    }
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps(d, a, b, [](Diagram *d, qubit q)
+                                        {
+            static const absi::Interval coeffs[] = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 0, 1,
+                0, 0, 1, 0};
+            static const gateappliers::GateMatrix gm(2, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 void gateappliers::apply_cy(Diagram *d, qubit a, qubit b)
@@ -223,11 +256,27 @@ void gateappliers::apply_cy(Diagram *d, qubit a, qubit b)
     static const gateappliers::GateMatrix gm(2, coeffs);
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
-    if (b != a + 1)
+    if (b == a + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else if (a == b + 1)
+    {
+        apply_gate_matrix(d, b, gm);
+    }
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps(d, a, b, [](Diagram *d, qubit q)
+                                        {
+            static const absi::Interval coeffs[] = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 0, -ampl::i,
+                0, 0, ampl::i, 0};
+            static const gateappliers::GateMatrix gm(2, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 void gateappliers::apply_cz(Diagram *d, qubit a, qubit b)
@@ -241,11 +290,27 @@ void gateappliers::apply_cz(Diagram *d, qubit a, qubit b)
     static const gateappliers::GateMatrix gm(2, coeffs);
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
-    if (b != a + 1)
+    if (b == a + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else if (a == b + 1)
+    {
+        apply_gate_matrix(d, b, gm);
+    }
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps(d, a, b, [](Diagram *d, qubit q)
+                                        {
+            static const absi::Interval coeffs[] = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, -1};
+            static const gateappliers::GateMatrix gm(2, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 void gateappliers::apply_ch(Diagram *d, qubit a, qubit b)
@@ -259,11 +324,27 @@ void gateappliers::apply_ch(Diagram *d, qubit a, qubit b)
     static const gateappliers::GateMatrix gm(2, coeffs);
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
-    if (b != a + 1)
+    if (b == a + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else if (a == b + 1)
+    {
+        apply_gate_matrix(d, b, gm);
+    }
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps(d, a, b, [](Diagram *d, qubit q)
+                                        {
+            static const absi::Interval coeffs[] = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, ampl::inv_sqrt2, ampl::inv_sqrt2,
+                0, 0, ampl::inv_sqrt2, -ampl::inv_sqrt2};
+            static const gateappliers::GateMatrix gm(2, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 // ========== Controlled rotation gates ==========
@@ -280,11 +361,28 @@ void gateappliers::apply_cp(Diagram *d, qubit a, qubit b, double theta)
     static const gateappliers::GateMatrix gm(2, coeffs);
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
-    if (b != a + 1)
+    if (b == a + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else if (a == b + 1)
+    {
+        apply_gate_matrix(d, b, gm);
+    }
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps(d, a, b, [theta](Diagram *d, qubit q)
+                                        {
+            const auto exp_itheta = absi::Interval(ampl::Amplitude(std::cos(theta), std::sin(theta)));
+            const absi::Interval coeffs[] = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, exp_itheta};
+            static const gateappliers::GateMatrix gm(2, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 void gateappliers::apply_crx(Diagram *d, qubit a, qubit b, double theta)
@@ -303,11 +401,32 @@ void gateappliers::apply_crx(Diagram *d, qubit a, qubit b, double theta)
     static const gateappliers::GateMatrix gm(2, coeffs);
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
-    if (b != a + 1)
+    if (b == a + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else if (a == b + 1)
+    {
+        apply_gate_matrix(d, b, gm);
+    }
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps(d, a, b, [theta](Diagram *d, qubit q)
+                                        {
+            double half_theta = theta / 2.0;
+            double cos_val = std::cos(half_theta);
+            double sin_val = std::sin(half_theta);
+            const absi::Interval c(cos_val);
+            const absi::Interval s(ampl::Amplitude(0.0, -sin_val));
+            const absi::Interval coeffs[] = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, c, s,
+                0, 0, s, c};
+            static const gateappliers::GateMatrix gm(2, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 void gateappliers::apply_cry(Diagram *d, qubit a, qubit b, double theta)
@@ -327,11 +446,33 @@ void gateappliers::apply_cry(Diagram *d, qubit a, qubit b, double theta)
     static const gateappliers::GateMatrix gm(2, coeffs);
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
-    if (b != a + 1)
+    if (b == a + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else if (a == b + 1)
+    {
+        apply_gate_matrix(d, b, gm);
+    }
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps(d, a, b, [theta](Diagram *d, qubit q)
+                                        {
+            double half_theta = theta / 2.0;
+            double cos_val = std::cos(half_theta);
+            double sin_val = std::sin(half_theta);
+            const absi::Interval c(cos_val);
+            const absi::Interval s(sin_val);
+            const absi::Interval ms(-sin_val);
+            const absi::Interval coeffs[] = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, c, ms,
+                0, 0, s, c};
+            static const gateappliers::GateMatrix gm(2, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 void gateappliers::apply_crz(Diagram *d, qubit a, qubit b, double theta)
@@ -347,11 +488,29 @@ void gateappliers::apply_crz(Diagram *d, qubit a, qubit b, double theta)
     static const gateappliers::GateMatrix gm(2, coeffs);
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
-    if (b != a + 1)
+    if (b == a + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else if (a == b + 1)
+    {
+        apply_gate_matrix(d, b, gm);
+    }
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps(d, a, b, [theta](Diagram *d, qubit q)
+                                        {
+            const auto exp_itheta_half = absi::Interval(ampl::Amplitude(std::cos(theta / 2.0), std::sin(theta / 2.0)));
+            const auto exp_mitheta_half = absi::Interval(ampl::Amplitude(std::cos(theta / 2.0), -std::sin(theta / 2.0)));
+            const absi::Interval coeffs[] = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, exp_mitheta_half, 0,
+                0, 0, 0, exp_itheta_half};
+            static const gateappliers::GateMatrix gm(2, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 void gateappliers::apply_cu(Diagram *d, qubit a, qubit b, double theta, double phi, double lambda)
@@ -375,11 +534,37 @@ void gateappliers::apply_cu(Diagram *d, qubit a, qubit b, double theta, double p
     static const gateappliers::GateMatrix gm(2, coeffs);
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
-    if (b != a + 1)
+    if (b == a + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else if (a == b + 1)
+    {
+        apply_gate_matrix(d, b, gm);
+    }
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps(d, a, b, [theta, phi, lambda](Diagram *d, qubit q)
+                                        {
+            double half_theta = theta / 2.0;
+            double cos_val = std::cos(half_theta);
+            double sin_val = std::sin(half_theta);
+
+            const absi::Interval c(cos_val);
+            const absi::Interval s(sin_val);
+            const absi::Interval exp_ilambda(ampl::Amplitude(std::cos(lambda), std::sin(lambda)));
+            const absi::Interval exp_iphi(ampl::Amplitude(std::cos(phi), std::sin(phi)));
+            const absi::Interval exp_iphilambda(ampl::Amplitude(std::cos(phi + lambda), std::sin(phi + lambda)));
+
+            const absi::Interval coeffs[] = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, c, exp_ilambda * s * ampl::Amplitude(-1.0, 0.0),
+                0, 0, exp_iphi * s, exp_iphilambda * c};
+            static const gateappliers::GateMatrix gm(2, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 // ========== Three-qubit gates ==========
@@ -402,11 +587,27 @@ void gateappliers::apply_ccx(Diagram *d, qubit a, qubit b, qubit c)
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
     assert_qubit_is_valid(d, c);
-    if (b != a + 1 || c != b + 1)
+    if (b == a + 1 && c == b + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps_three(d, a, b, c, [](Diagram *d, qubit q)
+                                              {
+            static const absi::Interval coeffs[] = {
+                1, 0, 0, 0, 0, 0, 0, 0,
+                0, 1, 0, 0, 0, 0, 0, 0,
+                0, 0, 1, 0, 0, 0, 0, 0,
+                0, 0, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 0, 1, 0, 0, 0,
+                0, 0, 0, 0, 0, 1, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 1,
+                0, 0, 0, 0, 0, 0, 1, 0};
+            static const gateappliers::GateMatrix gm(3, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 void gateappliers::apply_cswap(Diagram *d, qubit a, qubit b, qubit c)
@@ -426,11 +627,27 @@ void gateappliers::apply_cswap(Diagram *d, qubit a, qubit b, qubit c)
     assert_qubit_is_valid(d, a);
     assert_qubit_is_valid(d, b);
     assert_qubit_is_valid(d, c);
-    if (b != a + 1 || c != b + 1)
+    if (b == a + 1 && c == b + 1)
     {
-        throw std::runtime_error("Gate applying on non-contiguous qubits is not implemented yet");
+        apply_gate_matrix(d, a, gm);
     }
-    apply_gate_matrix(d, a, gm);
+    else
+    {
+        // Use helper to bring qubits together
+        internal::apply_gate_with_swaps_three(d, a, b, c, [](Diagram *d, qubit q)
+                                              {
+            static const absi::Interval coeffs[] = {
+                1, 0, 0, 0, 0, 0, 0, 0,
+                0, 1, 0, 0, 0, 0, 0, 0,
+                0, 0, 1, 0, 0, 0, 0, 0,
+                0, 0, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 1, 0, 0,
+                0, 0, 0, 0, 1, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 1,
+                0, 0, 0, 0, 0, 0, 1, 0};
+            static const gateappliers::GateMatrix gm(3, coeffs);
+            apply_gate_matrix(d, q, gm); });
+    }
 }
 
 // ========== Universal single-qubit gate ==========
