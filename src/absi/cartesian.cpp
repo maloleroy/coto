@@ -15,6 +15,12 @@ Interval::Interval(const ampl::Real value) : bottom_left{value}, top_right{value
 
 Interval::Interval(const ampl::Amplitude z) : bottom_left{z}, top_right{z} {};
 
+Interval Interval::exp_2ipi_over(int n)
+{
+    ampl::Amplitude x = std::polar(1.0, 2.0 * M_PI / n);
+    return Interval(x);
+}
+
 bool Interval::operator==(const Interval &other) const
 {
     return (bottom_left == other.bottom_left) && (top_right == other.top_right);

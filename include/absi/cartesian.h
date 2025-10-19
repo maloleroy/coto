@@ -46,6 +46,8 @@ namespace cartesian
             : bottom_left(ampl::Amplitude(a, b)),
               top_right(ampl::Amplitude(c, d)) {};
 
+        [[nodiscard]] static Interval exp_2ipi_over(int n);
+
         /// @brief Tests if two intervals are equal
         /// @return True if other is equal to the interval, false otherwise.
         bool operator==(const Interval &other) const;
