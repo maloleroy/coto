@@ -136,6 +136,16 @@ Branches *&#160;</td><td class="memItemRight" valign="bottom"><b>children_of_sid
 <tr class="memitem:a90581448813b65051d32222e10e5a5f7" id="r_a90581448813b65051d32222e10e5a5f7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdiagram_1_1Diagram.html#a90581448813b65051d32222e10e5a5f7">clone</a> () const</td></tr>
 <tr class="memdesc:a90581448813b65051d32222e10e5a5f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone the diagram.  <br /></td></tr>
 <tr class="separator:a90581448813b65051d32222e10e5a5f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9069db885a295ae1996c9142a44f331" id="r_ad9069db885a295ae1996c9142a44f331"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdiagram_1_1Diagram.html#ad9069db885a295ae1996c9142a44f331">replace_contents</a> (<a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *replacement)</td></tr>
+<tr class="memdesc:ad9069db885a295ae1996c9142a44f331"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace this node's children with those of an equal-height node.  <br /></td></tr>
+<tr class="separator:ad9069db885a295ae1996c9142a44f331"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f5e09e0ea4eaeda58bf5e2318c547fb" id="r_a2f5e09e0ea4eaeda58bf5e2318c547fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdiagram_1_1Diagram.html#a2f5e09e0ea4eaeda58bf5e2318c547fb">remove_dead_children</a> ()</td></tr>
+<tr class="memdesc:a2f5e09e0ea4eaeda58bf5e2318c547fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove direct children that represent the empty diagram.  <br /></td></tr>
+<tr class="separator:a2f5e09e0ea4eaeda58bf5e2318c547fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e557319dc7b036084b7767ff64efb43" id="r_a4e557319dc7b036084b7767ff64efb43"><td class="memItemLeft" align="right" valign="top"><a id="a4e557319dc7b036084b7767ff64efb43" name="a4e557319dc7b036084b7767ff64efb43"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>mark_modified</b> ()</td></tr>
+<tr class="memdesc:a4e557319dc7b036084b7767ff64efb43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invalidate cached summaries after an in-place mutation. <br /></td></tr>
+<tr class="separator:a4e557319dc7b036084b7767ff64efb43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d775faaa0dd484517c2ef44b8312553" id="r_a2d775faaa0dd484517c2ef44b8312553"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdiagram_1_1Diagram.html#a2d775faaa0dd484517c2ef44b8312553">lefto</a> (<a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *d, const <a class="el" href="classcartesian_1_1Interval.html">Interval</a> &amp;x=absi::one)</td></tr>
 <tr class="memdesc:a2d775faaa0dd484517c2ef44b8312553"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add <code>d</code> to be a left child with amplitude <code>x</code>.  <br /></td></tr>
 <tr class="separator:a2d775faaa0dd484517c2ef44b8312553"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -204,6 +214,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>mark_parents_as_to_be
 void&#160;</td><td class="memItemRight" valign="bottom"><b>forget_child</b> (<a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *d) noexcept</td></tr>
 <tr class="memdesc:a3b9f93629b237012cb9f3985164c002a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forget a child. <br /></td></tr>
 <tr class="separator:a3b9f93629b237012cb9f3985164c002a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fe2946e2920bb763972918731b90a22" id="r_a7fe2946e2920bb763972918731b90a22"><td class="memItemLeft" align="right" valign="top"><a id="a7fe2946e2920bb763972918731b90a22" name="a7fe2946e2920bb763972918731b90a22"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>remove_parent</b> (<a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *parent) noexcept</td></tr>
+<tr class="separator:a7fe2946e2920bb763972918731b90a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4d7144111990d762e054c8f70c6d2dc" id="r_ad4d7144111990d762e054c8f70c6d2dc"><td class="memItemLeft" align="right" valign="top"><a id="ad4d7144111990d762e054c8f70c6d2dc" name="ad4d7144111990d762e054c8f70c6d2dc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>add_parent</b> (<a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *parent)</td></tr>
+<tr class="separator:ad4d7144111990d762e054c8f70c6d2dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec8e8bc446ec215ff24a4e6c632b9128" id="r_aec8e8bc446ec215ff24a4e6c632b9128"><td class="memItemLeft" align="right" valign="top"><a id="aec8e8bc446ec215ff24a4e6c632b9128" name="aec8e8bc446ec215ff24a4e6c632b9128"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>release_children</b> () noexcept</td></tr>
+<tr class="separator:aec8e8bc446ec215ff24a4e6c632b9128"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -354,6 +373,47 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_up_to_date</b> = f
 
 </div>
 </div>
+<a id="a2f5e09e0ea4eaeda58bf5e2318c547fb" name="a2f5e09e0ea4eaeda58bf5e2318c547fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f5e09e0ea4eaeda58bf5e2318c547fb">&#9670;&#160;</a></span>remove_dead_children()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void diagram::Diagram::remove_dead_children </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove direct children that represent the empty diagram. </p>
+<p>Height-zero nodes are terminal leaves and are never considered empty. </p>
+
+</div>
+</div>
+<a id="ad9069db885a295ae1996c9142a44f331" name="ad9069db885a295ae1996c9142a44f331"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9069db885a295ae1996c9142a44f331">&#9670;&#160;</a></span>replace_contents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void diagram::Diagram::replace_contents </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *&#160;</td>
+          <td class="paramname"><em>replacement</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace this node's children with those of an equal-height node. </p>
+<p>Ownership of <code>replacement</code> is consumed. </p>
+
+</div>
+</div>
 <a id="a3af2b010d164025b957c4d2b7fca7b89" name="a3af2b010d164025b957c4d2b7fca7b89"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3af2b010d164025b957c4d2b7fca7b89">&#9670;&#160;</a></span>righto()</h2>
 
@@ -409,7 +469,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_up_to_date</b> = f
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

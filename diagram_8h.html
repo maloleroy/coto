@@ -95,9 +95,9 @@ $(document).ready(function(){initNavTree('diagram_8h.html',''); initResizable();
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">diagram.h File Reference</div></div>
 </div><!--header-->
@@ -106,6 +106,8 @@ $(document).ready(function(){initNavTree('diagram_8h.html',''); initResizable();
 <p>Abstract-interpreted additive diagrams.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;vector&gt;</code><br />
+<code>#include &lt;limits&gt;</code><br />
+<code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;<a class="el" href="absi_8h_source.html">absi.h</a>&gt;</code><br />
 <code>#include &lt;amplitude.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -113,30 +115,34 @@ Include dependency graph for diagram.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="diagram_8h__incl.png" border="0" usemap="#ainclude_2diagram_8h" alt=""/></div>
 <map name="ainclude_2diagram_8h" id="ainclude_2diagram_8h">
-<area shape="rect" title="Abstract&#45;interpreted additive diagrams." alt="" coords="70,5,209,31"/>
-<area shape="rect" title=" " alt="" coords="35,299,97,324"/>
-<area shape="poly" title=" " alt="" coords="123,33,96,53,65,80,35,114,13,153,9,171,9,197,12,225,19,250,30,270,45,287,41,290,26,273,14,252,7,226,3,197,3,171,8,151,31,111,61,76,93,48,120,29"/>
-<area shape="rect" href="absi_8h.html" title="This file includes the necessary headers for working with ABStract Interpretation." alt="" coords="109,79,170,104"/>
-<area shape="poly" title=" " alt="" coords="142,31,142,65,137,65,137,31"/>
-<area shape="rect" href="amplitude_8h_source.html" title=" " alt="" coords="200,225,300,251"/>
-<area shape="poly" title=" " alt="" coords="161,28,191,48,226,75,259,110,284,151,288,168,285,185,271,215,266,213,280,183,283,168,280,153,255,113,222,79,188,52,158,33"/>
-<area shape="rect" href="polar_8h_source.html" title=" " alt="" coords="23,152,120,177"/>
-<area shape="poly" title=" " alt="" coords="130,106,94,144,90,140,126,102"/>
-<area shape="rect" href="cartesian_8h_source.html" title=" " alt="" coords="145,152,270,177"/>
-<area shape="poly" title=" " alt="" coords="153,102,189,140,185,144,149,106"/>
-<area shape="rect" title=" " alt="" coords="29,225,97,251"/>
-<area shape="poly" title=" " alt="" coords="73,178,69,212,64,212,67,177"/>
-<area shape="poly" title=" " alt="" coords="101,175,209,218,207,223,99,180"/>
-<area shape="poly" title=" " alt="" coords="221,253,110,296,108,291,219,248"/>
-<area shape="rect" title=" " alt="" coords="265,299,344,324"/>
-<area shape="poly" title=" " alt="" coords="261,249,290,286,285,289,257,253"/>
-<area shape="rect" href="powarray_8h_source.html" title=" " alt="" coords="147,299,241,324"/>
-<area shape="poly" title=" " alt="" coords="243,253,214,289,209,286,239,249"/>
-<area shape="rect" title=" " alt="" coords="155,372,233,397"/>
-<area shape="poly" title=" " alt="" coords="197,324,197,358,191,358,191,324"/>
-<area shape="poly" title=" " alt="" coords="217,176,238,212,234,215,212,179"/>
-<area shape="rect" title=" " alt="" coords="121,225,176,251"/>
-<area shape="poly" title=" " alt="" coords="200,179,169,217,165,213,196,176"/>
+<area shape="rect" title="Abstract&#45;interpreted additive diagrams." alt="" coords="240,5,379,31"/>
+<area shape="rect" title=" " alt="" coords="37,299,100,324"/>
+<area shape="poly" title=" " alt="" coords="241,31,182,45,119,68,89,84,60,104,35,127,15,153,10,168,8,191,12,219,21,250,33,270,47,287,43,290,28,273,16,252,7,220,3,191,4,167,10,151,31,123,57,100,86,80,117,64,180,40,239,26"/>
+<area shape="rect" title=" " alt="" coords="347,79,406,104"/>
+<area shape="poly" title=" " alt="" coords="323,29,358,67,354,70,319,33"/>
+<area shape="rect" title=" " alt="" coords="430,79,517,104"/>
+<area shape="poly" title=" " alt="" coords="337,28,436,71,433,76,335,33"/>
+<area shape="rect" href="absi_8h.html" title="This file includes the necessary headers for working with ABStract Interpretation." alt="" coords="179,79,240,104"/>
+<area shape="poly" title=" " alt="" coords="295,33,239,73,235,68,292,29"/>
+<area shape="rect" href="amplitude_8h_source.html" title=" " alt="" coords="202,225,302,251"/>
+<area shape="poly" title=" " alt="" coords="312,31,305,94,298,136,287,178,270,214,265,212,282,176,293,135,300,94,306,30"/>
+<area shape="rect" href="polar_8h_source.html" title=" " alt="" coords="25,152,122,177"/>
+<area shape="poly" title=" " alt="" coords="189,106,109,148,107,143,187,102"/>
+<area shape="rect" href="cartesian_8h_source.html" title=" " alt="" coords="147,152,272,177"/>
+<area shape="poly" title=" " alt="" coords="212,104,212,138,207,138,207,104"/>
+<area shape="rect" title=" " alt="" coords="32,225,100,251"/>
+<area shape="poly" title=" " alt="" coords="75,178,71,212,66,212,70,177"/>
+<area shape="poly" title=" " alt="" coords="103,175,212,218,210,223,101,180"/>
+<area shape="poly" title=" " alt="" coords="224,253,112,296,110,291,222,248"/>
+<area shape="rect" title=" " alt="" coords="268,299,346,324"/>
+<area shape="poly" title=" " alt="" coords="263,249,292,286,288,289,259,253"/>
+<area shape="rect" href="powarray_8h_source.html" title=" " alt="" coords="150,299,243,324"/>
+<area shape="poly" title=" " alt="" coords="245,253,216,289,212,286,241,249"/>
+<area shape="rect" title=" " alt="" coords="158,372,235,397"/>
+<area shape="poly" title=" " alt="" coords="199,324,199,358,194,358,194,324"/>
+<area shape="poly" title=" " alt="" coords="219,176,241,212,236,215,214,179"/>
+<area shape="rect" title=" " alt="" coords="124,225,178,251"/>
+<area shape="poly" title=" " alt="" coords="202,179,171,217,167,213,198,176"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -179,12 +185,6 @@ Namespaces</h2></td></tr>
 <tr class="memdesc:namespacediagram"><td class="mdescLeft">&#160;</td><td class="mdescRight">Namespace for the diagram module. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:adf4233e895924956f41805dc59b586ab" id="r_adf4233e895924956f41805dc59b586ab"><td class="memItemLeft" align="right" valign="top"><a id="adf4233e895924956f41805dc59b586ab" name="adf4233e895924956f41805dc59b586ab"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>pwrtwo</b>(x)&#160;&#160;&#160;(1 &lt;&lt; (x))</td></tr>
-<tr class="separator:adf4233e895924956f41805dc59b586ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:a87db0be7196c481faa9fe126933d185f" id="r_a87db0be7196c481faa9fe126933d185f"><td class="memItemLeft" align="right" valign="top"><a id="a87db0be7196c481faa9fe126933d185f" name="a87db0be7196c481faa9fe126933d185f"></a>
@@ -201,6 +201,12 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:a71d1699d5fba4fddea1e93f6093c4dc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration of sides of a diagram. <br /></td></tr>
 <tr class="separator:a71d1699d5fba4fddea1e93f6093c4dc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a6e300f272e1040afecbbcc373861464f" id="r_a6e300f272e1040afecbbcc373861464f"><td class="memItemLeft" align="right" valign="top"><a id="a6e300f272e1040afecbbcc373861464f" name="a6e300f272e1040afecbbcc373861464f"></a>
+constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>pwrtwo</b> (std::size_t exponent)</td></tr>
+<tr class="separator:a6e300f272e1040afecbbcc373861464f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
