@@ -4,10 +4,17 @@
  */
 #pragma once
 #include <vector>
+#include <limits>
+#include <stdexcept>
 #include <absi.h>
 #include <amplitude.h>
 
-#define pwrtwo(x) (1 << (x))
+constexpr std::size_t pwrtwo(std::size_t exponent)
+{
+    if (exponent >= std::numeric_limits<std::size_t>::digits)
+        throw std::overflow_error("Power of two does not fit in size_t");
+    return std::size_t{1} << exponent;
+}
 
 using absi::Interval;
 using std::size_t;
@@ -80,6 +87,17 @@ namespace diagram
         /// @return A new diagram with the same structure
         Diagram *clone() const;
 
+        /// @brief Replace this node's children with those of an equal-height node.
+        /// @details Ownership of @p replacement is consumed.
+        void replace_contents(Diagram *replacement);
+
+        /// @brief Remove direct children that represent the empty diagram.
+        /// @details Height-zero nodes are terminal leaves and are never considered empty.
+        void remove_dead_children();
+
+        /// @brief Invalidate cached summaries after an in-place mutation.
+        void mark_modified();
+
         /// @brief Add @p d to be a left child with amplitude @p x
         /// @param d The child
         /// @param x The amplitude
@@ -92,7 +110,10 @@ namespace diagram
 
         /// @brief The number of intervals contained in the evaluation
         /// @return 2 ^ @p height
-        constexpr size_t size() const;
+        constexpr size_t size() const
+        {
+            return pwrtwo(height);
+        }
 
         /// @brief The number of nodes at a given height
         size_t count_nodes_at_height(size_t h);
@@ -141,6 +162,12 @@ namespace diagram
 
         /// @brief Forget a child
         void forget_child(Diagram *d) noexcept;
+
+        void remove_parent(Diagram *parent) noexcept;
+
+        void add_parent(Diagram *parent);
+
+        void release_children() noexcept;
     };
 
     const size_t CHILDREN_NUMBER_AMBITION = 5;

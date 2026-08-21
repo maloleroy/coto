@@ -14,24 +14,7 @@ void reduction::cut_dead_branches(Diagram *d)
     for (size_t i = 1; i < d->height + 1; i++)
     {
         for (auto node : d->get_node_pointers_at_height(i))
-        {
-            for (auto i = 0; i < node->left.size(); i++)
-            {
-                if ((node->left[i]).d->left.size() == 0 && (node->left[i]).d->right.size() == 0)
-                {
-                    node->left.erase(node->left.begin() + i);
-                    delete (node->left[i]).d;
-                }
-            }
-            for (auto i = 0; i < node->right.size(); i++)
-            {
-                if ((node->right[i]).d->left.size() == 0 && (node->right[i]).d->right.size() == 0)
-                {
-                    node->right.erase(node->right.begin() + i);
-                    delete (node->right[i]).d;
-                }
-            }
-        }
+            node->remove_dead_children();
     }
 }
 
@@ -53,7 +36,6 @@ void reduction::max_nodes_level(Diagram *d, std::array<size_t, height> maxNodes,
     }
 }
 
-template <size_t height>
 static void force_merge_at_height(Diagram *d, const size_t h, MergeesChoiceStrategy strategy)
 {
     auto mergees = selection::get_mergees_at_height(h, d, strategy);
