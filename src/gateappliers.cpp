@@ -4,9 +4,14 @@
 
 using diagram::Diagram;
 
+static void apply_gate_to_qubits(
+    Diagram *diagram,
+    const std::vector<qubit> &operands,
+    const gateappliers::GateMatrix &matrix);
+
 static void assert_qubit_is_valid(Diagram *d, qubit q)
 {
-    if (d->height < q)
+    if (q >= d->height)
     {
         throw std::runtime_error("Invalid qubit: Trying to apply qubit " + std::to_string(q) + " to a diagram of height " + std::to_string(d->height));
     }
@@ -17,18 +22,11 @@ static void assert_qubit_is_valid(Diagram *d, qubit q)
 void gateappliers::apply_x(Diagram *d, qubit q)
 {
     assert_qubit_is_valid(d, q);
-    if (q == 0)
+    const auto target_height = d->height - q;
+    for (auto *node : d->get_node_pointers_at_height(target_height))
     {
-        std::swap(d->left, d->right);
-        return;
-    }
-    for (auto &g : d->left)
-    {
-        apply_x(g.d, q - 1);
-    }
-    for (auto &g : d->right)
-    {
-        apply_x(g.d, q - 1);
+        std::swap(node->left, node->right);
+        node->mark_modified();
     }
 }
 
@@ -114,7 +112,6 @@ void gateappliers::apply_tdg(Diagram *d, qubit q)
 void gateappliers::apply_sx(Diagram *d, qubit q)
 {
     // SX = (1/2) * [[1+i, 1-i], [1-i, 1+i]]
-    const auto half = ampl::Amplitude(0.5, 0.0);
     const auto one_pi = ampl::Amplitude(0.5, 0.5);
     const auto one_mi = ampl::Amplitude(0.5, -0.5);
     const absi::Interval coeffs[] = {
@@ -139,7 +136,7 @@ void gateappliers::apply_rx(Diagram *d, qubit q, double theta)
     const absi::Interval coeffs[] = {
         c, s,
         s, c};
-    static const gateappliers::GateMatrix gm(1, coeffs);
+    const gateappliers::GateMatrix gm(1, coeffs);
     assert_qubit_is_valid(d, q);
     apply_gate_matrix(d, q, gm);
 }
@@ -157,7 +154,7 @@ void gateappliers::apply_ry(Diagram *d, qubit q, double theta)
     const absi::Interval coeffs[] = {
         c, ms,
         s, c};
-    static const gateappliers::GateMatrix gm(1, coeffs);
+    const gateappliers::GateMatrix gm(1, coeffs);
     assert_qubit_is_valid(d, q);
     apply_gate_matrix(d, q, gm);
 }
@@ -165,11 +162,12 @@ void gateappliers::apply_ry(Diagram *d, qubit q, double theta)
 void gateappliers::apply_rz(Diagram *d, qubit q, double theta)
 {
     // RZ(θ) = [[exp(-i*θ/2), 0], [0, exp(i*θ/2)]]
-    const auto exp_val = absi::Interval(ampl::Amplitude(std::cos(theta / 2.0), std::sin(theta / 2.0)));
+    const auto exp_mitheta = absi::Interval(ampl::Amplitude(std::cos(theta / 2.0), -std::sin(theta / 2.0)));
+    const auto exp_itheta = absi::Interval(ampl::Amplitude(std::cos(theta / 2.0), std::sin(theta / 2.0)));
     const absi::Interval coeffs[] = {
-        exp_val * ampl::Amplitude(-1.0, 0.0), 0,
-        0, exp_val};
-    static const gateappliers::GateMatrix gm(1, coeffs);
+        exp_mitheta, 0,
+        0, exp_itheta};
+    const gateappliers::GateMatrix gm(1, coeffs);
     assert_qubit_is_valid(d, q);
     apply_gate_matrix(d, q, gm);
 }
@@ -185,30 +183,7 @@ void gateappliers::apply_swap(Diagram *d, qubit a, qubit b)
         0, 1, 0, 0,
         0, 0, 0, 1};
     static const gateappliers::GateMatrix gm(2, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-
-    if (b == a + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else if (a == b + 1)
-    {
-        apply_gate_matrix(d, b, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps(d, a, b, [](Diagram *d, qubit q)
-                                        {
-            static const absi::Interval coeffs[] = {
-                1, 0, 0, 0,
-                0, 0, 1, 0,
-                0, 1, 0, 0,
-                0, 0, 0, 1};
-            static const gateappliers::GateMatrix gm(2, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    apply_gate_to_qubits(d, {a, b}, gm);
 }
 
 void gateappliers::apply_cx(Diagram *d, qubit a, qubit b)
@@ -220,29 +195,7 @@ void gateappliers::apply_cx(Diagram *d, qubit a, qubit b)
         0, 0, 0, 1,
         0, 0, 1, 0};
     static const gateappliers::GateMatrix gm(2, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-    if (b == a + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else if (a == b + 1)
-    {
-        apply_gate_matrix(d, b, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps(d, a, b, [](Diagram *d, qubit q)
-                                        {
-            static const absi::Interval coeffs[] = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 0, 1,
-                0, 0, 1, 0};
-            static const gateappliers::GateMatrix gm(2, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    apply_gate_to_qubits(d, {a, b}, gm);
 }
 
 void gateappliers::apply_cy(Diagram *d, qubit a, qubit b)
@@ -254,29 +207,7 @@ void gateappliers::apply_cy(Diagram *d, qubit a, qubit b)
         0, 0, 0, -ampl::i,
         0, 0, ampl::i, 0};
     static const gateappliers::GateMatrix gm(2, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-    if (b == a + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else if (a == b + 1)
-    {
-        apply_gate_matrix(d, b, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps(d, a, b, [](Diagram *d, qubit q)
-                                        {
-            static const absi::Interval coeffs[] = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 0, -ampl::i,
-                0, 0, ampl::i, 0};
-            static const gateappliers::GateMatrix gm(2, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    apply_gate_to_qubits(d, {a, b}, gm);
 }
 
 void gateappliers::apply_cz(Diagram *d, qubit a, qubit b)
@@ -288,29 +219,7 @@ void gateappliers::apply_cz(Diagram *d, qubit a, qubit b)
         0, 0, 1, 0,
         0, 0, 0, -1};
     static const gateappliers::GateMatrix gm(2, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-    if (b == a + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else if (a == b + 1)
-    {
-        apply_gate_matrix(d, b, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps(d, a, b, [](Diagram *d, qubit q)
-                                        {
-            static const absi::Interval coeffs[] = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, -1};
-            static const gateappliers::GateMatrix gm(2, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    apply_gate_to_qubits(d, {a, b}, gm);
 }
 
 void gateappliers::apply_ch(Diagram *d, qubit a, qubit b)
@@ -322,29 +231,7 @@ void gateappliers::apply_ch(Diagram *d, qubit a, qubit b)
         0, 0, ampl::inv_sqrt2, ampl::inv_sqrt2,
         0, 0, ampl::inv_sqrt2, -ampl::inv_sqrt2};
     static const gateappliers::GateMatrix gm(2, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-    if (b == a + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else if (a == b + 1)
-    {
-        apply_gate_matrix(d, b, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps(d, a, b, [](Diagram *d, qubit q)
-                                        {
-            static const absi::Interval coeffs[] = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, ampl::inv_sqrt2, ampl::inv_sqrt2,
-                0, 0, ampl::inv_sqrt2, -ampl::inv_sqrt2};
-            static const gateappliers::GateMatrix gm(2, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    apply_gate_to_qubits(d, {a, b}, gm);
 }
 
 // ========== Controlled rotation gates ==========
@@ -358,31 +245,8 @@ void gateappliers::apply_cp(Diagram *d, qubit a, qubit b, double theta)
         0, 1, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, exp_itheta};
-    static const gateappliers::GateMatrix gm(2, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-    if (b == a + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else if (a == b + 1)
-    {
-        apply_gate_matrix(d, b, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps(d, a, b, [theta](Diagram *d, qubit q)
-                                        {
-            const auto exp_itheta = absi::Interval(ampl::Amplitude(std::cos(theta), std::sin(theta)));
-            const absi::Interval coeffs[] = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, exp_itheta};
-            static const gateappliers::GateMatrix gm(2, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    const gateappliers::GateMatrix gm(2, coeffs);
+    apply_gate_to_qubits(d, {a, b}, gm);
 }
 
 void gateappliers::apply_crx(Diagram *d, qubit a, qubit b, double theta)
@@ -398,35 +262,8 @@ void gateappliers::apply_crx(Diagram *d, qubit a, qubit b, double theta)
         0, 1, 0, 0,
         0, 0, c, s,
         0, 0, s, c};
-    static const gateappliers::GateMatrix gm(2, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-    if (b == a + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else if (a == b + 1)
-    {
-        apply_gate_matrix(d, b, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps(d, a, b, [theta](Diagram *d, qubit q)
-                                        {
-            double half_theta = theta / 2.0;
-            double cos_val = std::cos(half_theta);
-            double sin_val = std::sin(half_theta);
-            const absi::Interval c(cos_val);
-            const absi::Interval s(ampl::Amplitude(0.0, -sin_val));
-            const absi::Interval coeffs[] = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, c, s,
-                0, 0, s, c};
-            static const gateappliers::GateMatrix gm(2, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    const gateappliers::GateMatrix gm(2, coeffs);
+    apply_gate_to_qubits(d, {a, b}, gm);
 }
 
 void gateappliers::apply_cry(Diagram *d, qubit a, qubit b, double theta)
@@ -443,36 +280,8 @@ void gateappliers::apply_cry(Diagram *d, qubit a, qubit b, double theta)
         0, 1, 0, 0,
         0, 0, c, ms,
         0, 0, s, c};
-    static const gateappliers::GateMatrix gm(2, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-    if (b == a + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else if (a == b + 1)
-    {
-        apply_gate_matrix(d, b, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps(d, a, b, [theta](Diagram *d, qubit q)
-                                        {
-            double half_theta = theta / 2.0;
-            double cos_val = std::cos(half_theta);
-            double sin_val = std::sin(half_theta);
-            const absi::Interval c(cos_val);
-            const absi::Interval s(sin_val);
-            const absi::Interval ms(-sin_val);
-            const absi::Interval coeffs[] = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, c, ms,
-                0, 0, s, c};
-            static const gateappliers::GateMatrix gm(2, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    const gateappliers::GateMatrix gm(2, coeffs);
+    apply_gate_to_qubits(d, {a, b}, gm);
 }
 
 void gateappliers::apply_crz(Diagram *d, qubit a, qubit b, double theta)
@@ -485,32 +294,8 @@ void gateappliers::apply_crz(Diagram *d, qubit a, qubit b, double theta)
         0, 1, 0, 0,
         0, 0, exp_mitheta_half, 0,
         0, 0, 0, exp_itheta_half};
-    static const gateappliers::GateMatrix gm(2, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-    if (b == a + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else if (a == b + 1)
-    {
-        apply_gate_matrix(d, b, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps(d, a, b, [theta](Diagram *d, qubit q)
-                                        {
-            const auto exp_itheta_half = absi::Interval(ampl::Amplitude(std::cos(theta / 2.0), std::sin(theta / 2.0)));
-            const auto exp_mitheta_half = absi::Interval(ampl::Amplitude(std::cos(theta / 2.0), -std::sin(theta / 2.0)));
-            const absi::Interval coeffs[] = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, exp_mitheta_half, 0,
-                0, 0, 0, exp_itheta_half};
-            static const gateappliers::GateMatrix gm(2, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    const gateappliers::GateMatrix gm(2, coeffs);
+    apply_gate_to_qubits(d, {a, b}, gm);
 }
 
 void gateappliers::apply_cu(Diagram *d, qubit a, qubit b, double theta, double phi, double lambda)
@@ -531,40 +316,8 @@ void gateappliers::apply_cu(Diagram *d, qubit a, qubit b, double theta, double p
         0, 1, 0, 0,
         0, 0, c, exp_ilambda * s * ampl::Amplitude(-1.0, 0.0),
         0, 0, exp_iphi * s, exp_iphilambda * c};
-    static const gateappliers::GateMatrix gm(2, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-    if (b == a + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else if (a == b + 1)
-    {
-        apply_gate_matrix(d, b, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps(d, a, b, [theta, phi, lambda](Diagram *d, qubit q)
-                                        {
-            double half_theta = theta / 2.0;
-            double cos_val = std::cos(half_theta);
-            double sin_val = std::sin(half_theta);
-
-            const absi::Interval c(cos_val);
-            const absi::Interval s(sin_val);
-            const absi::Interval exp_ilambda(ampl::Amplitude(std::cos(lambda), std::sin(lambda)));
-            const absi::Interval exp_iphi(ampl::Amplitude(std::cos(phi), std::sin(phi)));
-            const absi::Interval exp_iphilambda(ampl::Amplitude(std::cos(phi + lambda), std::sin(phi + lambda)));
-
-            const absi::Interval coeffs[] = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, c, exp_ilambda * s * ampl::Amplitude(-1.0, 0.0),
-                0, 0, exp_iphi * s, exp_iphilambda * c};
-            static const gateappliers::GateMatrix gm(2, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    const gateappliers::GateMatrix gm(2, coeffs);
+    apply_gate_to_qubits(d, {a, b}, gm);
 }
 
 // ========== Three-qubit gates ==========
@@ -584,70 +337,24 @@ void gateappliers::apply_ccx(Diagram *d, qubit a, qubit b, qubit c)
         0, 0, 0, 0, 0, 0, 0, 1,
         0, 0, 0, 0, 0, 0, 1, 0};
     static const gateappliers::GateMatrix gm(3, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-    assert_qubit_is_valid(d, c);
-    if (b == a + 1 && c == b + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps_three(d, a, b, c, [](Diagram *d, qubit q)
-                                              {
-            static const absi::Interval coeffs[] = {
-                1, 0, 0, 0, 0, 0, 0, 0,
-                0, 1, 0, 0, 0, 0, 0, 0,
-                0, 0, 1, 0, 0, 0, 0, 0,
-                0, 0, 0, 1, 0, 0, 0, 0,
-                0, 0, 0, 0, 1, 0, 0, 0,
-                0, 0, 0, 0, 0, 1, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 1,
-                0, 0, 0, 0, 0, 0, 1, 0};
-            static const gateappliers::GateMatrix gm(3, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    apply_gate_to_qubits(d, {a, b, c}, gm);
 }
 
 void gateappliers::apply_cswap(Diagram *d, qubit a, qubit b, qubit c)
 {
     // CSWAP (Fredkin) = SWAP qubits b and c if a is 1
-    // Full 8x8 matrix with swaps at positions (4,5), (5,4) and (6,7), (7,6)
+    // Full 8x8 matrix: when the first qubit is one, swap |101> and |110>.
     static const absi::Interval coeffs[] = {
         1, 0, 0, 0, 0, 0, 0, 0,
         0, 1, 0, 0, 0, 0, 0, 0,
         0, 0, 1, 0, 0, 0, 0, 0,
         0, 0, 0, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 0, 0,
         0, 0, 0, 0, 1, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 1,
-        0, 0, 0, 0, 0, 0, 1, 0};
+        0, 0, 0, 0, 0, 0, 1, 0,
+        0, 0, 0, 0, 0, 1, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 1};
     static const gateappliers::GateMatrix gm(3, coeffs);
-    assert_qubit_is_valid(d, a);
-    assert_qubit_is_valid(d, b);
-    assert_qubit_is_valid(d, c);
-    if (b == a + 1 && c == b + 1)
-    {
-        apply_gate_matrix(d, a, gm);
-    }
-    else
-    {
-        // Use helper to bring qubits together
-        internal::apply_gate_with_swaps_three(d, a, b, c, [](Diagram *d, qubit q)
-                                              {
-            static const absi::Interval coeffs[] = {
-                1, 0, 0, 0, 0, 0, 0, 0,
-                0, 1, 0, 0, 0, 0, 0, 0,
-                0, 0, 1, 0, 0, 0, 0, 0,
-                0, 0, 0, 1, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 1, 0, 0,
-                0, 0, 0, 0, 1, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 1,
-                0, 0, 0, 0, 0, 0, 1, 0};
-            static const gateappliers::GateMatrix gm(3, coeffs);
-            apply_gate_matrix(d, q, gm); });
-    }
+    apply_gate_to_qubits(d, {a, b, c}, gm);
 }
 
 // ========== Universal single-qubit gate ==========
@@ -668,7 +375,7 @@ void gateappliers::apply_u(Diagram *d, qubit q, double theta, double phi, double
     const absi::Interval coeffs[] = {
         c, exp_ilambda * s * ampl::Amplitude(-1.0, 0.0),
         exp_iphi * s, exp_iphilambda * c};
-    static const gateappliers::GateMatrix gm(1, coeffs);
+    const gateappliers::GateMatrix gm(1, coeffs);
     assert_qubit_is_valid(d, q);
     apply_gate_matrix(d, q, gm);
 }
@@ -688,6 +395,7 @@ void gateappliers::apply_gphase(Diagram *d, double theta)
     {
         g.x = phase * g.x;
     }
+    d->mark_modified();
 }
 
 // ========== Phase gate ==========
@@ -696,98 +404,165 @@ void gateappliers::apply_phase(Diagram *d, qubit q, int phaseDenominator)
 {
     assert_qubit_is_valid(d, q);
     const auto phase_shift = absi::Interval::exp_2ipi_over(phaseDenominator);
-    for (auto &d : d->get_node_pointers_at_height(d->height - q))
+    for (auto *node : d->get_node_pointers_at_height(d->height - q))
     {
-        for (auto &g : d->right)
+        for (auto &g : node->right)
         {
             g.x = phase_shift * g.x;
         }
+        node->mark_modified();
     }
 }
 
 // ========== Matrix application helpers ==========
 
-static void apply_single_qubit_gate_on_first_qubit(Diagram *diagram, const gateappliers::GateMatrix &matrix)
+static bool is_zero_matrix(const gateappliers::GateMatrix &matrix)
 {
-    if (matrix.height() != 1)
-    {
-        throw std::runtime_error("Invalid matrix height: " + std::to_string(matrix.height()));
-    }
-    auto m00 = matrix.top_left().value();
-    auto m01 = matrix.top_right().value();
-    auto m10 = matrix.bottom_left().value();
-    auto m11 = matrix.bottom_right().value();
-    auto baseLeft = diagram->left;
-    for (auto &g : diagram->left)
-    {
-        g.x = m00 * g.x; // No need to clone
-    }
-    for (auto &d : diagram->right)
-    {
-        diagram->lefto(d.d, m01 * d.x);
-        d.x = m11 * d.x; // No need to clone
-    }
-    for (auto &g : baseLeft)
-    {
-        diagram->righto(g.d->clone(), m10 * g.x);
-    }
+    for (size_t row = 0; row < matrix.size(); ++row)
+        for (size_t column = 0; column < matrix.size(); ++column)
+            if (matrix(row, column) != absi::zero)
+                return false;
+    return true;
 }
 
-static diagram::Branches clone_branches(const diagram::Branches &brs)
-{
-    diagram::Branches cloned;
-    for (const auto &g : brs)
-    {
-        cloned.push_back({.x = g.x, .d = g.d->clone()});
-    }
-    return cloned;
-}
+static Diagram *transformed(const Diagram *input, const gateappliers::GateMatrix &matrix);
 
-static void apply_gate_on_first_qubits(Diagram *diagram, const gateappliers::GateMatrix &matrix)
+static void add_transformed_branch(
+    Diagram *output,
+    diagram::Side side,
+    const diagram::Branch &input_branch,
+    const gateappliers::GateMatrix &matrix)
 {
-    if (matrix.height() == 1)
-    {
-        apply_single_qubit_gate_on_first_qubit(diagram, matrix);
+    if (is_zero_matrix(matrix))
         return;
+
+    Diagram *child = input_branch.d;
+    absi::Interval weight = input_branch.x;
+    if (matrix.height() == 0)
+    {
+        weight = matrix.value() * weight;
+    }
+    else
+    {
+        child = transformed(input_branch.d, matrix);
     }
 
-    auto m00 = matrix.top_left();
-    auto m01 = matrix.top_right();
-    auto m10 = matrix.bottom_left();
-    auto m11 = matrix.bottom_right();
-    auto clonedLeft = clone_branches(diagram->left);
-    for (auto &g : diagram->left)
-    {
-        apply_gate_on_first_qubits(g.d, m00);
-    }
-    for (auto &d : diagram->right)
-    {
-        auto clone = d.d->clone();
-        apply_gate_on_first_qubits(clone, m01);
-        diagram->lefto(clone, d.x);
+    if (side == diagram::Side::Left)
+        output->lefto(child, weight);
+    else
+        output->righto(child, weight);
+}
 
-        apply_gate_on_first_qubits(d.d, m11);
-    }
-    for (auto &g : clonedLeft)
+static Diagram *transformed(const Diagram *input, const gateappliers::GateMatrix &matrix)
+{
+    if (matrix.height() == 0 || matrix.height() > input->height)
+        throw std::invalid_argument("Gate matrix height is incompatible with diagram height");
+
+    auto *output = new Diagram(input->height);
+    const auto m00 = matrix.top_left();
+    const auto m01 = matrix.top_right();
+    const auto m10 = matrix.bottom_left();
+    const auto m11 = matrix.bottom_right();
+    for (const auto &branch : input->left)
     {
-        auto clone = g.d->clone();
-        apply_gate_on_first_qubits(clone, m10);
-        diagram->righto(clone, g.x);
+        add_transformed_branch(output, diagram::Side::Left, branch, m00);
+        add_transformed_branch(output, diagram::Side::Right, branch, m10);
     }
+    for (const auto &branch : input->right)
+    {
+        add_transformed_branch(output, diagram::Side::Left, branch, m01);
+        add_transformed_branch(output, diagram::Side::Right, branch, m11);
+    }
+    return output;
 }
 
 void gateappliers::apply_gate_matrix(Diagram *diagram, qubit q, const GateMatrix &matrix)
 {
     assert_qubit_is_valid(diagram, q);
+    if (matrix.height() == 0 || q + matrix.height() > diagram->height)
+        throw std::invalid_argument("Gate does not fit at the requested qubit");
     const auto k = diagram->height - q; // 0 <= k < d->height
 
     if (q == 0)
     {
-        apply_gate_on_first_qubits(diagram, matrix);
+        diagram->replace_contents(transformed(diagram, matrix));
         return;
     }
     for (auto &g : diagram->get_node_pointers_at_height(k))
     {
-        apply_gate_on_first_qubits(g, matrix);
+        g->replace_contents(transformed(g, matrix));
     }
+}
+
+static size_t reorder_basis_index(
+    size_t sorted_index,
+    const std::vector<qubit> &operands,
+    const std::vector<qubit> &sorted_operands)
+{
+    const size_t count = operands.size();
+    size_t original_index = 0;
+    for (size_t original_position = 0; original_position < count; ++original_position)
+    {
+        const auto sorted_position = static_cast<size_t>(std::distance(
+            sorted_operands.begin(),
+            std::find(sorted_operands.begin(), sorted_operands.end(), operands[original_position])));
+        const size_t index_bit = (sorted_index >> (count - sorted_position - 1)) & 1U;
+        original_index |= index_bit << (count - original_position - 1);
+    }
+    return original_index;
+}
+
+static void apply_gate_to_qubits(
+    Diagram *diagram,
+    const std::vector<qubit> &operands,
+    const gateappliers::GateMatrix &matrix)
+{
+    if (operands.size() != matrix.height())
+        throw std::invalid_argument("Gate operand count does not match matrix height");
+    for (auto operand : operands)
+        assert_qubit_is_valid(diagram, operand);
+
+    auto sorted_operands = operands;
+    std::sort(sorted_operands.begin(), sorted_operands.end());
+    if (std::adjacent_find(sorted_operands.begin(), sorted_operands.end()) != sorted_operands.end())
+        throw std::invalid_argument("Gate operands must be distinct");
+
+    gateappliers::GateMatrix reordered(matrix.height());
+    for (size_t row = 0; row < matrix.size(); ++row)
+        for (size_t column = 0; column < matrix.size(); ++column)
+            reordered(row, column) = matrix(
+                reorder_basis_index(row, operands, sorted_operands),
+                reorder_basis_index(column, operands, sorted_operands));
+
+    static const absi::Interval swap_coefficients[] = {
+        1, 0, 0, 0,
+        0, 0, 1, 0,
+        0, 1, 0, 0,
+        0, 0, 0, 1};
+    static const gateappliers::GateMatrix swap_matrix(2, swap_coefficients);
+
+    std::vector<qubit> positions = sorted_operands;
+    std::vector<qubit> swaps;
+    const qubit first = positions.front();
+    for (size_t index = 0; index < positions.size(); ++index)
+    {
+        const qubit destination = static_cast<qubit>(first + index);
+        while (positions[index] > destination)
+        {
+            const qubit left = positions[index] - 1;
+            gateappliers::apply_gate_matrix(diagram, left, swap_matrix);
+            swaps.push_back(left);
+            for (auto &position : positions)
+            {
+                if (position == left)
+                    ++position;
+                else if (position == left + 1)
+                    --position;
+            }
+        }
+    }
+
+    gateappliers::apply_gate_matrix(diagram, first, reordered);
+    for (auto iterator = swaps.rbegin(); iterator != swaps.rend(); ++iterator)
+        gateappliers::apply_gate_matrix(diagram, *iterator, swap_matrix);
 }

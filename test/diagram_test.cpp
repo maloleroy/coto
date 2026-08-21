@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <diagram.h>
 #include <amplitude.h>
+#include <set>
 
 using absi::Interval;
 using namespace diagram;
@@ -60,6 +61,12 @@ TEST_F(DiagramTest, eig0)
     {
         EXPECT_EQ(i == 0 ? absi::one : absi::zero, vec[i]);
     }
+}
+
+TEST_F(DiagramTest, size_rejects_unrepresentable_state_vectors)
+{
+    Diagram diagram(std::numeric_limits<size_t>::digits);
+    EXPECT_THROW(diagram.size(), std::overflow_error);
 }
 
 TEST_F(DiagramTest, build)
@@ -138,37 +145,21 @@ TEST_F(DiagramTest, random_is_norm_lower_than_one)
 
 TEST_F(DiagramTest, random_assert_variability)
 {
-    const auto n = 100;
-    size_t counts[n][5];
-    bool is_not_duplicate[n];
-    for (auto i = 0; i < n; i++)
+    constexpr size_t samples = 20;
+    constexpr size_t height = 3;
+    std::set<std::string> evaluations;
+    for (size_t sample = 0; sample < samples; sample++)
     {
-        auto d = Diagram::random(5);
-        for (auto j = 0; j < 5; j++)
+        auto d = Diagram::random(height);
+        std::string signature;
+        for (const auto &amplitude : d->evaluate())
         {
-            counts[i][j] = d->count_nodes_at_height(j);
+            signature += amplitude.to_string();
         }
+        evaluations.insert(signature);
         delete d;
     }
-    for (auto i = 0; i < n; i++)
-    {
-        bool broke = false;
-        for (auto k = 0; k < i; k++)
-        {
-            for (auto j = 0; j < 5; j++)
-            {
-                if (counts[i][j] != counts[i][k])
-                {
-                    broke = true;
-                    break;
-                }
-            }
-        }
-    }
-    for (auto i = 0; i < n; i++)
-    {
-        EXPECT_TRUE(true);
-    }
+    EXPECT_GT(evaluations.size(), 1);
 }
 
 TEST_F(DiagramTest, random_assert_boundaries)

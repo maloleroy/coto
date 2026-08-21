@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <set>
+#include <unordered_set>
 #include <functional>
 
 using std::size_t;
@@ -122,6 +123,68 @@ Diagram *Diagram::clone() const
     return d;
 }
 
+void Diagram::replace_contents(Diagram *replacement)
+{
+    if (replacement == nullptr || replacement->height != height)
+    {
+        throw std::invalid_argument("Replacement diagram must have the same height");
+    }
+
+    release_children();
+    left = std::move(replacement->left);
+    right = std::move(replacement->right);
+    for (auto &branch : left)
+    {
+        branch.d->remove_parent(replacement);
+        branch.d->add_parent(this);
+    }
+    for (auto &branch : right)
+    {
+        branch.d->remove_parent(replacement);
+        branch.d->add_parent(this);
+    }
+    replacement->left.clear();
+    replacement->right.clear();
+    delete replacement;
+    mark_modified();
+}
+
+void Diagram::remove_dead_children()
+{
+    std::vector<Diagram *> removed;
+    auto prune = [&removed](Branches &branches)
+    {
+        branches.erase(std::remove_if(branches.begin(), branches.end(), [&removed](const Branch &branch)
+                                      {
+                                          const bool dead = branch.d->height > 0 &&
+                                                            branch.d->left.empty() && branch.d->right.empty();
+                                          if (dead && std::find(removed.begin(), removed.end(), branch.d) == removed.end())
+                                              removed.push_back(branch.d);
+                                          return dead;
+                                      }),
+                       branches.end());
+    };
+
+    prune(left);
+    prune(right);
+    if (removed.empty())
+        return;
+
+    for (auto *child : removed)
+    {
+        child->remove_parent(this);
+        if (child->parents.empty())
+            delete child;
+    }
+    mark_modified();
+}
+
+void Diagram::mark_modified()
+{
+    is_up_to_date = false;
+    mark_parents_as_to_be_updated();
+}
+
 Branches *Diagram::children_of_side(Side s)
 {
     return s == Side::Left ? &left : &right;
@@ -134,8 +197,8 @@ void Diagram::lefto(Diagram *d, const absi::Interval &x)
         return;
     }
     left.push_back(Branch{.x = x, .d = d});
-    is_up_to_date = false;
-    d->parents.push_back(this);
+    mark_modified();
+    d->add_parent(this);
 }
 
 void Diagram::righto(Diagram *d, const absi::Interval &x)
@@ -145,13 +208,8 @@ void Diagram::righto(Diagram *d, const absi::Interval &x)
         return;
     }
     right.push_back(Branch{.x = x, .d = d});
-    is_up_to_date = false;
-    d->parents.push_back(this);
-}
-
-constexpr size_t Diagram::size() const
-{
-    return pwrtwo(height);
+    mark_modified();
+    d->add_parent(this);
 }
 
 size_t Diagram::count_nodes_at_height(size_t h)
@@ -159,52 +217,38 @@ size_t Diagram::count_nodes_at_height(size_t h)
     return get_node_pointers_at_height(h).size();
 }
 
-// TODO: Implement this function in-place, not by copying vectors
 std::vector<Diagram *> Diagram::get_node_pointers_at_height(const size_t h) const
 {
-    std::vector<Diagram *> nodes;
     if (h > height)
     {
         throw std::invalid_argument("Height is greater than the diagram's height");
     }
-    if (h == height)
+    std::vector<Diagram *> current = {const_cast<Diagram *>(this)};
+    for (size_t current_height = height; current_height > h; --current_height)
     {
-        nodes.push_back(const_cast<Diagram *>(this));
-        return nodes;
+        std::vector<Diagram *> next;
+        std::unordered_set<Diagram *> seen;
+        for (auto *node : current)
+        {
+            for (const auto &branch : node->left)
+            {
+                if (seen.insert(branch.d).second)
+                    next.push_back(branch.d);
+            }
+            for (const auto &branch : node->right)
+            {
+                if (seen.insert(branch.d).second)
+                    next.push_back(branch.d);
+            }
+        }
+        current = std::move(next);
     }
-    for (Branch b : left)
-    {
-        nodes = merge_vectors_without_duplicates(nodes, b.d->get_node_pointers_at_height(h));
-    }
-    for (Branch b : right)
-    {
-        nodes = merge_vectors_without_duplicates(nodes, b.d->get_node_pointers_at_height(h));
-    }
-    return nodes;
+    return current;
 }
 
 void Diagram::replace_nodes_at_height(const size_t h, Diagram *f1, Diagram *f2, Diagram *r)
 {
     throw std::runtime_error("Not implemented");
-}
-
-// TODO: Implement this function in O(n log n), not in O(n^2)
-template <typename T>
-static std::vector<T> merge_vectors_without_duplicates(const std::vector<T> a, const std::vector<T> b)
-{
-    std::vector<T> result;
-    for (T d : a)
-    {
-        result.push_back(d);
-    }
-    for (T d : b)
-    {
-        if (std::find(result.begin(), result.end(), d) == result.end())
-        {
-            result.push_back(d);
-        }
-    }
-    return result;
 }
 
 absi::Interval calculate_enclosure(Diagram &d)
@@ -231,7 +275,7 @@ absi::Interval Diagram::enclosure()
 
 size_t Diagram::memory_usage() const
 {
-    std::set<const Diagram *> visited;
+    std::unordered_set<const Diagram *> visited;
     std::function<size_t(const Diagram *)> calculate = [&](const Diagram *d) -> size_t
     {
         if (visited.count(d))
@@ -266,11 +310,18 @@ size_t Diagram::memory_usage() const
 
 void Diagram::mark_parents_as_to_be_updated() const
 {
-    for (auto i : parents)
+    std::unordered_set<Diagram *> visited;
+    std::function<void(const Diagram *)> invalidate = [&](const Diagram *node)
     {
-        i->is_up_to_date = false;
-        i->mark_parents_as_to_be_updated();
-    }
+        for (auto *parent : node->parents)
+        {
+            if (!visited.insert(parent).second)
+                continue;
+            parent->is_up_to_date = false;
+            invalidate(parent);
+        }
+    };
+    invalidate(this);
 }
 
 void Diagram::forget_child(Diagram *d) noexcept
@@ -283,28 +334,47 @@ void Diagram::forget_child(Diagram *d) noexcept
                left.end());
 }
 
+void Diagram::remove_parent(Diagram *parent) noexcept
+{
+    parents.erase(std::remove(parents.begin(), parents.end(), parent), parents.end());
+}
+
+void Diagram::add_parent(Diagram *parent)
+{
+    if (std::find(parents.begin(), parents.end(), parent) == parents.end())
+        parents.push_back(parent);
+}
+
+void Diagram::release_children() noexcept
+{
+    std::vector<Diagram *> children;
+    for (const auto &branch : left)
+    {
+        if (branch.d != leaf && std::find(children.begin(), children.end(), branch.d) == children.end())
+            children.push_back(branch.d);
+    }
+    for (const auto &branch : right)
+    {
+        if (branch.d != leaf && std::find(children.begin(), children.end(), branch.d) == children.end())
+            children.push_back(branch.d);
+    }
+
+    left.clear();
+    right.clear();
+    for (auto *child : children)
+    {
+        child->remove_parent(this);
+        if (child->parents.empty())
+            delete child;
+    }
+}
+
 Diagram::~Diagram()
 {
-    // Track already-deleted children to avoid double-deletion
-    std::vector<Diagram *> deleted;
-
-    for (Branch b : left)
-    {
-        if (b.d != leaf && std::find(deleted.begin(), deleted.end(), b.d) == deleted.end())
-        {
-            deleted.push_back(b.d);
-            delete b.d;
-        }
-    }
-    for (Branch b : right)
-    {
-        if (b.d != leaf && std::find(deleted.begin(), deleted.end(), b.d) == deleted.end())
-        {
-            deleted.push_back(b.d);
-            delete b.d;
-        }
-    }
-    for (Diagram *p : parents)
+    release_children();
+    auto former_parents = parents;
+    parents.clear();
+    for (Diagram *p : former_parents)
     {
         p->is_up_to_date = false;
         p->mark_parents_as_to_be_updated();

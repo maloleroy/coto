@@ -619,3 +619,110 @@ TEST(GateAppliersTest, apply_cy_non_consecutive)
             << "CY on non-consecutive qubits failed at index " << i;
     }
 }
+
+TEST(GateAppliersTest, parameterized_gates_use_each_call_parameters)
+{
+    const ampl::Amplitude zero_state[] = {1, 0};
+
+    auto rx_zero = Diagram::from_state_vector(ampl::ConcreteState(1, zero_state));
+    auto rx_pi = Diagram::from_state_vector(ampl::ConcreteState(1, zero_state));
+    gateappliers::apply_rx(rx_zero, 0, 0.0);
+    gateappliers::apply_rx(rx_pi, 0, M_PI);
+
+    auto zero_evaluation = rx_zero->evaluate();
+    auto pi_evaluation = rx_pi->evaluate();
+    EXPECT_TRUE(zero_evaluation[0].contains(ampl::Amplitude(1, 0)));
+    EXPECT_TRUE(zero_evaluation[1].contains(ampl::Amplitude(0, 0)));
+    EXPECT_TRUE(pi_evaluation[0].contains(ampl::Amplitude(std::cos(M_PI / 2.0), 0)));
+    EXPECT_TRUE(pi_evaluation[1].contains(ampl::Amplitude(0, -1)));
+
+    delete rx_zero;
+    delete rx_pi;
+}
+
+TEST(GateAppliersTest, rz_uses_conjugate_diagonal_phases)
+{
+    const ampl::Amplitude state[] = {1, 1};
+    auto d = Diagram::from_state_vector(ampl::ConcreteState(1, state));
+    gateappliers::apply_rz(d, 0, M_PI);
+
+    auto evaluation = d->evaluate();
+    EXPECT_TRUE(evaluation[0].contains(ampl::Amplitude(std::cos(M_PI / 2.0), -1)));
+    EXPECT_TRUE(evaluation[1].contains(ampl::Amplitude(std::cos(M_PI / 2.0), 1)));
+    delete d;
+}
+
+TEST(GateAppliersTest, matrix_quadrants_follow_row_column_order)
+{
+    absi::Interval values[16];
+    for (size_t i = 0; i < 16; ++i)
+        values[i] = static_cast<double>(i);
+    gateappliers::GateMatrix matrix(2, values);
+
+    auto top_right = matrix.top_right();
+    auto bottom_left = matrix.bottom_left();
+    EXPECT_EQ(top_right(0, 0), absi::Interval(2));
+    EXPECT_EQ(top_right(1, 1), absi::Interval(7));
+    EXPECT_EQ(bottom_left(0, 0), absi::Interval(8));
+    EXPECT_EQ(bottom_left(1, 1), absi::Interval(13));
+}
+
+TEST(GateAppliersTest, rejects_out_of_range_qubit)
+{
+    auto d = Diagram::eig0(1);
+    EXPECT_THROW(gateappliers::apply_x(d, 1), std::runtime_error);
+    EXPECT_THROW(gateappliers::apply_h(d, 1), std::runtime_error);
+    delete d;
+}
+
+TEST(GateAppliersTest, preserves_control_target_order)
+{
+    const ampl::Amplitude two_qubit_state[] = {0, 1, 0, 0}; // |01>
+    auto adjacent = Diagram::from_state_vector(ampl::ConcreteState(2, two_qubit_state));
+    gateappliers::apply_cx(adjacent, 1, 0);
+    auto adjacent_result = adjacent->evaluate();
+    for (size_t index = 0; index < 4; ++index)
+        EXPECT_TRUE(adjacent_result[index].contains(index == 3 ? ampl::one : ampl::zero));
+
+    const ampl::Amplitude three_qubit_state[] = {0, 1, 0, 0, 0, 0, 0, 0}; // |001>
+    auto separated = Diagram::from_state_vector(ampl::ConcreteState(3, three_qubit_state));
+    gateappliers::apply_cx(separated, 2, 0);
+    auto separated_result = separated->evaluate();
+    for (size_t index = 0; index < 8; ++index)
+        EXPECT_TRUE(separated_result[index].contains(index == 5 ? ampl::one : ampl::zero));
+
+    delete adjacent;
+    delete separated;
+}
+
+TEST(GateAppliersTest, preserves_three_qubit_operand_order)
+{
+    const ampl::Amplitude ccx_state[] = {0, 0, 0, 0, 0, 1, 0, 0}; // |101>
+    auto ccx = Diagram::from_state_vector(ampl::ConcreteState(3, ccx_state));
+    gateappliers::apply_ccx(ccx, 2, 0, 1);
+    auto ccx_result = ccx->evaluate();
+    for (size_t index = 0; index < 8; ++index)
+        EXPECT_TRUE(ccx_result[index].contains(index == 7 ? ampl::one : ampl::zero));
+
+    auto cswap = Diagram::from_state_vector(ampl::ConcreteState(3, ccx_state));
+    gateappliers::apply_cswap(cswap, 0, 1, 2);
+    auto cswap_result = cswap->evaluate();
+    for (size_t index = 0; index < 8; ++index)
+        EXPECT_TRUE(cswap_result[index].contains(index == 6 ? ampl::one : ampl::zero));
+
+    delete ccx;
+    delete cswap;
+}
+
+TEST(GateAppliersTest, separable_hadamards_keep_linear_structure)
+{
+    constexpr size_t qubits = 64;
+    auto *diagram = Diagram::eig0(qubits);
+    for (qubit target = 0; target < qubits; ++target)
+        gateappliers::apply_h(diagram, target);
+
+    for (size_t height = 1; height <= qubits; ++height)
+        EXPECT_EQ(diagram->count_nodes_at_height(height), 1);
+    EXPECT_LT(diagram->memory_usage(), 32 * 1024);
+    delete diagram;
+}

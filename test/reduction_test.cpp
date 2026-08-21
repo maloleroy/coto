@@ -20,6 +20,7 @@ TEST(ReductionTest, cut_dead_branches)
     {
         EXPECT_EQ(ev[i], 0) << "At index " << i << ", got " << ev[i].to_string() << ", expected 0";
     }
+    delete d;
 }
 
 TEST(ReductionTest, cut_dead_branches_reduces_size)
@@ -30,4 +31,24 @@ TEST(ReductionTest, cut_dead_branches_reduces_size)
     reduction::cut_dead_branches(d);
     size_t after = d->memory_usage();
     EXPECT_LT(after, before);
+    delete d;
+}
+
+TEST(ReductionTest, cut_dead_branches_preserves_shared_live_children)
+{
+    auto *live = diagram::Diagram::eig0(1);
+    auto *dead = new diagram::Diagram(1);
+    auto *d = new diagram::Diagram(2);
+    d->lefto(dead);
+    d->lefto(live);
+    d->righto(dead);
+    d->righto(live);
+
+    reduction::cut_dead_branches(d);
+
+    ASSERT_EQ(d->left.size(), 1);
+    ASSERT_EQ(d->right.size(), 1);
+    EXPECT_EQ(d->left.front().d, live);
+    EXPECT_EQ(d->right.front().d, live);
+    delete d;
 }

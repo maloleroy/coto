@@ -82,7 +82,7 @@ PowMatrix<T> PowMatrix<T>::top_right() const
     {
         for (size_t j = 0; j < part.size(); j++)
         {
-            part(i, j) = (*this)(i + part.size(), j);
+            part(i, j) = (*this)(i, j + part.size());
         }
     }
     return part;
@@ -96,7 +96,7 @@ PowMatrix<T> PowMatrix<T>::bottom_left() const
     {
         for (size_t j = 0; j < part.size(); j++)
         {
-            part(i, j) = (*this)(i, j + part.size());
+            part(i, j) = (*this)(i + part.size(), j);
         }
     }
     return part;
