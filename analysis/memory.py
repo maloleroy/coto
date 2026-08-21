@@ -1,6 +1,13 @@
 def find_prompt_executable() -> str:
     """Finds the path to the prompt executable."""
+    from os import environ
     from os.path import isfile, join, dirname
+
+    configured = environ.get("COTO_PROMPT")
+    if configured:
+        if isfile(configured):
+            return configured
+        raise FileNotFoundError(f"COTO_PROMPT does not exist: {configured}")
 
     current_dir = dirname(__file__)
     possible_paths = [
@@ -15,7 +22,7 @@ def find_prompt_executable() -> str:
     raise FileNotFoundError("Prompt executable not found.")
 
 
-def memory_from_qasm(qasm: str) -> int:
+def memory_from_qasm(qasm: str, timeout: float = 60.0) -> int:
     """Returns the memory usage in bytes of the quantum circuit defined in the given QASM file."""
     import subprocess
 
@@ -24,14 +31,18 @@ def memory_from_qasm(qasm: str) -> int:
 
     # feed the QASM string via stdin (many tools accept "-" to mean read from stdin)
     result = subprocess.run(
-        [prompt_executable, "-"], input=qasm, capture_output=True, text=True
+        [prompt_executable, "-"],
+        input=qasm,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
     )
     if result.returncode != 0:
         raise RuntimeError("Failed to get memory usage: " + result.stderr)
     return _parse_memory_output(result.stdout)
 
 
-def memory_from_path(qasm_path: str) -> int:
+def memory_from_path(qasm_path: str, timeout: float = 60.0) -> int:
     """Returns the memory usage in bytes of the quantum circuit defined in the given QASM file path."""
     import subprocess
 
@@ -39,7 +50,10 @@ def memory_from_path(qasm_path: str) -> int:
     prompt_executable = find_prompt_executable()
 
     result = subprocess.run(
-        [prompt_executable, qasm_path], capture_output=True, text=True
+        [prompt_executable, qasm_path],
+        capture_output=True,
+        text=True,
+        timeout=timeout,
     )
     if result.returncode != 0:
         raise RuntimeError("Failed to get memory usage: " + result.stderr)

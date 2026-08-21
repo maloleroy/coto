@@ -1,12 +1,54 @@
 # Analysis of abstract additive quantum decision diagrams
 
-The goal of this project is to perform quantitative analysis of the performance of our implementation of abstract additive quantum decision diagrams.
+This project contains reproducible tools for measuring Coto on QASMBench circuits. The
+current collector records the final structural footprint of Coto's diagram, the circuit
+size, elapsed wall-clock time, and any timeout or compatibility failure in CSV format.
 
-This analysis focuses on three metrics:
-- Memory usage
-- Computing time
-- Fidelity
+The reported `memory_bytes` includes each reachable diagram node once, the allocated
+capacity of its branch vectors, and its parent-pointer capacity. It is not the process's
+peak resident-set size or allocator overhead; later comparative experiments should report
+those separately.
 
-## Implementation Details
+## Setup
 
-- QASMBench is QASM 2, and we support a subset of QASM 3, so we have a in-house compatibility layer to translate between the two versions
+Clone the repository and its QASMBench submodule, then build Coto:
+
+```sh
+git clone --recurse-submodules git@github.com:maloleroy/coto.git
+cd coto
+cmake -S . -B build -GNinja -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+
+For an existing clone, initialize the dataset with
+`git submodule update --init --recursive`.
+
+## Collect memory footprints
+
+From `analysis/`, run a deliberately bounded first pass:
+
+```sh
+uv run python main.py --prompt ../build/prompt \
+  --size small --max-qubits 10 --timeout 60 \
+  --output results/memory-small.csv
+```
+
+Use repeated `--size` options to select several QASMBench groups. `--limit` restricts the
+number of circuits, and each circuit has its own `--timeout`. Rows are flushed immediately,
+so completed observations remain available if a later circuit fails. The command returns a
+nonzero status if any row failed.
+
+The compatibility layer translates the supported QASM 2 subset without evaluating the
+full state vector. Measurements, barriers, identities, and classical registers are removed.
+Classically-controlled operations are rejected and recorded as failures rather than silently
+changing circuit semantics.
+
+## Validation
+
+Python checks are included in the main CTest suite. They can also be run directly:
+
+```sh
+uv run python -m unittest discover -s tests -v
+uv run ruff check .
+uv run ruff format --check .
+```

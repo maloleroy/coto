@@ -18,6 +18,7 @@ FetchContent_MakeAvailable(googletest)
 include_directories(include/)
 
 enable_testing()
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
 # Amplitude test
 add_library(amplitude src/amplitude.cpp)
@@ -84,3 +85,10 @@ gtest_discover_tests(gateappliers_test)
 gtest_discover_tests(selection_test)
 gtest_discover_tests(reduction_test)
 gtest_discover_tests(qasm_test)
+
+add_test(
+  NAME analysis_test
+  COMMAND ${CMAKE_COMMAND} -E env COTO_PROMPT=$<TARGET_FILE:prompt>
+          ${Python3_EXECUTABLE} -m unittest discover -s tests -v
+)
+set_tests_properties(analysis_test PROPERTIES WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/analysis)

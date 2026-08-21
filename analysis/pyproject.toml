@@ -10,3 +10,7 @@ dependencies = []
 dev = [
     "ruff>=0.14.1",
 ]
+
+[tool.ruff]
+exclude = ["data"]
+line-length = 100

@@ -124,7 +124,7 @@ Diagram *Diagram::clone() const
 
 Branches *Diagram::children_of_side(Side s)
 {
-    return s == Side::Right ? &left : &right;
+    return s == Side::Left ? &left : &right;
 }
 
 void Diagram::lefto(Diagram *d, const absi::Interval &x)
@@ -245,6 +245,7 @@ size_t Diagram::memory_usage() const
         // Account for the left and right branches vectors
         total += d->left.capacity() * sizeof(Branch);
         total += d->right.capacity() * sizeof(Branch);
+        total += d->parents.capacity() * sizeof(Diagram *);
 
         // Account for each branch's interval (which is part of the Branch struct, already counted)
         // But we need to recurse into children

@@ -1,5 +1,6 @@
 #include <absi/polar.h>
 
+#include <algorithm>
 #include <stdexcept>
 #include <numbers>
 #include <iostream>

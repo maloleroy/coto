@@ -337,8 +337,11 @@ void QasmContext::print_diagram_description() const
     std::cout << "~ branches " << get_branch_count(diagram) << std::endl;
 }
 
-void QasmContext::print_diagram_memory_usage() const
+void QasmContext::print_diagram_memory_usage()
 {
+    // Measuring the diagram must include every queued gate, but unlike @eval it
+    // must not materialize the exponentially-sized state vector.
+    simulate();
     if (diagram == nullptr)
     {
         std::cout << "(null)" << std::endl;

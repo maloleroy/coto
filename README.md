@@ -23,6 +23,7 @@ To build the project, you must have Clang, CMake and Ninja installed. The code u
 
 1. Configure the project
 ```bash
+git submodule update --init --recursive
 export CXX=$(which clang++)
 cmake -S . -B build -GNinja
 ```
