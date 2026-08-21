@@ -1,17 +1,10 @@
 <map id="diagram::Branch" name="diagram::Branch">
-<area shape="rect" id="Node000001" title="A incoming branch (in diagrams, an arrow)" alt="" coords="117,372,247,397"/>
-<area shape="rect" id="Node000002" href="$classpolar_1_1Interval.html" title=" " alt="" coords="143,196,256,221"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,230,237,245,237,260,227,294,215,325,191,373,186,371,210,323,222,292,231,260,231,246,223,233"/>
-<area shape="rect" id="Node000006" href="$classdiagram_1_1Diagram.html" title="A general&#45;purpose abstract&#45;interpreted additive diagram." alt="" coords="41,284,181,309"/>
-<area shape="poly" id="edge8_Node000006_Node000002" title=" " alt="" coords="134,230,115,247,109,265,111,284,106,284,104,264,110,244,130,226"/>
-<area shape="rect" id="Node000003" href="$classpolar_1_1PositiveInterval.html" title=" " alt="" coords="11,108,177,133"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="120,140,187,194,183,198,117,144"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="159,5,210,31"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="167,43,106,110,102,106,163,39"/>
-<area shape="rect" id="Node000005" href="$classpolar_1_1AngleInterval.html" title=" " alt="" coords="201,108,352,133"/>
-<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="207,39,268,106,264,110,203,43"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="259,146,212,197,208,194,255,142"/>
-<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="131,318,174,370,170,373,127,322"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="5,196,65,221"/>
-<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="34,235,35,248,39,259,52,272,68,282,66,286,48,276,34,261,29,249,28,236"/>
+<area shape="rect" id="Node000001" title="A incoming branch (in diagrams, an arrow)" alt="" coords="9,181,139,207"/>
+<area shape="rect" id="Node000002" href="$classcartesian_1_1Interval.html" title="Represents an interval in the Cartesian coordinate system." alt="" coords="5,5,145,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,44,67,93,69,142,74,181,69,181,63,142,62,93,68,44"/>
+<area shape="rect" id="Node000003" href="$classdiagram_1_1Diagram.html" title="A general&#45;purpose abstract&#45;interpreted additive diagram." alt="" coords="91,93,231,119"/>
+<area shape="poly" id="edge4_Node000003_Node000002" title=" " alt="" coords="85,42,100,68,116,81,133,91,130,95,112,85,96,71,80,45"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="141,130,88,183,84,179,138,126"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="219,5,279,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="240,44,221,71,187,96,184,91,217,67,236,41"/>
 </map>

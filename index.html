@@ -105,7 +105,8 @@ Building</h1>
 <li>Ninja 1.12.1</li>
 </ul>
 <ol type="1">
-<li>Configure the project <div class="fragment"><div class="line">export CXX=$(which clang++)</div>
+<li>Configure the project <div class="fragment"><div class="line">git submodule update --init --recursive</div>
+<div class="line">export CXX=$(which clang++)</div>
 <div class="line">cmake -S . -B build -GNinja</div>
 </div><!-- fragment --></li>
 <li>Build the project <div class="fragment"><div class="line">cmake --build build</div>
@@ -127,6 +128,7 @@ QASM interactive interpreter</h1>
 <li><code>@list</code>, <code>@actions</code> - list the actions (gate applicaitons) to be performed</li>
 <li><code>@display</code>, <code>@evaluate</code>, <code>@eval</code> - display the evaluation of the current diagram</li>
 <li><code>@describe</code>, <code>@desc</code> - display the description of the current diagram</li>
+<li><code>@memory</code>, <code>@mem</code> - display the memory usage of the current diagram</li>
 <li><code>@help</code>, <code>@man</code>, <code>@manual</code> - display a help message</li>
 </ul>
 <p>Applying gates to qubits is not performed immediately after the statement is entered, and should be triggered by a <code>@display;</code>.</p>

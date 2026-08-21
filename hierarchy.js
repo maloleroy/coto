@@ -24,5 +24,6 @@ var hierarchy =
     [ "Statement", "classStatement.html", null ],
     [ "StatementString", "structStatementString.html", null ],
     [ "Var< T >", "structVar.html", null ],
+    [ "VarArray< T >", "structVarArray.html", null ],
     [ "VariableStorage", "classVariableStorage.html", null ]
 ];

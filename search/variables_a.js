@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['top_5fright_0',['top_right',['../classcartesian_1_1Interval.html#aa2078272bbe0f8bf350474f5996e8139',1,'cartesian::Interval']]],
-  ['type_5fname_1',['type_name',['../structVar.html#a093017c90454fcf36fb61e0f0ab581d4',1,'Var']]]
+  ['size_0',['size',['../classGate.html#affd4ad9ac79d3f8eff7d78023ee8c60e',1,'Gate']]],
+  ['sqrt2_1',['sqrt2',['../namespaceampl.html#aa5678d49b109abd9245f1114198f938c',1,'ampl']]]
 ];

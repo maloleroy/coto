@@ -1,6 +1,7 @@
 var searchData=
 [
   ['fileerror_0',['FileError',['../classFileError.html',1,'']]],
-  ['force_5fmerge_1',['force_merge',['../namespacereduction.html#a8306363579b13d3db4a7933dcdd6e85a',1,'reduction']]],
-  ['forget_5fchild_2',['forget_child',['../classdiagram_1_1Diagram.html#a3b9f93629b237012cb9f3985164c002a',1,'diagram::Diagram']]]
+  ['float_5fparameters_1',['float_parameters',['../classGate.html#a7dbf4905b8de1f93a3b723a05d33f899',1,'Gate']]],
+  ['force_5fmerge_2',['force_merge',['../namespacereduction.html#a8306363579b13d3db4a7933dcdd6e85a',1,'reduction']]],
+  ['forget_5fchild_3',['forget_child',['../classdiagram_1_1Diagram.html#a3b9f93629b237012cb9f3985164c002a',1,'diagram::Diagram']]]
 ];

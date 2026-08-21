@@ -31,6 +31,7 @@ var annotated_dup =
     [ "StatementString", "structStatementString.html", null ],
     [ "SyntaxError", "classSyntaxError.html", null ],
     [ "Var", "structVar.html", "structVar" ],
+    [ "VarArray", "structVarArray.html", "structVarArray" ],
     [ "VariableError", "classVariableError.html", null ],
     [ "VariableStorage", "classVariableStorage.html", null ],
     [ "VersionError", "classVersionError.html", null ]
