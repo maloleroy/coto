@@ -67,7 +67,7 @@ namespace diagram
         /// used to choose the number of children and the amplitudes are undefined in this
         /// interface and are left as an implementation detail that is subject to change.
         /// @return A random diagram
-        static Diagram random(const size_t height);
+        static Diagram *random(const size_t height);
 
         /// @brief Children of side @p s
         Branches *children_of_side(Side s);
@@ -98,13 +98,18 @@ namespace diagram
         size_t count_nodes_at_height(size_t h);
 
         /// @brief Get all nodes at a given height
-        std::vector<Diagram *> get_node_pointers_at_height(const size_t h);
+        std::vector<Diagram *> get_node_pointers_at_height(const size_t h) const;
 
         /// @brief Replace nodes @p f1 and @p f2 by @p r at a given height
         void replace_nodes_at_height(const size_t h, Diagram *f1, Diagram *f2, Diagram *r);
 
         /// @brief An interval that contains all the intervals of the evaluation.
         Interval enclosure();
+
+        /// @brief Calculate the memory usage of the diagram including all children
+        /// Takes into account all sub-children diagrams but counts each node only once
+        /// @return The total memory usage in bytes
+        size_t memory_usage() const;
 
         ~Diagram();
 

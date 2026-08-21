@@ -2,6 +2,8 @@
 #include "diagram.h"
 #include <iostream>
 #include <algorithm>
+#include <set>
+#include <functional>
 
 using std::size_t;
 using namespace diagram;
@@ -122,7 +124,7 @@ Diagram *Diagram::clone() const
 
 Branches *Diagram::children_of_side(Side s)
 {
-    return s == Side::Right ? &left : &right;
+    return s == Side::Left ? &left : &right;
 }
 
 void Diagram::lefto(Diagram *d, const absi::Interval &x)
@@ -158,7 +160,7 @@ size_t Diagram::count_nodes_at_height(size_t h)
 }
 
 // TODO: Implement this function in-place, not by copying vectors
-std::vector<Diagram *> Diagram::get_node_pointers_at_height(const size_t h)
+std::vector<Diagram *> Diagram::get_node_pointers_at_height(const size_t h) const
 {
     std::vector<Diagram *> nodes;
     if (h > height)
@@ -167,7 +169,7 @@ std::vector<Diagram *> Diagram::get_node_pointers_at_height(const size_t h)
     }
     if (h == height)
     {
-        nodes.push_back(this);
+        nodes.push_back(const_cast<Diagram *>(this));
         return nodes;
     }
     for (Branch b : left)
@@ -227,6 +229,41 @@ absi::Interval Diagram::enclosure()
     return cached_enclosure;
 }
 
+size_t Diagram::memory_usage() const
+{
+    std::set<const Diagram *> visited;
+    std::function<size_t(const Diagram *)> calculate = [&](const Diagram *d) -> size_t
+    {
+        if (visited.count(d))
+        {
+            return 0;
+        }
+        visited.insert(d);
+
+        size_t total = sizeof(Diagram);
+
+        // Account for the left and right branches vectors
+        total += d->left.capacity() * sizeof(Branch);
+        total += d->right.capacity() * sizeof(Branch);
+        total += d->parents.capacity() * sizeof(Diagram *);
+
+        // Account for each branch's interval (which is part of the Branch struct, already counted)
+        // But we need to recurse into children
+        for (const auto &b : d->left)
+        {
+            total += calculate(b.d);
+        }
+        for (const auto &b : d->right)
+        {
+            total += calculate(b.d);
+        }
+
+        return total;
+    };
+
+    return calculate(this);
+}
+
 void Diagram::mark_parents_as_to_be_updated() const
 {
     for (auto i : parents)
@@ -248,13 +285,24 @@ void Diagram::forget_child(Diagram *d) noexcept
 
 Diagram::~Diagram()
 {
+    // Track already-deleted children to avoid double-deletion
+    std::vector<Diagram *> deleted;
+
     for (Branch b : left)
     {
-        delete b.d;
+        if (b.d != leaf && std::find(deleted.begin(), deleted.end(), b.d) == deleted.end())
+        {
+            deleted.push_back(b.d);
+            delete b.d;
+        }
     }
     for (Branch b : right)
     {
-        delete b.d;
+        if (b.d != leaf && std::find(deleted.begin(), deleted.end(), b.d) == deleted.end())
+        {
+            deleted.push_back(b.d);
+            delete b.d;
+        }
     }
     for (Diagram *p : parents)
     {

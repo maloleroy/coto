@@ -1,5 +1,6 @@
 .vscode/
 build/
+build-*/
 *.fdb_latexmk
 *.fls
 *synctex.gz
@@ -22,3 +23,4 @@ CMakeFiles/
 *.cmake
 Testing/
 __pycache__/
+analysis/results/

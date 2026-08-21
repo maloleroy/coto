@@ -36,6 +36,8 @@ public:
 
     void print_diagram_description() const;
 
+    void print_diagram_memory_usage();
+
     static void print_run_statements_help();
 
     VariableStorage storage;

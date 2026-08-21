@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <optional>
 #include <sstream>
+#include <cctype>
 
 #include <qasm/statements.h>
 #include <qasm/variables.h>
@@ -10,22 +11,20 @@
 
 bool is_valid_identifier(string identifier)
 {
-    bool is_first_char = true;
-    for (char c : identifier)
+    if (identifier.empty())
+        return false;
+
+    // First character must be a letter or underscore
+    char first = identifier[0];
+    if (!((first >= 'a' && first <= 'z') || (first >= 'A' && first <= 'Z') || first == '_'))
+        return false;
+
+    // Subsequent characters can be letters, digits, or underscores
+    for (size_t i = 1; i < identifier.length(); i++)
     {
-        if (c < 'A' || c > 'z')
-        {
-            if (c == '_')
-            {
-                continue;
-            }
-            if (!is_first_char && c > '0' && c < '9')
-            {
-                continue;
-            }
+        char c = identifier[i];
+        if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_'))
             return false;
-        }
-        is_first_char = false;
     }
     return true;
 }
@@ -40,7 +39,8 @@ public:
 
     DefinitionStatement(string content)
         : type_name(content.substr(0, content.find(' '))),
-          name(content.substr(content.find(' ') + 1))
+          name(content.substr(content.find(' ') + 1)),
+          array_size(0)
     {
         if (!is_valid_identifier(type_name))
         {
@@ -59,6 +59,113 @@ public:
 
     const string type_name;
     const string name;
+    size_t array_size;
+};
+
+class ArrayDefinitionStatement : public Statement
+{
+public:
+    static bool is(const string &content)
+    {
+        // Check if content contains brackets, indicating an array definition
+        // Array definitions have pattern like: "qubits[5] q" or "qubit[n] varname"
+        // NOT "x q[0]" or "cx q[0], q[1]" (gate applications)
+
+        size_t bracket_start = content.find('[');
+        if (bracket_start == string::npos || content.find(']') == string::npos)
+            return false;
+
+        // For a valid array definition, the type name (before bracket) should be
+        // at the beginning of the string and followed immediately by bracket
+        // Also, there should be a space between the closing bracket and the variable name
+
+        // Get the part before the bracket
+        string before_bracket = content.substr(0, bracket_start);
+
+        // Check if this looks like a type name (no spaces, valid identifier)
+        if (before_bracket.empty() || before_bracket.find(' ') != string::npos)
+            return false;
+
+        if (!is_valid_identifier(before_bracket))
+            return false;
+
+        // Check if there's a space after the closing bracket
+        size_t bracket_end = content.find(']');
+        if (bracket_end + 1 >= content.length())
+            return false;
+
+        // Must have a space after the bracket
+        if (content[bracket_end + 1] != ' ' && !std::isspace(static_cast<unsigned char>(content[bracket_end + 1])))
+            return false;
+
+        return true;
+    }
+
+    ArrayDefinitionStatement(string content)
+    {
+        // Parse type name, array name, and size
+        // Expected format: "qubits[5] q" or "qubit[n] varname"
+
+        size_t bracket_start = content.find('[');
+        size_t bracket_end = content.find(']');
+
+        if (bracket_start == string::npos || bracket_end == string::npos || bracket_end <= bracket_start)
+        {
+            throw SyntaxError("Invalid array syntax in definition statement");
+        }
+
+        // Extract type name
+        type_name = content.substr(0, bracket_start);
+        if (type_name.empty() || !is_valid_identifier(type_name))
+        {
+            throw SyntaxError("Invalid type name identifier in array definition statement");
+        }
+
+        // Extract array size
+        string size_str = content.substr(bracket_start + 1, bracket_end - bracket_start - 1);
+        if (size_str.empty())
+        {
+            throw SyntaxError("Array size cannot be empty");
+        }
+
+        try
+        {
+            array_size = std::stoul(size_str);
+        }
+        catch (...)
+        {
+            throw SyntaxError("Invalid array size: " + size_str);
+        }
+
+        if (array_size == 0)
+        {
+            throw SyntaxError("Array size must be greater than 0");
+        }
+
+        // Extract variable name
+        string after_bracket = content.substr(bracket_end + 1);
+        // Trim leading whitespace
+        size_t name_start = after_bracket.find_first_not_of(" \t");
+        if (name_start == string::npos)
+        {
+            throw SyntaxError("Variable name missing in array definition statement");
+        }
+
+        name = after_bracket.substr(name_start);
+        if (!is_valid_identifier(name))
+        {
+            throw SyntaxError("Invalid identifier in array definition statement");
+        }
+    }
+
+    void execute(QasmContext &context) const override
+    {
+        context.storage.define_var_array(type_name, name, array_size, false);
+    }
+
+    string type_name;
+    string name;
+    size_t array_size;
 };
 
 class AssignmentStatement : public Statement
@@ -118,25 +225,129 @@ public:
 
     static bool is(const string &content)
     {
-        return std::ranges::count(content, ' ') >= 1 && Gate::exists(content.substr(0, content.find(' ')));
+        // Check if there are parentheses (indicating parameters)
+        size_t paren_start = content.find('(');
+
+        if (paren_start == string::npos)
+        {
+            // No parameters - simple gate name followed by space and qubits
+            size_t gate_end = content.find(' ');
+            if (gate_end == string::npos)
+                return false;
+
+            string gate_name = content.substr(0, gate_end);
+            return Gate::exists(gate_name);
+        }
+        else
+        {
+            // Gate has parameters, find the closing parenthesis
+            size_t paren_end = content.find(')', paren_start);
+            if (paren_end == string::npos)
+                return false;
+
+            // Check what comes after the closing paren
+            size_t after_paren = paren_end + 1;
+            while (after_paren < content.size() && std::isspace(static_cast<unsigned char>(content[after_paren])))
+                after_paren++;
+
+            // If nothing after paren (e.g., gphase(pi/2)), extract full gate name with params
+            if (after_paren >= content.size())
+            {
+                string gate_name = content.substr(0, paren_end + 1);
+                return Gate::exists(gate_name);
+            }
+
+            // Otherwise, find the space separating gate from qubits
+            // The gate name is everything from start to paren_end (inclusive)
+            // Then there might be a space, then qubits
+            size_t space_pos = content.find(' ', paren_end);
+            if (space_pos == string::npos)
+                return false;
+
+            string gate_name = content.substr(0, space_pos);
+            return Gate::exists(gate_name);
+        }
     }
 
     GateApplyStatement(const string &content)
     {
-        auto first_space_pos = content.find(' ');
-        auto qubits_str = content.substr(first_space_pos + 1);
-        gateName = content.substr(0, first_space_pos);
-        qubits_names.reserve(std::ranges::count(qubits_str, ' ') + 1);
+        // Find the end of the gate name (including parameters if present)
+        size_t paren_start = content.find('(');
+        size_t gate_end;
+
+        if (paren_start == string::npos)
+        {
+            // No parameters - simple gate name
+            gate_end = content.find(' ');
+            if (gate_end == string::npos)
+                gate_end = content.size();
+        }
+        else
+        {
+            // Gate has parameters, find the closing parenthesis
+            size_t paren_end = content.find(')', paren_start);
+            gate_end = paren_end + 1;
+
+            // Check if there's a space after the closing paren (indicating qubits follow)
+            while (gate_end < content.size() && std::isspace(static_cast<unsigned char>(content[gate_end])))
+                gate_end++;
+
+            // If we're at the end, this is a 0-qubit gate (like gphase)
+            if (gate_end >= content.size())
+            {
+                gateName = content.substr(0, paren_end + 1);
+                return;
+            }
+
+            // Find the space that separates gate from qubits
+            gate_end = content.find(' ', paren_end);
+            if (gate_end == string::npos)
+                gate_end = content.size();
+        }
+
+        auto qubits_str = content.substr(gate_end + 1);
+        gateName = content.substr(0, gate_end);
+        // Trim whitespace from gateName
+        while (!gateName.empty() && std::isspace(static_cast<unsigned char>(gateName.back())))
+            gateName.pop_back();
+
+        qubits_names.reserve(std::ranges::count(qubits_str, ',') + 1);
 
         while (qubits_str.size() > 0)
         {
-            auto comma_pos = qubits_str.find(' ');
+            // Skip leading whitespace
+            while (qubits_str.size() > 0 && std::isspace(static_cast<unsigned char>(qubits_str[0])))
+            {
+                qubits_str = qubits_str.substr(1);
+            }
+            if (qubits_str.empty())
+                break;
+
+            auto comma_pos = qubits_str.find(',');
             if (comma_pos == string::npos)
             {
-                qubits_names.push_back(qubits_str);
+                // Last qubit - trim trailing whitespace
+                auto trimmed = qubits_str;
+                while (!trimmed.empty() && std::isspace(static_cast<unsigned char>(trimmed.back())))
+                {
+                    trimmed.pop_back();
+                }
+                if (!trimmed.empty())
+                {
+                    qubits_names.push_back(trimmed);
+                }
                 break;
             }
-            qubits_names.push_back(qubits_str.substr(0, comma_pos));
+            auto qubit = qubits_str.substr(0, comma_pos);
+            // Trim trailing whitespace from qubit
+            while (!qubit.empty() && std::isspace(static_cast<unsigned char>(qubit.back())))
+            {
+                qubit.pop_back();
+            }
+            if (!qubit.empty())
+            {
+                qubits_names.push_back(qubit);
+            }
             qubits_str = qubits_str.substr(comma_pos + 1);
         }
     }
@@ -235,6 +446,10 @@ public:
         {
             context.print_diagram_description();
         }
+        else if (content == "@memory" || content == "@mem")
+        {
+            context.print_diagram_memory_usage();
+        }
         else if (content == "@help" || content == "@man" || content == "@manual")
         {
             context.print_run_statements_help();
@@ -268,6 +483,10 @@ Statement::parse(const struct StatementString &ss)
         if (AssignmentStatement::is(ss.content))
         {
             return std::make_unique<AssignmentStatement>(ss.content);
+        }
+        if (ArrayDefinitionStatement::is(ss.content))
+        {
+            return std::make_unique<ArrayDefinitionStatement>(ss.content);
         }
         if (GateApplyStatement::is(ss.content))
         {

@@ -32,7 +32,7 @@ namespace reduction
      * @return Nothing, the reduction is performed in-place.
      */
     template <std::size_t height>
-    void max_nodes_level(Diagram d, std::array<size_t, height> maxNodes, selection::MergeesChoiceStrategy strategy);
+    void max_nodes_level(Diagram *d, std::array<size_t, height> maxNodes, selection::MergeesChoiceStrategy strategy);
 
     /**
      * @brief Forces the merge of two diagrams.

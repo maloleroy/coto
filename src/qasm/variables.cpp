@@ -9,6 +9,7 @@
 static std::vector<Var<int>> int_vars;
 static std::vector<Var<bit>> bit_bars;
 static std::vector<Var<qubit>> qubit_vars;
+static std::vector<VarArray<qubit>> qubit_arrays;
 
 enum VarType
 {
@@ -66,7 +67,17 @@ std::string VariableStorage::var_to_string(const varname &name) const
 
 bool VariableStorage::is_name_reserved(const varname &name) noexcept
 {
-    static const std::set<std::string> reserved_names{"x", "h", "cx", "s"};
+    static const std::set<std::string> reserved_names{
+        // Single-qubit Pauli gates
+        "x", "y", "z",
+        // Single-qubit Clifford gates
+        "h", "s", "sdg", "t", "tdg",
+        // Single-qubit sqrt gates
+        "sx",
+        // Two-qubit gates
+        "swap", "cx", "cy", "cz", "ch",
+        // Three-qubit gates
+        "ccx", "cswap"};
     return reserved_names.contains(name);
 }
 
@@ -97,6 +108,28 @@ void VariableStorage::define_var(const std::string &type_name, const varname &na
     else
     {
         throw VariableError("Unsupported variable type in definition: '" + type_name + "'");
+    }
+}
+
+void VariableStorage::define_var_array(const std::string &type_name, const varname &name, size_t size, bool is_const)
+{
+    if (is_name_reserved(name))
+    {
+        throw VariableError("Trying to define a variable with a reserved name: " + name);
+    }
+    if (type_name == "qubit" || type_name == "qubits")
+    {
+        std::vector<qubit> values;
+        for (size_t i = 0; i < size; ++i)
+        {
+            values.push_back(get_qubit_count());
+            qubit_count++;
+        }
+        qubit_arrays.push_back(VarArray<qubit>{type_name, name, true, values});
+    }
+    else
+    {
+        throw VariableError("Unsupported array type in definition: '" + type_name + "'");
     }
 }
 
@@ -144,4 +177,20 @@ qubit VariableStorage::get_qubit(const varname &name)
         }
     }
     throw VariableError("Qubit not defined: " + name);
+}
+
+qubit VariableStorage::get_qubit_array_element(const varname &name, size_t index)
+{
+    for (auto &arr : qubit_arrays)
+    {
+        if (arr.name == name)
+        {
+            if (index >= arr.values.size())
+            {
+                throw VariableError("Qubit array index out of bounds: " + name + "[" + std::to_string(index) + "]");
+            }
+            return arr.values[index];
+        }
+    }
+    throw VariableError("Qubit array not defined: " + name);
 }

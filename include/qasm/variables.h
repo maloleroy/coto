@@ -30,6 +30,20 @@ struct Var
     T value;             /**< The value of the variable. */
 };
 
+/**
+ * @brief A template structure representing an array variable.
+ *
+ * @tparam T The type of the array's elements.
+ */
+template <class T>
+struct VarArray
+{
+    varname type_name;     /**< The name of the variable's type. */
+    varname name;          /**< The name of the variable. */
+    bool is_const;         /**< Indicates if the array is constant. */
+    std::vector<T> values; /**< The values of the array elements. */
+};
+
 class VariableStorage
 {
 public:
@@ -43,13 +57,19 @@ public:
 
     void define_var(const string &type_name, const varname &name, bool is_const = false);
 
+    void define_var_array(const string &type_name, const varname &name, size_t size, bool is_const = false);
+
     void assign_var(const varname &name, const string &value);
 
     [[nodiscard]]
     qubit get_qubit(const varname &name);
 
+    [[nodiscard]]
+    qubit get_qubit_array_element(const varname &name, size_t index);
+
 private:
     std::vector<Var<string>> vars;
+    std::vector<VarArray<qubit>> qubit_arrays;
 
     size_t qubit_count = 0;
 };

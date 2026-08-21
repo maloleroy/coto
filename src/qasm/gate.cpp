@@ -3,11 +3,16 @@
 #include <qasm/context.h>
 
 #include <algorithm>
+#include <cctype>
+#include <cmath>
 
-Gate::Gate(const std::string &name, const std::size_t size, const std::optional<int> &parameter) noexcept
+// ... existing parse_phase_gate_phase and get_phase_gate_name functions ...
+
+Gate::Gate(const std::string &name, const std::size_t size, const std::optional<int> &parameter, const std::vector<double> &float_params) noexcept
     : parameter(parameter),
       size(size),
-      name(name)
+      name(name),
+      float_parameters(float_params)
 {
 }
 
@@ -69,7 +74,150 @@ bool is_phase_gate(const std::string &gateName)
 
 bool Gate::exists(const std::string &gateName) noexcept
 {
-    return VariableStorage::is_name_reserved(gateName) || is_phase_gate(gateName);
+    // Check reserved (non-parameterized) gate names
+    if (VariableStorage::is_name_reserved(gateName))
+        return true;
+
+    // Check phase gates
+    if (is_phase_gate(gateName))
+        return true;
+
+    // Check parameterized gates
+    if (gateName.starts_with("rx(") || gateName.starts_with("ry(") || gateName.starts_with("rz(") ||
+        gateName.starts_with("cp(") || gateName.starts_with("crx(") || gateName.starts_with("cry(") ||
+        gateName.starts_with("crz(") || gateName.starts_with("cu(") || gateName.starts_with("u(") ||
+        gateName.starts_with("gphase("))
+    {
+        return gateName.back() == ')'; // Must end with ')'
+    }
+
+    return false;
+}
+
+// Helper to parse a single parameter expression (supporting negation and pi expressions)
+static double parse_parameter_expression(const std::string &param_str)
+{
+    // Trim whitespace
+    std::string param = param_str;
+    param.erase(0, param.find_first_not_of(" \t"));
+    param.erase(param.find_last_not_of(" \t") + 1);
+
+    if (param.empty())
+        throw std::invalid_argument("Empty parameter");
+
+    // Check for negative sign
+    bool is_negative = false;
+    if (param[0] == '-')
+    {
+        is_negative = true;
+        param = param.substr(1);
+        // Trim whitespace after minus sign
+        param.erase(0, param.find_first_not_of(" \t"));
+    }
+
+    double value = 0.0;
+
+    // Check if it contains 'pi' (general pi expression handler)
+    if (param.find("pi") != std::string::npos)
+    {
+        // Format can be: pi, N*pi, pi/D, N*pi/D
+        // Examples: pi, 2*pi, pi/4, 3*pi/16, 2*pi/3
+
+        size_t pi_pos = param.find("pi");
+
+        // Parse the part before "pi"
+        double multiplier = 1.0;
+        if (pi_pos > 0)
+        {
+            std::string before_pi = param.substr(0, pi_pos);
+            // Remove the '*' if present
+            if (before_pi.back() == '*')
+                before_pi.pop_back();
+            if (!before_pi.empty())
+            {
+                multiplier = std::stod(before_pi);
+            }
+        }
+
+        // Parse the part after "pi"
+        double divisor = 1.0;
+        if (pi_pos + 2 < param.length())
+        {
+            std::string after_pi = param.substr(pi_pos + 2);
+            if (after_pi[0] == '/')
+            {
+                divisor = std::stod(after_pi.substr(1));
+            }
+            else
+            {
+                throw std::invalid_argument("Invalid pi expression format: " + param);
+            }
+        }
+
+        value = (multiplier / divisor) * M_PI;
+    }
+    else
+    {
+        // Try to parse as a numeric literal
+        value = std::stod(param);
+    }
+
+    return is_negative ? -value : value;
+}
+
+// Helper to parse rotation gate parameters like rx(0.5), ry(pi/4), etc.
+static std::vector<double> parse_rotation_gate_params(const std::string &gateName, size_t param_count)
+{
+    // Format: gateName(param1, param2, ..., paramN)
+    // Supports numeric literals and pi-related expressions, including negative values
+    std::vector<double> params;
+
+    size_t open_paren = gateName.find('(');
+    size_t close_paren = gateName.rfind(')');
+
+    if (open_paren == std::string::npos || close_paren == std::string::npos || close_paren <= open_paren)
+    {
+        throw VariableError("Invalid gate parameter format in " + gateName);
+    }
+
+    std::string params_str = gateName.substr(open_paren + 1, close_paren - open_paren - 1);
+
+    try
+    {
+        // Handle simple case of single parameter (for rotation gates)
+        if (param_count == 1)
+        {
+            params.push_back(parse_parameter_expression(params_str));
+        }
+        else
+        {
+            // For multiple parameters, split by comma
+            size_t pos = 0;
+            for (size_t i = 0; i < param_count; ++i)
+            {
+                size_t comma_pos = params_str.find(',', pos);
+                std::string param = (comma_pos == std::string::npos)
+                                        ? params_str.substr(pos)
+                                        : params_str.substr(pos, comma_pos - pos);
+
+                params.push_back(parse_parameter_expression(param));
+
+                if (comma_pos == std::string::npos)
+                    break;
+                pos = comma_pos + 1;
+            }
+        }
+    }
+    catch (std::invalid_argument &e)
+    {
+        throw VariableError("Invalid gate parameter: " + params_str);
+    }
+    catch (std::out_of_range &e)
+    {
+        throw VariableError("Gate parameter out of range: " + params_str);
+    }
+
+    return params;
 }
 
 const Gate Gate::from_name(const std::string &gateName)
@@ -78,13 +226,59 @@ const Gate Gate::from_name(const std::string &gateName)
     {
         return Gate(gateName, 1, parse_phase_gate_phase(gateName));
     }
-    else if (gateName == "x" || gateName == "h")
+    // Single-qubit gates without parameters
+    else if (gateName == "x" || gateName == "y" || gateName == "z" ||
+             gateName == "h" || gateName == "s" || gateName == "sdg" ||
+             gateName == "t" || gateName == "tdg" || gateName == "sx")
     {
         return Gate(gateName, 1);
     }
-    else if (gateName == "s" || gateName == "cx")
+    // Single-qubit rotation gates with 1 parameter
+    else if (gateName.starts_with("rx(") || gateName.starts_with("ry(") || gateName.starts_with("rz("))
+    {
+        auto params = parse_rotation_gate_params(gateName, 1);
+        return Gate(gateName, 1, std::nullopt, params);
+    }
+    // Two-qubit gates without parameters
+    else if (gateName == "swap" || gateName == "cx" || gateName == "cy" || gateName == "cz" ||
+             gateName == "ch")
     {
         return Gate(gateName, 2);
+    }
+    // Controlled phase gate with 1 parameter
+    else if (gateName.starts_with("cp("))
+    {
+        auto params = parse_rotation_gate_params(gateName, 1);
+        return Gate(gateName, 2, std::nullopt, params);
+    }
+    // Controlled rotation gates with 1 parameter
+    else if (gateName.starts_with("crx(") || gateName.starts_with("cry(") || gateName.starts_with("crz("))
+    {
+        auto params = parse_rotation_gate_params(gateName, 1);
+        return Gate(gateName, 2, std::nullopt, params);
+    }
+    // Controlled U gate with 3 parameters
+    else if (gateName.starts_with("cu("))
+    {
+        auto params = parse_rotation_gate_params(gateName, 3);
+        return Gate(gateName, 2, std::nullopt, params);
+    }
+    // Three-qubit gates
+    else if (gateName == "ccx" || gateName == "cswap")
+    {
+        return Gate(gateName, 3);
+    }
+    // Global phase gate
+    else if (gateName.starts_with("gphase("))
+    {
+        auto params = parse_rotation_gate_params(gateName, 1);
+        return Gate(gateName, 0, std::nullopt, params); // 0 qubits - affects global phase
+    }
+    // U gate (universal single-qubit gate with 3 parameters)
+    else if (gateName.starts_with("u("))
+    {
+        auto params = parse_rotation_gate_params(gateName, 3);
+        return Gate(gateName, 1, std::nullopt, params);
     }
     throw VariableError("Undefined gate " + gateName);
 }
