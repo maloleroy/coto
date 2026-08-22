@@ -26,3 +26,8 @@ __pycache__/
 analysis/results/*
 !analysis/results/fidelity.csv
 !analysis/results/fidelity.metadata.json
+!analysis/results/benchmarks.csv
+!analysis/results/benchmarks.metadata.json
+!analysis/results/README.md
+!analysis/results/figures/
+!analysis/results/figures/*.pdf

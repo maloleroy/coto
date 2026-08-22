@@ -6,8 +6,8 @@ size, elapsed wall-clock time, and any timeout or compatibility failure in CSV f
 
 The reported `memory_bytes` includes each reachable diagram node once, the allocated
 capacity of its branch vectors, and its parent-pointer capacity. It is not the process's
-peak resident-set size or allocator overhead; later comparative experiments should report
-those separately.
+peak resident-set size or allocator overhead; the comparative collector below reports peak
+resident-set size separately.
 
 ## Setup
 
@@ -68,6 +68,25 @@ immediately. Package and platform versions are stored next to the CSV in
 `fidelity.metadata.json`. Coto indexes qubit 0 as the most-significant state bit, while
 Qiskit uses it as the least-significant bit; the collector explicitly reverses state indices
 before comparing amplitudes. Mid-circuit measurements and classical control are rejected.
+
+## Compare simulators
+
+The comparative collector runs Coto, Qiskit Aer, and MQT DDSIM in fresh processes. GNU
+`time` records process peak RSS and wall time; Python workers also report simulation-only
+time. Every run has an address-space limit and timeout, and failures remain in the CSV:
+
+```sh
+uv run python benchmarks.py --profile paper --repeats 3 \
+  --timeout 10 --memory-gib 4 --prompt ../build/prompt \
+  --output results/benchmarks.csv
+uv run python plot_results.py
+```
+
+The paper profile includes scaled separable, GHZ, and deterministic entangling circuits plus
+QASMBench instances. Aer uses its state-vector method and MQT uses its decision-diagram QASM
+simulator; both execute one measured shot so circuit evolution cannot be optimized away. Coto
+runs in exact mode and with node budgets 1, 4, and 16. Metadata records package versions,
+the Git commit, platform, resource limits, and repetition count.
 
 ## Validation
 

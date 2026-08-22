@@ -5,6 +5,7 @@ description = "Performance analysis of additive quantum decision diagrams"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "matplotlib>=3.10",
     "mqt-ddsim>=2.5.0",
     "numpy>=2.5.2",
     "qiskit>=2.5.2",
