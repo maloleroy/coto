@@ -212,7 +212,7 @@ void Diagram::righto(Diagram *d, const absi::Interval &x)
     d->add_parent(this);
 }
 
-size_t Diagram::count_nodes_at_height(size_t h)
+size_t Diagram::count_nodes_at_height(size_t h) const
 {
     return get_node_pointers_at_height(h).size();
 }
@@ -248,7 +248,50 @@ std::vector<Diagram *> Diagram::get_node_pointers_at_height(const size_t h) cons
 
 void Diagram::replace_nodes_at_height(const size_t h, Diagram *f1, Diagram *f2, Diagram *r)
 {
-    throw std::runtime_error("Not implemented");
+    if (f1 == nullptr || f2 == nullptr || r == nullptr || f1 == f2)
+        throw std::invalid_argument("Replacement requires two distinct nodes and one result");
+    if (h == 0 || h >= height || f1->height != h || f2->height != h || r->height != h)
+        throw std::invalid_argument("Replacement nodes do not match the requested height");
+
+    const auto affected_parents = get_node_pointers_at_height(h + 1);
+    bool replacement_used = false;
+
+    for (auto *parent : affected_parents)
+    {
+        bool replaced = false;
+        auto redirect = [&](Branches &branches)
+        {
+            for (auto &branch : branches)
+            {
+                if (branch.d == f1 || branch.d == f2)
+                {
+                    branch.d = r;
+                    replaced = true;
+                }
+            }
+        };
+        redirect(parent->left);
+        redirect(parent->right);
+        if (replaced)
+        {
+            r->add_parent(parent);
+            parent->mark_modified();
+            replacement_used = true;
+        }
+        f1->remove_parent(parent);
+        f2->remove_parent(parent);
+    }
+
+    if (!replacement_used)
+    {
+        delete r;
+        throw std::invalid_argument("Replacement nodes are not reachable below this diagram");
+    }
+
+    if (f1->parents.empty())
+        delete f1;
+    if (f2->parents.empty())
+        delete f2;
 }
 
 absi::Interval calculate_enclosure(Diagram &d)

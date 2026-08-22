@@ -101,6 +101,11 @@ bool Interval::contains(ampl::Amplitude z) const
            (z.imag() <= top_right.imag());
 }
 
+bool Interval::contains_interval(const Interval &other) const
+{
+    return contains(other.bottom_left) && contains(other.top_right);
+}
+
 ampl::Real Interval::norm() const noexcept
 {
     return abs(top_right - bottom_left);

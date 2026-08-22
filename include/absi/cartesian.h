@@ -86,6 +86,9 @@ namespace cartesian
         /// @return True if the point is contained within the interval, false otherwise.
         bool contains(ampl::Amplitude point) const;
 
+        /// @brief Checks whether another rectangular interval is included in this one.
+        bool contains_interval(const Interval &other) const;
+
         std::string to_string() const noexcept;
 
         /// @brief Computes the norm of the interval.

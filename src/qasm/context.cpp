@@ -25,7 +25,8 @@ QasmContext::~QasmContext()
 QasmContext::QasmContext(QasmContext &&other) noexcept
     : storage(std::move(other.storage)), // Move storage
       diagram(other.diagram),            // Transfer ownership of diagram pointer
-      actions(std::move(other.actions))  // Move actions vector
+      actions(std::move(other.actions)), // Move actions vector
+      reduction_max_nodes(other.reduction_max_nodes)
 {
     other.diagram = nullptr; // Leave other in a valid state (no longer owns diagram)
 }
@@ -42,6 +43,7 @@ QasmContext &QasmContext::operator=(QasmContext &&other) noexcept
         storage = std::move(other.storage);
         diagram = other.diagram;
         actions = std::move(other.actions);
+        reduction_max_nodes = other.reduction_max_nodes;
 
         // Leave other in a valid state
         other.diagram = nullptr;
@@ -255,8 +257,11 @@ void QasmContext::simulate()
         }
         else
         {
-            std::cout << "Unimplemented gate application in context handling: " << a->gate.name << std::endl;
+            throw std::runtime_error("Unimplemented gate application: " + a->gate.name);
         }
+
+        if (reduction_max_nodes.has_value())
+            reduction::max_nodes_per_level(diagram, reduction_max_nodes.value());
     }
     actions.clear();
 }
@@ -307,24 +312,9 @@ static void register_nodes(const diagram::Diagram *d, std::set<const diagram::Di
     }
 }
 
-static size_t get_branch_count(diagram::Diagram *d)
+void QasmContext::print_diagram_description()
 {
-    size_t count = 0;
-    for (auto &b : d->left)
-    {
-        count += get_branch_count(b.d);
-        count++;
-    }
-    for (auto &b : d->right)
-    {
-        count += get_branch_count(b.d);
-        count++;
-    }
-    return count;
-}
-
-void QasmContext::print_diagram_description() const
-{
+    simulate();
     if (diagram == nullptr)
     {
         std::cout << "(null)" << std::endl;
@@ -332,9 +322,33 @@ void QasmContext::print_diagram_description() const
     }
     std::set<const diagram::Diagram *> seen;
     register_nodes(diagram, seen);
+    size_t branch_count = 0;
+    size_t max_level_nodes = 0;
+    for (const auto *node : seen)
+        branch_count += node->left.size() + node->right.size();
+    for (size_t height = 1; height < diagram->height; ++height)
+        max_level_nodes = std::max(max_level_nodes, diagram->count_nodes_at_height(height));
     std::cout << "~ height " << diagram->height << std::endl;
     std::cout << "~ nodes " << seen.size() << std::endl;
-    std::cout << "~ branches " << get_branch_count(diagram) << std::endl;
+    std::cout << "~ branches " << branch_count << std::endl;
+    std::cout << "~ max nodes per nonterminal level " << max_level_nodes << std::endl;
+    std::cout << "~ reduction "
+              << (reduction_max_nodes.has_value() ? std::to_string(reduction_max_nodes.value()) : "exact")
+              << std::endl;
+}
+
+void QasmContext::set_reduction_max_nodes(size_t max_nodes)
+{
+    if (max_nodes == 0)
+        throw std::invalid_argument("The reduction node budget must be at least one");
+    reduction_max_nodes = max_nodes;
+    if (diagram != nullptr)
+        reduction::max_nodes_per_level(diagram, max_nodes);
+}
+
+void QasmContext::disable_reduction() noexcept
+{
+    reduction_max_nodes.reset();
 }
 
 void QasmContext::print_diagram_memory_usage()
@@ -371,6 +385,8 @@ void QasmContext::print_run_statements_help()
               << "  @display, @evaluate, @eval - display the evaluation of the current diagram\n"
               << "  @describe, @desc - display the description of the current diagram\n"
               << "  @memory, @mem - display the memory usage of the current diagram\n"
+              << "  @reduce(N) - cap every nonterminal level at N nodes after each gate\n"
+              << "  @exact - disable automatic reduction\n"
               << "  @help, @man, @manual - display this help message\n"
               << std::endl;
 }

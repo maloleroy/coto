@@ -21,18 +21,17 @@ namespace reduction
     void cut_dead_branches(Diagram *d);
 
     /**
-     * @brief Reduces the number of nodes at each level of the QDD so that level i
-     * contains less than (or equal) `maxNodes[i]`.
-     *
-     * This function reduces the number of nodes at each level of the Quantum Decision Diagram (QDD)
-     * such that level i contains less than or equal to the specified maximum number of nodes `maxNodes[i]`.
+     * @brief Caps every nonterminal level of a diagram at @p max_nodes nodes.
      *
      * @param d The quantum diagram we want to reduce.
-     * @param maxNodes A vector containing the maximum number of nodes for each level.
-     * @return Nothing, the reduction is performed in-place.
+     * @param max_nodes The positive, uniform node budget.
+     * @param strategy The merge-pair selection policy.
+     * @return The number of node merges performed in-place.
      */
-    template <std::size_t height>
-    void max_nodes_level(Diagram *d, std::array<size_t, height> maxNodes, selection::MergeesChoiceStrategy strategy);
+    size_t max_nodes_per_level(
+        Diagram *d,
+        size_t max_nodes,
+        selection::MergeesChoiceStrategy strategy = selection::MIN_IMPRECISION);
 
     /**
      * @brief Forces the merge of two diagrams.
@@ -43,5 +42,6 @@ namespace reduction
      * @param b The second diagram to be merged.
      * @return The merged diagram.
      */
-    Diagram force_merge(Diagram &a, Diagram &b);
+    /// @return A heap-allocated merged node owned by the caller.
+    Diagram *force_merge(const Diagram &a, const Diagram &b);
 };

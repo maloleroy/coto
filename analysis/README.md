@@ -38,6 +38,11 @@ number of circuits, and each circuit has its own `--timeout`. Rows are flushed i
 so completed observations remain available if a later circuit fails. The command returns a
 nonzero status if any row failed.
 
+To collect an approximate run, add `--reduction-max-nodes N`. Coto then applies its
+minimum-imprecision merge heuristic after every gate until every nonterminal level has at
+most `N` nodes. The CSV records the budget (or `exact`) in every row; use separate output
+files for each budget.
+
 The compatibility layer translates the supported QASM 2 subset without evaluating the
 full state vector. Measurements, barriers, identities, and classical registers are removed.
 Classically-controlled operations are rejected and recorded as failures rather than silently

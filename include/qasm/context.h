@@ -6,6 +6,7 @@
 #include <qasm/gate.h>
 #include <qasm/variables.h>
 #include <diagram.h>
+#include <optional>
 
 struct action;
 
@@ -34,9 +35,13 @@ public:
 
     void print_evaluation();
 
-    void print_diagram_description() const;
+    void print_diagram_description();
 
     void print_diagram_memory_usage();
+
+    void set_reduction_max_nodes(size_t max_nodes);
+
+    void disable_reduction() noexcept;
 
     static void print_run_statements_help();
 
@@ -48,4 +53,6 @@ private:
     diagram::Diagram *diagram;
 
     std::vector<std::unique_ptr<struct action>> actions;
+
+    std::optional<size_t> reduction_max_nodes;
 };

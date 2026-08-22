@@ -425,7 +425,8 @@ public:
 
     static bool is(const string &content)
     {
-        return content.starts_with("@") && is_valid_identifier(content.substr(1));
+        return (content.starts_with("@") && is_valid_identifier(content.substr(1))) ||
+               (content.starts_with("@reduce(") && content.ends_with(')'));
     }
 
     void execute(QasmContext &context) const override
@@ -449,6 +450,25 @@ public:
         else if (content == "@memory" || content == "@mem")
         {
             context.print_diagram_memory_usage();
+        }
+        else if (content.starts_with("@reduce(") && content.ends_with(')'))
+        {
+            const auto value = content.substr(8, content.size() - 9);
+            if (value.empty() || !std::ranges::all_of(value, [](unsigned char c)
+                                                      { return std::isdigit(c); }))
+                throw SyntaxError("Reduction budget must be a positive integer");
+            try
+            {
+                context.set_reduction_max_nodes(std::stoull(value));
+            }
+            catch (const std::exception &)
+            {
+                throw SyntaxError("Invalid reduction budget: " + value);
+            }
+        }
+        else if (content == "@exact")
+        {
+            context.disable_reduction();
         }
         else if (content == "@help" || content == "@man" || content == "@manual")
         {

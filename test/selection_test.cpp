@@ -27,3 +27,23 @@ TEST_F(SelectionTest, Random)
     EXPECT_EQ(m.b->height, eig0->height);
     EXPECT_EQ(expectedMergees, m);
 }
+
+TEST(SelectionStrategyTest, minimum_imprecision_selects_closest_pair)
+{
+    auto *terminal = Diagram::eig0(0);
+    auto *near_a = new Diagram(1);
+    auto *near_b = new Diagram(1);
+    auto *far = new Diagram(1);
+    near_a->lefto(terminal, 1.0);
+    near_b->lefto(terminal, 1.1);
+    far->lefto(terminal, 10.0);
+    auto *root = new Diagram(2);
+    root->lefto(near_a);
+    root->lefto(near_b);
+    root->righto(far);
+
+    const auto selected = selection::get_mergees_at_height(1, root, selection::MIN_IMPRECISION);
+
+    EXPECT_EQ(selected, (selection::Mergees{near_a, near_b}));
+    delete root;
+}
