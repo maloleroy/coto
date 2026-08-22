@@ -68,6 +68,12 @@ def benchmark_cases(profile: str) -> list[tuple[str, str]]:
         (f"contrived/layered_random_n{qubits}", circuits.layered_random(qubits, 4))
         for qubits in (6, 8, 10, 12)
     )
+    # A deeper, deterministic instance that is deliberately hostile to both
+    # dense state vectors and exact decision-diagram sharing.
+    cases.extend(
+        (f"contrived/layered_random_n{qubits}_d20", circuits.layered_random(qubits, 20))
+        for qubits in (20, 30)
+    )
     cases.extend(circuits.fidelity_cases(include_qasmbench=True))
     unique: dict[str, str] = {}
     for name, source in cases:

@@ -17,6 +17,11 @@ class BenchmarksTest(unittest.TestCase):
             ],
         )
 
+    def test_paper_profile_contains_deep_adversarial_case(self):
+        names = {name for name, _ in benchmarks.benchmark_cases("paper")}
+        self.assertIn("contrived/layered_random_n20_d20", names)
+        self.assertIn("contrived/layered_random_n30_d20", names)
+
     def test_isolated_runner_records_peak_rss(self):
         result = benchmarks.run_isolated(
             [sys.executable, "-c", "print('ok')"], timeout=5, memory_limit_bytes=1024**3
