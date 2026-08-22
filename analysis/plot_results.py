@@ -12,6 +12,10 @@ import statistics
 import matplotlib.pyplot as plt
 
 
+# ACM submissions must embed scalable Type 1/TrueType fonts, not Type 3 glyphs.
+plt.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42})
+
+
 COLORS = {
     "Aer": "#4477AA",
     "MQT DDSIM": "#228833",
