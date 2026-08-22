@@ -1,4 +1,6 @@
 {
+  "certification": "unit_norm_triangle_bound_v1",
+  "git_commit": "5d3f397ce6a5aeb039d46dc6b53874066f2dc6d9",
   "mqt-ddsim": "2.5.0",
   "numpy": "2.5.2",
   "platform": "Linux-7.0.0-28-generic-x86_64-with-glibc2.39",

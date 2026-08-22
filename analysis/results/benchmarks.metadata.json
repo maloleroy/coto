@@ -5,7 +5,7 @@
     4,
     16
   ],
-  "git_commit": "2cdffd64520ec92a03bba6b6693e36d7a4dec7b0",
+  "git_commit": "5d3f397ce6a5aeb039d46dc6b53874066f2dc6d9",
   "logical_cpus": 16,
   "memory_limit_bytes": 4294967296,
   "mqt-ddsim": "2.5.0",
