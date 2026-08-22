@@ -31,6 +31,13 @@ measure q -> c;
         with self.assertRaisesRegex(ValueError, "Classically-controlled"):
             transpile.transpile("OPENQASM 2.0;\nif(c==1) x q[0];")
 
+    def test_reduction_budget_is_recorded_as_runtime_directive(self):
+        result = transpile.transpile("OPENQASM 2.0;\nqreg q[2];", reduction_max_nodes=3)
+        self.assertIn("@reduce(3);", result)
+        self.assertLess(result.index("@reduce(3);"), result.index("@memory;"))
+        with self.assertRaisesRegex(ValueError, "positive"):
+            transpile.transpile("OPENQASM 2.0;", reduction_max_nodes=0)
+
 
 if __name__ == "__main__":
     unittest.main()

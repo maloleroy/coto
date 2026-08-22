@@ -106,6 +106,28 @@ TEST(QasmTest, memory_usage)
     EXPECT_NO_THROW(r = r.exec("@memory;"));
 }
 
+TEST(QasmTest, runtime_reduction_budget)
+{
+    Runtime runtime = exec("qubit[4] q;\n@reduce(1);\nh q[0];\nh q[1];\ncx q[0], q[2];\nt q[2];\ncx q[1], q[3];");
+    testing::internal::CaptureStdout();
+    EXPECT_NO_THROW(runtime.exec("@describe;"));
+    const auto description = testing::internal::GetCapturedStdout();
+    EXPECT_NE(description.find("~ max nodes per nonterminal level 1"), std::string::npos);
+    EXPECT_NE(description.find("~ reduction 1"), std::string::npos);
+}
+
+TEST(QasmTest, runtime_reduction_directives_validate_and_disable)
+{
+    EXPECT_THROW(exec("@reduce(0);"), SyntaxError);
+    EXPECT_THROW(exec("@reduce(nope);"), SyntaxError);
+
+    Runtime runtime = exec("qubit q;\n@reduce(2);\n@exact;");
+    testing::internal::CaptureStdout();
+    runtime.exec("@describe;");
+    const auto description = testing::internal::GetCapturedStdout();
+    EXPECT_NE(description.find("~ reduction exact"), std::string::npos);
+}
+
 TEST(QasmTest, pauli_gates)
 {
     EXPECT_EQ(eval("x"), "gate: x[1]");

@@ -15,6 +15,10 @@ class MemoryTest(unittest.TestCase):
         qasm = "OPENQASM 3.0;\nqubit q;\nh q;\n@memory;\n"
         self.assertGreater(memory.memory_from_qasm(qasm, timeout=5), 0)
 
+    def test_prompt_integration_with_reduction(self):
+        qasm = "qubit[4] q;\n@reduce(1);\nh q[0];\nh q[1];\ncx q[0], q[2];\n@memory;\n"
+        self.assertGreater(memory.memory_from_qasm(qasm, timeout=5), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

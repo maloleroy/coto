@@ -55,9 +55,12 @@ This prompt utility comes with a few available **run statements** that should be
 * `@display`, `@evaluate`, `@eval` - display the evaluation of the current diagram
 * `@describe`, `@desc` - display the description of the current diagram
 * `@memory`, `@mem` - display the memory usage of the current diagram
+* `@reduce(N)` - enable approximate simulation and cap each nonterminal level at `N` nodes after every gate
+* `@exact` - disable automatic reduction (the default)
 * `@help`, `@man`, `@manual` - display a help message
 
-Applying gates to qubits is not performed immediately after the statement is entered, and should be triggered by a `@display;`.
+Applying gates to qubits is deferred until a statement needs the diagram. `@display`,
+`@describe`, and `@memory` all simulate every queued gate first.
 
 The `prompt` executable can also take a `.qasm` file path as an argument, in this case it quits after executing all statements in the file, without entering interactive mode.
 

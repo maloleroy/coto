@@ -58,7 +58,7 @@ target_link_libraries(selection_test selection GTest::gtest_main)
 add_library(gateappliers STATIC src/gateappliers.cpp)
 target_link_libraries(gateappliers diagram)
 add_executable(gateappliers_test test/gateappliers_test.cpp)
-target_link_libraries(gateappliers_test gateappliers GTest::gtest_main)
+target_link_libraries(gateappliers_test gateappliers reduction GTest::gtest_main)
 
 # Reduction test
 add_library(reduction STATIC src/reduction.cpp)
@@ -69,7 +69,7 @@ target_link_libraries(reduction_test reduction GTest::gtest_main)
 # QASM library
 FILE(GLOB QasmSources src/qasm/*.cpp)
 add_library(qasm STATIC ${QasmSources})
-target_link_libraries(qasm gateappliers)
+target_link_libraries(qasm reduction gateappliers)
 add_executable(qasm_test test/qasm/qasm_test.cpp)
 target_link_libraries(qasm_test qasm GTest::gtest_main)
 

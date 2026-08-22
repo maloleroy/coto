@@ -110,7 +110,7 @@ def add_memory(qasm: str) -> str:
     return qasm + "\n@memory;\n"
 
 
-def transpile(qasm: str) -> str:
+def transpile(qasm: str, reduction_max_nodes: int | None = None) -> str:
     steps: list[TranspilingStep] = [
         openqasm_version,
         remove_comments,
@@ -121,8 +121,11 @@ def transpile(qasm: str) -> str:
         remove_classical_registers,
         rename_qreg_to_qubits,
         split_gate_applications_on_arrays,
-        add_memory,
     ]
     for step in steps:
         qasm = step(qasm)
-    return qasm
+    if reduction_max_nodes is not None:
+        if reduction_max_nodes <= 0:
+            raise ValueError("reduction_max_nodes must be positive")
+        qasm += f"\n@reduce({reduction_max_nodes});\n"
+    return add_memory(qasm)

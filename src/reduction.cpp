@@ -1,134 +1,93 @@
 #include <reduction.h>
 
-#include <set>
+#include <unordered_map>
 #include <algorithm>
 
-using diagram::Diagram, diagram::Branch, diagram::Branches, selection::MergeesChoiceStrategy;
+using diagram::Branches, diagram::Diagram;
 
-static void force_merge_at_height(Diagram *d, const size_t h, MergeesChoiceStrategy strategy);
+namespace
+{
+    using Weights = std::unordered_map<Diagram *, absi::Interval>;
 
-static absi::Interval child_amplitude(const Branches brs, const Diagram *possible_child);
+    Weights aggregate(const Branches &branches)
+    {
+        Weights weights;
+        for (const auto &branch : branches)
+        {
+            const auto found = weights.find(branch.d);
+            if (found == weights.end())
+                weights.emplace(branch.d, branch.x);
+            else
+                found->second = found->second + branch.x;
+        }
+        return weights;
+    }
+
+    void merge_side(Diagram *result, const Branches &a, const Branches &b, diagram::Side side)
+    {
+        const auto a_weights = aggregate(a);
+        const auto b_weights = aggregate(b);
+        std::vector<Diagram *> children;
+        auto append = [&children](const Branches &branches)
+        {
+            for (const auto &branch : branches)
+                if (std::find(children.begin(), children.end(), branch.d) == children.end())
+                    children.push_back(branch.d);
+        };
+        append(a);
+        append(b);
+
+        for (auto *child : children)
+        {
+            const auto a_weight = a_weights.contains(child) ? a_weights.at(child) : absi::zero;
+            const auto b_weight = b_weights.contains(child) ? b_weights.at(child) : absi::zero;
+            const auto merged_weight = a_weight | b_weight;
+            if (side == diagram::Side::Left)
+                result->lefto(child, merged_weight);
+            else
+                result->righto(child, merged_weight);
+        }
+    }
+}
 
 void reduction::cut_dead_branches(Diagram *d)
 {
-    for (size_t i = 1; i < d->height + 1; i++)
-    {
-        for (auto node : d->get_node_pointers_at_height(i))
+    for (size_t height = 1; height <= d->height; ++height)
+        for (auto *node : d->get_node_pointers_at_height(height))
             node->remove_dead_children();
-    }
 }
 
-/**
- * @brief Reduces the diagram according to the sizes in @ref{maxNodes}.
- * We use a bottom-to top algorithm, reducing each level independantly.
- * At each level i, the number of nodes is reduced by one by "fusing" two nodes until
- * there is less than `maxNodes[i]` at this level.
- */
-template <size_t height>
-void reduction::max_nodes_level(Diagram *d, std::array<size_t, height> maxNodes, MergeesChoiceStrategy strategy)
+size_t reduction::max_nodes_per_level(
+    Diagram *d,
+    size_t max_nodes,
+    selection::MergeesChoiceStrategy strategy)
 {
-    for (size_t i = 0; i < height; i++)
+    if (d == nullptr)
+        throw std::invalid_argument("Cannot reduce a null diagram");
+    if (max_nodes == 0)
+        throw std::invalid_argument("The node budget must be at least one");
+
+    size_t merges = 0;
+    for (size_t height = 1; height < d->height; ++height)
     {
-        while (d->count_nodes_at_height(i) > maxNodes[i])
+        while (d->count_nodes_at_height(height) > max_nodes)
         {
-            force_merge_at_height(d, i, strategy);
+            const auto mergees = selection::get_mergees_at_height(height, d, strategy);
+            auto *result = force_merge(*mergees.a, *mergees.b);
+            d->replace_nodes_at_height(height, mergees.a, mergees.b, result);
+            ++merges;
         }
     }
+    return merges;
 }
 
-static void force_merge_at_height(Diagram *d, const size_t h, MergeesChoiceStrategy strategy)
-{
-    auto mergees = selection::get_mergees_at_height(h, d, strategy);
-    auto result = reduction::force_merge(*mergees.a, *mergees.b);
-    d->replace_nodes_at_height(h, mergees.a, mergees.b, &result);
-}
-
-/// @brief An approximation algorithm for non-additive QDDs
-/// We apply @ref{force_merge} to nodes of same descendance, top to down, every time it is needed.
-/// @tparam height The height of the diagram we want to reduce
-/// @param d The diagram we want to reduce
-template <size_t height>
-void algo1(Diagram *d, std::array<size_t, height> maxNodes, MergeesChoiceStrategy strategy)
-{
-    for (size_t i = 0; i < height; i++)
-    {
-        while (d->count_nodes_at_height(i) > maxNodes[i])
-        {
-            force_merge_at_height(d, i, strategy);
-        }
-    }
-}
-
-Diagram reduction::force_merge(Diagram &a, Diagram &b)
+Diagram *reduction::force_merge(const Diagram &a, const Diagram &b)
 {
     if (a.height != b.height)
-    {
         throw std::invalid_argument("Trying to merge diagrams with different heights");
-    }
-    Diagram result(a.height);
-    std::set<Branch> left_a_only, left_b_only, both_left;
-    for (auto &a_branch : a.left)
-    {
-        auto x = child_amplitude(b.left, a_branch.d);
-        if (x != absi::zero)
-        {
-            both_left.insert({a_branch.x | x, a_branch.d});
-        }
-        else
-        {
-            left_a_only.insert(a_branch);
-        }
-    }
-    for (auto &b_branch : a.left)
-    {
-        if (child_amplitude(a.left, b_branch.d) == absi::zero)
-        {
-            left_b_only.insert(b_branch);
-        }
-    }
-    std::set<Branch> right_a_only, right_b_only, both_right;
-    for (auto &a_branch : a.right)
-    {
-        auto x = child_amplitude(b.right, a_branch.d);
-        if (x != absi::zero)
-        {
-            both_right.insert({a_branch.x | x, a_branch.d});
-        }
-        else
-        {
-            right_a_only.insert(a_branch);
-        }
-    }
-    for (auto &b_branch : a.right)
-    {
-        if (child_amplitude(a.right, b_branch.d) == absi::zero)
-        {
-            right_b_only.insert(b_branch);
-        }
-    }
-    left_a_only.insert(left_b_only.begin(), left_b_only.end());
-    left_a_only.insert(both_left.begin(), both_left.end());
-    right_a_only.insert(right_b_only.begin(), right_b_only.end());
-    right_a_only.insert(both_right.begin(), both_right.end());
-    for (auto &cBranch : left_a_only)
-    {
-        result.left.push_back(cBranch);
-    }
-    for (auto &cBranch : right_a_only)
-    {
-        result.right.push_back(cBranch);
-    }
-    return result;
-}
 
-static absi::Interval child_amplitude(const Branches brs, const Diagram *possible_child)
-{
-    for (const auto &b : brs)
-    {
-        if (b.d == possible_child)
-        {
-            return b.x;
-        }
-    }
-    return absi::zero;
+    auto *result = new Diagram(a.height);
+    merge_side(result, a.left, b.left, diagram::Side::Left);
+    merge_side(result, a.right, b.right, diagram::Side::Right);
+    return result;
 }

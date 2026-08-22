@@ -12,7 +12,15 @@ import qasm_bench
 import transpile
 
 
-FIELDS = ("circuit", "qubits", "memory_bytes", "duration_seconds", "status", "error")
+FIELDS = (
+    "circuit",
+    "qubits",
+    "reduction_max_nodes",
+    "memory_bytes",
+    "duration_seconds",
+    "status",
+    "error",
+)
 
 
 def collect(
@@ -21,6 +29,7 @@ def collect(
     max_qubits: int | None,
     limit: int | None,
     timeout: float,
+    reduction_max_nodes: int | None,
 ) -> int:
     """Run bounded measurements and write one durable CSV row per circuit."""
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -41,13 +50,16 @@ def collect(
             row: dict[str, str | int] = {
                 "circuit": circuit_id,
                 "qubits": qubits,
+                "reduction_max_nodes": reduction_max_nodes or "exact",
                 "memory_bytes": "",
                 "duration_seconds": "",
                 "status": "ok",
                 "error": "",
             }
             try:
-                qasm = transpile.transpile(qasm_bench.content(circuit_id))
+                qasm = transpile.transpile(
+                    qasm_bench.content(circuit_id), reduction_max_nodes=reduction_max_nodes
+                )
                 row["memory_bytes"] = memory.memory_from_qasm(qasm, timeout=timeout)
             except Exception as error:  # Preserve failures in the reproducibility artifact.
                 failures += 1
@@ -67,12 +79,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-qubits", type=int)
     parser.add_argument("--limit", type=int)
     parser.add_argument("--timeout", type=float, default=60.0)
+    parser.add_argument(
+        "--reduction-max-nodes",
+        type=int,
+        help="Approximate mode: maximum nodes per nonterminal level (must be positive)",
+    )
     parser.add_argument("--prompt", type=Path, help="Path to the Coto prompt executable")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    if args.reduction_max_nodes is not None and args.reduction_max_nodes <= 0:
+        raise SystemExit("--reduction-max-nodes must be positive")
     if args.prompt:
         import os
 
@@ -83,6 +102,7 @@ def main() -> int:
         args.max_qubits,
         args.limit,
         args.timeout,
+        args.reduction_max_nodes,
     )
     return int(failures > 0)
 

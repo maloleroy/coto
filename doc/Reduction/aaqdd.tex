@@ -19,8 +19,10 @@ a_0 \arrow[r, no head, dashed] & a_{l-1} & b_0 \arrow[r, no head, dashed]       
 \vspace{1.7cm}
 \leftskip=0pt
 
-\noindent with $\delta_j = \beta(A)_j \sqcup \beta(B)_j$. More formally, the merging formula would be:
-$$\text{fm}(A, C) = (\{(\alpha_0, a_0), ..., (\alpha_{l-1}, a_{l-1}), (\delta_0, b_0), ..., (\delta_{n-1}, b_{n-1}), (\gamma_0, c_0), ..., (\gamma_m, c_{m-1})\}, \emptyset)$$
+\noindent with $\alpha'_i = \alpha_i \sqcup \mathbf{0}$,
+$\delta_j = \beta(A)_j \sqcup \beta(C)_j$, and
+$\gamma'_k = \gamma_k \sqcup \mathbf{0}$. More formally, the merging formula is:
+$$\text{fm}(A, C) = (\{(\alpha'_0, a_0), ..., (\alpha'_{l-1}, a_{l-1}), (\delta_0, b_0), ..., (\delta_{n-1}, b_{n-1}), (\gamma'_0, c_0), ..., (\gamma'_m, c_{m-1})\}, \emptyset)$$
 
 \subsection{Fully connected case}
 
@@ -43,6 +45,12 @@ Where the new abstract amplitudes are defined by the following formula:
 
 $$\forall x \in X, \text{ampl}(C, x) = \text{ampl}(A, x) \sqcup \text{ampl}(B, x)$$
 
+For a child that occurs in only one operand, its missing amplitude in the other operand is
+$\mathbf{0}$. Consequently, its coefficient in the result is $\alpha_i \sqcup \mathbf{0}$
+or $\gamma_k \sqcup \mathbf{0}$, rather than $\alpha_i$ or $\gamma_k$ alone. This widening is
+necessary: retaining a unique coefficient exactly would force that contribution to be present
+and would therefore fail to contain the operand in which the branch is absent.
+
 \noindent\underline{\textbf{Proof:}} Let $f : \mathcal{D}_n \times \mathcal{D}_n \rightarrow \mathcal{D}_n$ be our diagram transofrmation.
 Let $\alpha_0, \alpha_1, \beta_0, \beta_1 \in \mathcal{A}_0$ such that $\alpha_0 \subset \beta_0$ and $\alpha_1 \subset \beta_1$.
 \begin{align*}
@@ -61,4 +69,3 @@ From there it comes that $\forall x \in X, \text{ampl}(A, x) \subset \text{ampl}
 
 We now have $A \le C$, and since $A$ and $B$ are interchangeable, $B \le C$. Consequently, $f$ is a merge approximation and according to the merging theorem, a global approximation can be derived from it.
 \hfill{} $\boxed{}$
-

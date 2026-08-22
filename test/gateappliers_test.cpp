@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gateappliers.h>
+#include <reduction.h>
 
 using diagram::Diagram;
 
@@ -725,4 +726,42 @@ TEST(GateAppliersTest, separable_hadamards_keep_linear_structure)
         EXPECT_EQ(diagram->count_nodes_at_height(height), 1);
     EXPECT_LT(diagram->memory_usage(), 32 * 1024);
     delete diagram;
+}
+
+TEST(GateAppliersTest, reduced_gate_sequence_contains_exact_simulation)
+{
+    constexpr size_t qubits = 4;
+    auto *exact = Diagram::eig0(qubits);
+    auto *approximate = Diagram::eig0(qubits);
+    auto reduce = [&]
+    {
+        reduction::max_nodes_per_level(approximate, 1);
+        for (size_t height = 1; height < qubits; ++height)
+            EXPECT_LE(approximate->count_nodes_at_height(height), 1);
+    };
+
+    gateappliers::apply_h(exact, 0);
+    gateappliers::apply_h(approximate, 0);
+    reduce();
+    gateappliers::apply_cx(exact, 0, 1);
+    gateappliers::apply_cx(approximate, 0, 1);
+    reduce();
+    gateappliers::apply_t(exact, 1);
+    gateappliers::apply_t(approximate, 1);
+    reduce();
+    gateappliers::apply_cx(exact, 1, 2);
+    gateappliers::apply_cx(approximate, 1, 2);
+    reduce();
+    gateappliers::apply_h(exact, 1);
+    gateappliers::apply_h(approximate, 1);
+    reduce();
+
+    const auto exact_evaluation = exact->evaluate();
+    const auto approximate_evaluation = approximate->evaluate();
+    for (size_t index = 0; index < exact_evaluation.size(); ++index)
+        EXPECT_TRUE(approximate_evaluation[index].contains_interval(exact_evaluation[index]))
+            << "Reduced gate sequence lost the exact interval at index " << index;
+
+    delete exact;
+    delete approximate;
 }

@@ -116,12 +116,13 @@ namespace diagram
         }
 
         /// @brief The number of nodes at a given height
-        size_t count_nodes_at_height(size_t h);
+        size_t count_nodes_at_height(size_t h) const;
 
         /// @brief Get all nodes at a given height
         std::vector<Diagram *> get_node_pointers_at_height(const size_t h) const;
 
-        /// @brief Replace nodes @p f1 and @p f2 by @p r at a given height
+        /// @brief Replace nodes @p f1 and @p f2 by @p r at a given height.
+        /// @details All incoming edges are redirected and ownership of @p r is consumed.
         void replace_nodes_at_height(const size_t h, Diagram *f1, Diagram *f2, Diagram *r);
 
         /// @brief An interval that contains all the intervals of the evaluation.

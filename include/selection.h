@@ -17,7 +17,8 @@ namespace selection
         MAX_AMPLITUDE, /**< Choose mergees with maximum amplitude. */
         MIN_AMPLITUDE, /**< Choose mergees with minimum amplitude. */
         MAX_NODES,     /**< Choose mergees with maximum number of nodes. */
-        MIN_NODES      /**< Choose mergees with minimum number of nodes. */
+        MIN_NODES,     /**< Choose mergees with minimum number of nodes. */
+        MIN_IMPRECISION /**< Choose the pair with the smallest local interval widening. */
     };
 
     /**
