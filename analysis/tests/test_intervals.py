@@ -1,7 +1,12 @@
 import math
 import unittest
 
-from intervals import ComplexInterval, intervals_from_qasm, parse_interval_output
+from intervals import (
+    ComplexInterval,
+    intervals_from_qasm,
+    parse_certified_interval_output,
+    parse_interval_output,
+)
 
 
 class IntervalsTest(unittest.TestCase):
@@ -22,6 +27,16 @@ class IntervalsTest(unittest.TestCase):
         parsed = parse_interval_output(output)
         self.assertEqual(parsed[0], ComplexInterval(0, 1, -0.5, 0.5))
         self.assertEqual(parsed[1], ComplexInterval(-1, 0, 2, 3))
+
+    def test_global_certificate(self):
+        output = """~ intervals-v1 1
+~ approximation-l2-error-bound 1.25
+~ interval 0 -1 1 -1 1
+~ intervals-end
+"""
+        parsed = parse_certified_interval_output(output)
+        self.assertEqual(parsed.l2_error_bound, 1.25)
+        self.assertEqual(len(parsed.intervals), 1)
 
     def test_rejects_incomplete_or_duplicate_output(self):
         with self.assertRaises(RuntimeError):

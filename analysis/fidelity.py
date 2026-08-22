@@ -24,6 +24,7 @@ class FidelityMetrics:
     mean_diameter: float
     max_diameter: float
     l2_radius: float
+    certified_l2_error_bound: float
 
     def as_dict(self) -> dict[str, int | float]:
         return asdict(self)
@@ -71,6 +72,7 @@ def calculate_metrics(
     intervals: list[ComplexInterval],
     exact: np.ndarray,
     containment_tolerance: float = 1e-10,
+    certified_l2_error_bound: float = 0.0,
 ) -> FidelityMetrics:
     """Compare sound enclosures and their midpoint approximation to a reference."""
     aligned = align_to_qiskit(intervals)
@@ -100,4 +102,5 @@ def calculate_metrics(
         mean_diameter=float(np.mean(diameters)),
         max_diameter=float(np.max(diameters)),
         l2_radius=float(np.linalg.norm(radii)),
+        certified_l2_error_bound=certified_l2_error_bound,
     )

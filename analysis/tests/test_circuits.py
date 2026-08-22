@@ -7,7 +7,7 @@ import circuits
 class CircuitsTest(unittest.TestCase):
     def test_contrived_circuits_are_deterministic_and_valid(self):
         cases = list(circuits.fidelity_cases(include_qasmbench=False))
-        self.assertEqual(len(cases), 3)
+        self.assertEqual(len(cases), 4)
         for _, source in cases:
             self.assertGreater(len(aer_statevector(source)), 1)
         self.assertEqual(circuits.layered_random(), circuits.layered_random())

@@ -41,9 +41,9 @@ nonzero status if any row failed.
 To collect an approximate run, add `--reduction-max-nodes N`. Coto then applies its
 minimum-imprecision merge heuristic after every gate until every nonterminal level has at
 most `N` nodes. A general additive merge uses a compact uniform amplitude enclosure. After
-the first merge, subsequent unitary gates use a conservative row-norm enclosure so the result
-remains sound even though structural correlations have been discarded. The CSV records the budget (or `exact`) in every row; use separate output
-files for each budget.
+the first merge, subsequent gates propagate the reduced diagram as a nominal approximation;
+the unit-norm certificate described below provides the sound enclosure independently. The CSV
+records the budget (or `exact`) in every row; use separate output files for each budget.
 
 The compatibility layer translates the supported QASM 2 subset without evaluating the
 full state vector. Measurements, barriers, identities, and classical registers are removed.
@@ -68,6 +68,21 @@ immediately. Package and platform versions are stored next to the CSV in
 `fidelity.metadata.json`. Coto indexes qubit 0 as the most-significant state bit, while
 Qiskit uses it as the least-significant bit; the collector explicitly reverses state indices
 before comparing amplitudes. Mid-circuit measurements and classical control are rejected.
+
+After a reduction, the reduced diagram is propagated as a nominal approximation. Machine-
+readable intervals certify that midpoint independently: supported gates are unitary and the
+initial state has unit norm, so the triangle inequality gives
+`||psi - midpoint||_2 <= 1 + ||midpoint||_2`. Each complex rectangle is centered on the
+nominal amplitude and widened outward by that global bound. This is intentionally
+conservative, but it remains sound without repeatedly multiplying a global box by per-gate
+row bounds, and it preserves a meaningful midpoint for fidelity measurement.
+
+The nominal path is limited to eight qubits. Empirically, propagating interval-valued
+branches beyond that point can itself become exponential on adversarial layered circuits.
+For larger reduced simulations, Coto therefore propagates the compact sound uniform
+enclosure directly. Certified interval output remains available through 16 qubits, but its
+midpoint is zero in this safeguard regime. This cutoff preserves the reachability benefit
+without presenting the nominal fidelity as a scalability guarantee.
 
 ## Compare simulators
 

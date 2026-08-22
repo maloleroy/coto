@@ -3,6 +3,7 @@ import unittest
 
 import numpy as np
 
+import circuits
 from fidelity import aer_statevector, calculate_metrics, reverse_bits
 from intervals import ComplexInterval, intervals_from_qasm
 import qasm_bench
@@ -62,6 +63,18 @@ rz(0.37) q[1];
             transpile(prefix, reduction_max_nodes=1, run_directive="@intervals"), timeout=5
         )
         self.assertEqual(calculate_metrics(enclosed, exact).containment_rate, 1)
+
+    def test_repeated_reduction_retains_a_sound_useful_midpoint(self):
+        source = circuits.layered_random(6, 4)
+        exact = aer_statevector(source)
+        enclosed = intervals_from_qasm(
+            transpile(source, reduction_max_nodes=16, run_directive="@intervals"), timeout=5
+        )
+        metrics = calculate_metrics(enclosed, exact)
+        self.assertEqual(metrics.containment_rate, 1)
+        self.assertTrue(math.isfinite(metrics.midpoint_fidelity))
+        self.assertGreater(metrics.midpoint_fidelity, 0.5)
+        self.assertLess(metrics.l2_radius, 100)
 
 
 if __name__ == "__main__":

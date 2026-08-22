@@ -80,11 +80,12 @@ TEST(QasmTest, phase_gate)
 
 TEST(QasmTest, machine_readable_interval_state)
 {
-    Runtime runtime = exec("qubit[2] q;\nh q[0];\n@reduce(1);");
+    Runtime runtime = exec("qubit[2] q;\nh q[0];\ncx q[0], q[1];\n@reduce(1);");
     testing::internal::CaptureStdout();
     runtime.exec("@intervals;");
     const auto output = testing::internal::GetCapturedStdout();
     EXPECT_NE(output.find("~ intervals-v1 4"), std::string::npos);
+    EXPECT_NE(output.find("~ approximation-l2-error-bound "), std::string::npos);
     EXPECT_NE(output.find("~ interval 0 "), std::string::npos);
     EXPECT_NE(output.find("~ interval 3 "), std::string::npos);
     EXPECT_NE(output.find("~ intervals-end"), std::string::npos);

@@ -9,11 +9,12 @@ import importlib.metadata
 import json
 from pathlib import Path
 import platform
+import subprocess
 import time
 
 import circuits
 from fidelity import aer_statevector, calculate_metrics
-from intervals import intervals_from_qasm
+from intervals import certified_intervals_from_qasm
 import transpile
 
 
@@ -35,6 +36,7 @@ FIELDS = (
     "mean_diameter",
     "max_diameter",
     "l2_radius",
+    "certified_l2_error_bound",
 )
 
 
@@ -49,7 +51,16 @@ def _circuit_shape(source: str) -> tuple[int, int]:
 def _metadata() -> dict[str, str]:
     packages = ("qiskit", "qiskit-aer", "mqt-ddsim", "numpy")
     metadata = {name: importlib.metadata.version(name) for name in packages}
-    metadata.update({"python": platform.python_version(), "platform": platform.platform()})
+    metadata.update(
+        {
+            "python": platform.python_version(),
+            "platform": platform.platform(),
+            "git_commit": subprocess.run(
+                ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+            ).stdout.strip(),
+            "certification": "unit_norm_triangle_bound_v1",
+        }
+    )
     return metadata
 
 
@@ -65,7 +76,7 @@ def collect(
     )
     failures = 0
     with output.open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=FIELDS)
+        writer = csv.DictWriter(stream, fieldnames=FIELDS, lineterminator="\n")
         writer.writeheader()
         for circuit_id, source in circuits.fidelity_cases(include_qasmbench):
             source_hash = hashlib.sha256(source.encode()).hexdigest()
@@ -99,8 +110,14 @@ def collect(
                     coto_qasm = transpile.transpile(
                         source, reduction_max_nodes=budget, run_directive="@intervals"
                     )
-                    enclosed = intervals_from_qasm(coto_qasm, timeout=timeout)
-                    row.update(calculate_metrics(enclosed, exact).as_dict())
+                    enclosed = certified_intervals_from_qasm(coto_qasm, timeout=timeout)
+                    row.update(
+                        calculate_metrics(
+                            enclosed.intervals,
+                            exact,
+                            certified_l2_error_bound=enclosed.l2_error_bound,
+                        ).as_dict()
+                    )
                 except Exception as error:
                     failures += 1
                     row["status"] = "error"

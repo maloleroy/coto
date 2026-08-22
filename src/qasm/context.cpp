@@ -1,6 +1,8 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
+#include <cmath>
+#include <numeric>
 
 #include <qasm/context.h>
 #include <reduction.h>
@@ -130,7 +132,11 @@ void QasmContext::simulate()
     }
     for (const auto &a : actions)
     {
-        if (diagram_is_abstract)
+        // Propagating interval-valued nominal branches can itself grow exponentially.
+        // Keep that precision path to the calibrated small-circuit regime; larger
+        // reduced diagrams use the compact unit-norm enclosure below.
+        constexpr size_t nominal_max_qubits = 8;
+        if (diagram_is_abstract && diagram->height > nominal_max_qubits)
         {
             reduction::enclose_unitary_image(diagram, a->gate.size);
             continue;
@@ -298,11 +304,45 @@ void QasmContext::print_list_of_actions() const
     }
 }
 
+static double certify_unit_norm_approximation(diagram::Evaluation &evaluation)
+{
+    double midpoint_norm = 0;
+    for (const auto &interval : evaluation)
+    {
+        const double real = std::midpoint(interval.min_real(), interval.max_real());
+        const double imaginary = std::midpoint(interval.min_imag(), interval.max_imag());
+        midpoint_norm = std::hypot(midpoint_norm, real, imaginary);
+    }
+    // Every supported gate is unitary and the initial state has norm one.
+    // Thus ||psi - midpoint||_2 <= ||psi||_2 + ||midpoint||_2.
+    // A component's real and imaginary errors are individually no larger
+    // than this global L2 bound. Round every serialized endpoint outward.
+    const double error = std::nextafter(
+        1.0 + midpoint_norm, std::numeric_limits<double>::infinity());
+    for (auto &interval : evaluation)
+    {
+        const double real = std::midpoint(interval.min_real(), interval.max_real());
+        const double imaginary = std::midpoint(interval.min_imag(), interval.max_imag());
+        interval = absi::Interval(
+            cartesian::RealInterval{
+                std::nextafter(real - error, -std::numeric_limits<double>::infinity()),
+                std::nextafter(real + error, std::numeric_limits<double>::infinity())},
+            cartesian::RealInterval{
+                std::nextafter(imaginary - error, -std::numeric_limits<double>::infinity()),
+                std::nextafter(imaginary + error, std::numeric_limits<double>::infinity())});
+    }
+    return error;
+}
+
 void QasmContext::print_evaluation()
 {
     simulate();
     diagram::Evaluation eval = diagram->evaluate();
+    const double approximation_error =
+        diagram_is_abstract ? certify_unit_norm_approximation(eval) : 0;
     std::cout << "\n";
+    if (diagram_is_abstract)
+        std::cout << "~ certified L2 error <= " << approximation_error << '\n';
     for (auto &amp : eval)
     {
         std::cout << "  ( " << amp.to_string() << " )\n";
@@ -319,9 +359,13 @@ void QasmContext::print_interval_evaluation()
             "Machine-readable interval output is limited to " +
             std::to_string(max_output_qubits) + " qubits");
 
-    const auto evaluation = diagram->evaluate();
+    auto evaluation = diagram->evaluate();
+    const double approximation_error =
+        diagram_is_abstract ? certify_unit_norm_approximation(evaluation) : 0;
     std::cout << "~ intervals-v1 " << evaluation.size() << '\n';
     std::cout << std::setprecision(std::numeric_limits<double>::max_digits10);
+    if (diagram_is_abstract)
+        std::cout << "~ approximation-l2-error-bound " << approximation_error << '\n';
     for (size_t index = 0; index < evaluation.size(); ++index)
     {
         const auto &interval = evaluation[index];

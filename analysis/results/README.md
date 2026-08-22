@@ -30,14 +30,15 @@ Representative medians are:
 | Circuit and configuration | Wall time | Peak RSS | Coto structure |
 | --- | ---: | ---: | ---: |
 | Separable, 60 qubits, Aer | memory limit | — | — |
-| Separable, 60 qubits, MQT DDSIM | 0.390 s | 138.6 MiB | — |
-| Separable, 60 qubits, Coto exact | 0.0078 s | 4.52 MiB | 12.3 KiB |
-| GHZ, 60 qubits, MQT DDSIM | 0.414 s | 136.5 MiB | — |
-| GHZ, 60 qubits, Coto exact | 0.0080 s | 4.37 MiB | 19.7 KiB |
-| Layered, 8 qubits, Coto exact | 0.252 s | 8.06 MiB | 3.00 MiB |
-| Layered, 8 qubits, Coto budget 4 | 0.0066 s | 4.45 MiB | 1.86 KiB |
+| Separable, 60 qubits, MQT DDSIM | 0.411 s | 138.8 MiB | — |
+| Separable, 60 qubits, Coto exact | 0.0085 s | 4.48 MiB | 12.3 KiB |
+| GHZ, 60 qubits, MQT DDSIM | 0.381 s | 136.6 MiB | — |
+| GHZ, 60 qubits, Coto exact | 0.0091 s | 4.44 MiB | 19.7 KiB |
+| Layered, 8 qubits, Coto exact | 0.252 s | 8.15 MiB | 3.00 MiB |
+| Layered, 8 qubits, Coto budget 16 | 0.0636 s | 6.18 MiB | 1.32 MiB |
 | Layered, 10 qubits, Coto exact | timeout | — | — |
-| Layered, 10 qubits, Coto budget 4 | 0.0055 s | 4.52 MiB | 2.27 KiB |
+| Layered, 10 qubits, Coto budget 4 | 0.0064 s | 4.52 MiB | 2.27 KiB |
+| Layered, 12 qubits, Coto budget 4 | 0.0078 s | 4.60 MiB | 2.80 KiB |
 
 The scaled separable and GHZ cases demonstrate that structural simulators can avoid the
 state-vector memory wall, but MQT DDSIM also handles these circuits well. The layered cases
@@ -53,9 +54,17 @@ kernel comparisons; the CSV's simulation-only column helps distinguish the two f
 engines. One measured shot also makes this an evolution benchmark, not a sampling-throughput
 benchmark.
 
-Most importantly, the current sound post-merge enclosure is often very coarse. The companion
-fidelity dataset maintains 100% amplitude containment, but many budgeted layered/QAOA rows
-have a zero midpoint and therefore no finite normalized midpoint fidelity. The benchmark
-establishes reachability and a memory bound, not yet a compelling memory-versus-fidelity
-curve. Precision-preserving sound propagation is a required follow-up before using that curve
-as the paper's central empirical claim.
+The companion fidelity dataset contains 48 exact and budgeted runs and maintains 100%
+amplitude containment. On the eight-qubit layered circuit, budget 4 has midpoint fidelity
+0.651 and certified L2 error bound 1.807; budget 16 reduces structural storage from 3.00 MiB
+to 1.32 MiB. These quantities answer different questions: fidelity is an empirical comparison
+with an exact reference, while the unit-norm triangle bound is a proof obligation and is
+deliberately conservative.
+
+Neither fidelity nor resource use is monotone in the node budget. Merging changes subsequent
+sharing and interval propagation, so a smaller per-level cap can create more additive
+branches; the layered eight-qubit budget-1 run is a concrete example. Above eight qubits the
+implementation deliberately switches to a compact uniform enclosure. This makes the 10- and
+12-qubit adversarial cases reachable in milliseconds, but their zero midpoint carries no
+useful empirical fidelity. The results therefore support a tunable, sound memory--precision
+mechanism and a reachability result, not a claim that every budget improves every workload.

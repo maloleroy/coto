@@ -46,8 +46,14 @@ class ComplexInterval:
         )
 
 
-def parse_interval_output(output: str) -> list[ComplexInterval]:
-    """Strictly parse an ``intervals-v1`` block from prompt output."""
+@dataclass(frozen=True)
+class CertifiedIntervalEvaluation:
+    intervals: list[ComplexInterval]
+    l2_error_bound: float
+
+
+def parse_certified_interval_output(output: str) -> CertifiedIntervalEvaluation:
+    """Strictly parse intervals and their optional global L2 certificate."""
     lines = [line.strip() for line in output.splitlines()]
     headers = [line for line in lines if line.startswith("~ intervals-v1 ")]
     if len(headers) != 1:
@@ -77,14 +83,28 @@ def parse_interval_output(output: str) -> list[ComplexInterval]:
 
     if "~ intervals-end" not in lines:
         raise RuntimeError("missing intervals-end marker")
+    certificates = [line for line in lines if line.startswith("~ approximation-l2-error-bound ")]
+    if len(certificates) > 1:
+        raise RuntimeError("multiple approximation L2 certificates")
+    try:
+        l2_error_bound = float(certificates[0].split()[2]) if certificates else 0.0
+    except (IndexError, ValueError) as error:
+        raise RuntimeError("invalid approximation L2 certificate") from error
+    if not math.isfinite(l2_error_bound) or l2_error_bound < 0:
+        raise RuntimeError("approximation L2 certificate must be finite and nonnegative")
     expected = set(range(count))
     if set(parsed) != expected:
         raise RuntimeError(f"interval indices differ from 0..{count - 1}")
-    return [parsed[index] for index in range(count)]
+    return CertifiedIntervalEvaluation([parsed[index] for index in range(count)], l2_error_bound)
 
 
-def intervals_from_qasm(qasm: str, timeout: float = 60.0) -> list[ComplexInterval]:
-    """Run Coto and return its final complex amplitude enclosures."""
+def parse_interval_output(output: str) -> list[ComplexInterval]:
+    """Strictly parse an ``intervals-v1`` block from prompt output."""
+    return parse_certified_interval_output(output).intervals
+
+
+def certified_intervals_from_qasm(qasm: str, timeout: float = 60.0) -> CertifiedIntervalEvaluation:
+    """Run Coto and return amplitude enclosures with their global certificate."""
     result = subprocess.run(
         [find_prompt_executable(), "-"],
         input=qasm,
@@ -94,4 +114,9 @@ def intervals_from_qasm(qasm: str, timeout: float = 60.0) -> list[ComplexInterva
     )
     if result.returncode != 0:
         raise RuntimeError(f"Coto failed ({result.returncode}): {result.stderr.strip()}")
-    return parse_interval_output(result.stdout)
+    return parse_certified_interval_output(result.stdout)
+
+
+def intervals_from_qasm(qasm: str, timeout: float = 60.0) -> list[ComplexInterval]:
+    """Run Coto and return its final complex amplitude enclosures."""
+    return certified_intervals_from_qasm(qasm, timeout).intervals
