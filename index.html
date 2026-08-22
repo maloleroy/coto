@@ -98,6 +98,9 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <div class="textblock"><p><a class="anchor" id="md_README"></a> <a href="https://github.com/maloleroy/coto"><img src="https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&amp;logoColor=white" alt="GitHub" style="pointer-events: none;" class="inline"/></a> <a href="https://github.com/maloleroy/coto/actions"><img src="https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&amp;logoColor=white" alt="GitHub Actions" class="inline"/></a> <a href="https://github.com/maloleroy/coto/actions?query=workflow%3A" title="CMake%20Tests"><img src="https://github.com/maloleroy/coto/workflows/CMake%20Tests/badge.svg" alt="Build Status (GitHub Actions)" style="pointer-events: none;" class="inline"/></a> <a href="https://en.cppreference.com/w/cpp/23"><img src="https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&amp;logoColor=white" alt="C++" style="pointer-events: none;" class="inline"/></a> <a href="https://gitmoji.dev"><img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square" alt="Gitmoji" style="pointer-events: none;" class="inline"/> </a> <a href="http://www.plantuml.com/"><img src="https://img.shields.io/badge/PlantUML-FABD14?logo=uml&amp;logoColor=000" alt="PlantUML" class="inline"/></a></p>
 <p>Theoretical research, experiments and implementation of <em>abstract additive quantum decision diagrams</em>, as part of a student research project.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
+Scientific manuscript and artifacts</h1>
+<p>The author-facing ACM manuscript, reproducibility commands, and known-limitations report are in <a href="paper/"><code>paper/</code></a>. Checked-in raw benchmark/fidelity data and paper figures are under <a href="analysis/results/"><code>analysis/results/</code></a>; the longer-form theoretical notes remain in <a href="doc/"><code>doc/</code></a>.</p>
+<h1><a class="anchor" id="autotoc_md2"></a>
 Building</h1>
 <p>To build the project, you must have Clang, CMake and Ninja installed. The code uses some C++23 features, so a recent version of <code>clang++</code> is required. <em>Other versions probably work</em>, but I personally use the following on my machine:</p><ul>
 <li>Clang 19.1.7</li>
@@ -115,7 +118,7 @@ Building</h1>
 <div class="line">ctest</div>
 </div><!-- fragment --></li>
 </ol>
-<h1><a class="anchor" id="autotoc_md2"></a>
+<h1><a class="anchor" id="autotoc_md3"></a>
 QASM interactive interpreter</h1>
 <p>After building the project (steps 1. and 2. above), simply run <code>./build/prompt</code>. You can then enter QASM instructions, for example </p><div class="fragment"><div class="line">qubit a;</div>
 <div class="line">qubit b;</div>
@@ -136,7 +139,7 @@ QASM interactive interpreter</h1>
 </ul>
 <p>Applying gates to qubits is deferred until a statement needs the diagram. <code>@display</code>, <code>@describe</code>, and <code>@memory</code> all simulate every queued gate first.</p>
 <p>The <code>prompt</code> executable can also take a <code>.qasm</code> file path as an argument, in this case it quits after executing all statements in the file, without entering interactive mode.</p>
-<h1><a class="anchor" id="autotoc_md3"></a>
+<h1><a class="anchor" id="autotoc_md4"></a>
 Repository architecture</h1>
 <p>Presentation of this repository's main directories:</p><ul>
 <li><code>.github/workflows</code> GitHub actions continuous integration (CI) and continous deployment (CD) configuration files<ul>
