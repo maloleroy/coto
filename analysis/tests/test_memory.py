@@ -1,6 +1,8 @@
 import unittest
 
+import circuits
 import memory
+import transpile
 
 
 class MemoryTest(unittest.TestCase):
@@ -18,6 +20,15 @@ class MemoryTest(unittest.TestCase):
     def test_prompt_integration_with_reduction(self):
         qasm = "qubit[4] q;\n@reduce(1);\nh q[0];\nh q[1];\ncx q[0], q[2];\n@memory;\n"
         self.assertGreater(memory.memory_from_qasm(qasm, timeout=5), 0)
+
+    def test_large_reduced_ghz_stays_compact(self):
+        gates = ["h q[0];", *(f"cx q[{index - 1}], q[{index}];" for index in range(1, 30))]
+        qasm = "qubit[30] q;\n" + "\n".join(gates) + "\n@reduce(1);\n@memory;\n"
+        self.assertLess(memory.memory_from_qasm(qasm, timeout=2), 64 * 1024)
+
+    def test_layered_reduced_circuit_uses_large_circuit_safeguard(self):
+        qasm = transpile.transpile(circuits.layered_random(10), reduction_max_nodes=4)
+        self.assertLess(memory.memory_from_qasm(qasm, timeout=2), 64 * 1024)
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 from collections import defaultdict
+import math
 from pathlib import Path
 import statistics
 
@@ -96,31 +97,55 @@ def plot_tradeoff(
             memory[row["circuit"], row["reduction_max_nodes"]].append(
                 float(row["coto_structural_bytes"])
             )
-    figure, axis = plt.subplots(figsize=(3.5, 2.8))
+    figure, axes = plt.subplots(1, 2, figsize=(7.1, 2.8))
     for circuit in sorted({row["circuit"] for row in fidelity}):
-        points: list[tuple[float, float]] = []
+        fidelity_points: list[tuple[float, float]] = []
+        bound_points: list[tuple[float, float]] = []
         for row in fidelity:
             key = (circuit, row["reduction_max_nodes"])
-            value = float(row["l2_radius"])
-            if row["circuit"] == circuit and key in memory and value > 0:
-                points.append((statistics.median(memory[key]) / 1024, value))
-        if points:
-            points.sort()
-            axis.plot(
-                [point[0] for point in points],
-                [point[1] for point in points],
+            if row["circuit"] != circuit or key not in memory:
+                continue
+            memory_kib = statistics.median(memory[key]) / 1024
+            fidelity_value = float(row["midpoint_fidelity"])
+            if math.isfinite(fidelity_value):
+                fidelity_points.append((memory_kib, fidelity_value))
+            bound = float(row["certified_l2_error_bound"])
+            if bound > 0:
+                bound_points.append((memory_kib, bound))
+        label = circuit.split("/")[-1]
+        if fidelity_points:
+            fidelity_points.sort()
+            axes[0].plot(
+                [point[0] for point in fidelity_points],
+                [point[1] for point in fidelity_points],
                 "o-",
-                label=circuit.split("/")[-1],
+                label=label,
                 markersize=3,
             )
-    axis.set(
+        if bound_points:
+            bound_points.sort()
+            axes[1].plot(
+                [point[0] for point in bound_points],
+                [point[1] for point in bound_points],
+                "o-",
+                label=label,
+                markersize=3,
+            )
+    axes[0].set(
         xlabel="Coto structural memory (KiB)",
-        ylabel=r"$\ell_2$ enclosure radius",
+        ylabel="Midpoint fidelity",
+        xscale="log",
+        ylim=(-0.03, 1.03),
+    )
+    axes[1].set(
+        xlabel="Coto structural memory (KiB)",
+        ylabel=r"Certified $\ell_2$ error bound",
         xscale="log",
         yscale="log",
     )
-    axis.grid(alpha=0.25)
-    axis.legend(fontsize=5, ncol=2)
+    for axis in axes:
+        axis.grid(alpha=0.25)
+    axes[0].legend(fontsize=5, ncol=2)
     figure.tight_layout()
     figure.savefig(output, bbox_inches="tight")
     plt.close(figure)

@@ -53,6 +53,7 @@ def fidelity_cases(include_qasmbench: bool = True) -> Iterator[tuple[str, str]]:
     yield "contrived/separable_n10", separable()
     yield "contrived/ghz_n10", ghz()
     yield "contrived/layered_random_n6", layered_random()
+    yield "contrived/layered_random_n8", layered_random(8)
     if include_qasmbench:
         for circuit_id in QASMBENCH_FIDELITY_CASES:
             yield circuit_id, qasm_bench.content(circuit_id)
