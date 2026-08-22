@@ -294,6 +294,32 @@ void Diagram::replace_nodes_at_height(const size_t h, Diagram *f1, Diagram *f2, 
         delete f2;
 }
 
+void Diagram::rebuild_parent_links()
+{
+    std::vector<Diagram *> nodes;
+    std::unordered_set<Diagram *> seen;
+    std::function<void(Diagram *)> visit = [&](Diagram *node)
+    {
+        if (!seen.insert(node).second)
+            return;
+        nodes.push_back(node);
+        for (const auto &branch : node->left)
+            visit(branch.d);
+        for (const auto &branch : node->right)
+            visit(branch.d);
+    };
+    visit(this);
+    for (auto *node : nodes)
+        node->parents.clear();
+    for (auto *node : nodes)
+    {
+        for (const auto &branch : node->left)
+            branch.d->add_parent(node);
+        for (const auto &branch : node->right)
+            branch.d->add_parent(node);
+    }
+}
+
 absi::Interval calculate_enclosure(Diagram &d)
 {
     if (d.height == 0)

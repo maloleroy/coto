@@ -93,6 +93,45 @@ TEST(ReductionTest, force_merge_sums_duplicate_branches_before_widening)
     delete b;
 }
 
+TEST(ReductionTest, force_merge_preserves_uncertainty_from_duplicate_abstract_branches)
+{
+    auto *child = new diagram::Diagram(1);
+    child->lefto(diagram::Diagram::eig0(0), absi::Interval(-1, 1));
+    auto *a = new diagram::Diagram(2);
+    a->lefto(child, 1);
+    a->lefto(child, -1);
+    auto *b = diagram::Diagram::eig0(2);
+    const auto before = a->evaluate();
+
+    auto *merged = reduction::force_merge(*a, *b);
+    const auto after = merged->evaluate();
+    for (size_t index = 0; index < before.size(); ++index)
+        EXPECT_TRUE(after[index].contains_interval(before[index])) << "index=" << index;
+
+    delete merged;
+    delete a;
+    delete b;
+}
+
+TEST(ReductionTest, unitary_image_enclosure_contains_hadamard_outputs)
+{
+    const absi::Interval uncertain(
+        cartesian::RealInterval{-1, 2}, cartesian::RealInterval{-0.5, 0.25});
+    auto *diagram = new diagram::Diagram(2);
+    auto *child = diagram::Diagram::eig0(1);
+    diagram->lefto(child, uncertain);
+
+    reduction::enclose_unitary_image(diagram, 1);
+
+    const auto evaluation = diagram->evaluate();
+    for (const auto &amplitude : evaluation)
+    {
+        EXPECT_TRUE(amplitude.contains(ampl::Amplitude(2 * std::sqrt(2.0), 0)));
+        EXPECT_TRUE(amplitude.contains(ampl::Amplitude(-2 * std::sqrt(2.0), 0)));
+    }
+    delete diagram;
+}
+
 TEST(ReductionTest, node_budget_contains_original_state_and_reduces_memory)
 {
     const ampl::Amplitude values[] = {1, -2, 3, -4, 5, -6, 7, -8};

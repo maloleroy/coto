@@ -125,6 +125,9 @@ namespace diagram
         /// @details All incoming edges are redirected and ownership of @p r is consumed.
         void replace_nodes_at_height(const size_t h, Diagram *f1, Diagram *f2, Diagram *r);
 
+        /// Reconstruct the auxiliary parent index from reachable child edges.
+        void rebuild_parent_links();
+
         /// @brief An interval that contains all the intervals of the evaluation.
         Interval enclosure();
 

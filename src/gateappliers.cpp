@@ -1,6 +1,7 @@
 #include <gateappliers.h>
 #include <cmath>
 #include <algorithm>
+#include <unordered_map>
 
 using diagram::Diagram;
 
@@ -400,10 +401,10 @@ void gateappliers::apply_gphase(Diagram *d, double theta)
 
 // ========== Phase gate ==========
 
-void gateappliers::apply_phase(Diagram *d, qubit q, int phaseDenominator)
+void gateappliers::apply_phase(Diagram *d, qubit q, double theta)
 {
     assert_qubit_is_valid(d, q);
-    const auto phase_shift = absi::Interval::exp_2ipi_over(phaseDenominator);
+    const auto phase_shift = absi::Interval(ampl::Amplitude(std::cos(theta), std::sin(theta)));
     for (auto *node : d->get_node_pointers_at_height(d->height - q))
     {
         for (auto &g : node->right)
@@ -425,13 +426,34 @@ static bool is_zero_matrix(const gateappliers::GateMatrix &matrix)
     return true;
 }
 
-static Diagram *transformed(const Diagram *input, const gateappliers::GateMatrix &matrix);
+using CloneMemo = std::unordered_map<const Diagram *, Diagram *>;
+
+static Diagram *clone_shared(const Diagram *input, CloneMemo &memo)
+{
+    if (input->height == 0)
+        return Diagram::eig0(0);
+    if (const auto found = memo.find(input); found != memo.end())
+        return found->second;
+    auto *output = new Diagram(input->height);
+    memo.emplace(input, output);
+    for (const auto &branch : input->left)
+        output->lefto(clone_shared(branch.d, memo), branch.x);
+    for (const auto &branch : input->right)
+        output->righto(clone_shared(branch.d, memo), branch.x);
+    return output;
+}
+
+static Diagram *transformed(
+    const Diagram *input,
+    const gateappliers::GateMatrix &matrix,
+    CloneMemo &clone_memo);
 
 static void add_transformed_branch(
     Diagram *output,
     diagram::Side side,
     const diagram::Branch &input_branch,
-    const gateappliers::GateMatrix &matrix)
+    const gateappliers::GateMatrix &matrix,
+    CloneMemo &clone_memo)
 {
     if (is_zero_matrix(matrix))
         return;
@@ -441,10 +463,11 @@ static void add_transformed_branch(
     if (matrix.height() == 0)
     {
         weight = matrix.value() * weight;
+        child = clone_shared(input_branch.d, clone_memo);
     }
     else
     {
-        child = transformed(input_branch.d, matrix);
+        child = transformed(input_branch.d, matrix, clone_memo);
     }
 
     if (side == diagram::Side::Left)
@@ -453,7 +476,10 @@ static void add_transformed_branch(
         output->righto(child, weight);
 }
 
-static Diagram *transformed(const Diagram *input, const gateappliers::GateMatrix &matrix)
+static Diagram *transformed(
+    const Diagram *input,
+    const gateappliers::GateMatrix &matrix,
+    CloneMemo &clone_memo)
 {
     if (matrix.height() == 0 || matrix.height() > input->height)
         throw std::invalid_argument("Gate matrix height is incompatible with diagram height");
@@ -465,13 +491,13 @@ static Diagram *transformed(const Diagram *input, const gateappliers::GateMatrix
     const auto m11 = matrix.bottom_right();
     for (const auto &branch : input->left)
     {
-        add_transformed_branch(output, diagram::Side::Left, branch, m00);
-        add_transformed_branch(output, diagram::Side::Right, branch, m10);
+        add_transformed_branch(output, diagram::Side::Left, branch, m00, clone_memo);
+        add_transformed_branch(output, diagram::Side::Right, branch, m10, clone_memo);
     }
     for (const auto &branch : input->right)
     {
-        add_transformed_branch(output, diagram::Side::Left, branch, m01);
-        add_transformed_branch(output, diagram::Side::Right, branch, m11);
+        add_transformed_branch(output, diagram::Side::Left, branch, m01, clone_memo);
+        add_transformed_branch(output, diagram::Side::Right, branch, m11, clone_memo);
     }
     return output;
 }
@@ -485,13 +511,17 @@ void gateappliers::apply_gate_matrix(Diagram *diagram, qubit q, const GateMatrix
 
     if (q == 0)
     {
-        diagram->replace_contents(transformed(diagram, matrix));
+        CloneMemo clone_memo;
+        diagram->replace_contents(transformed(diagram, matrix, clone_memo));
+        diagram->rebuild_parent_links();
         return;
     }
     for (auto &g : diagram->get_node_pointers_at_height(k))
     {
-        g->replace_contents(transformed(g, matrix));
+        CloneMemo clone_memo;
+        g->replace_contents(transformed(g, matrix, clone_memo));
     }
+    diagram->rebuild_parent_links();
 }
 
 static size_t reorder_basis_index(

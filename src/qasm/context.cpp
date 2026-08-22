@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>
+#include <limits>
 
 #include <qasm/context.h>
 #include <reduction.h>
@@ -26,7 +28,8 @@ QasmContext::QasmContext(QasmContext &&other) noexcept
     : storage(std::move(other.storage)), // Move storage
       diagram(other.diagram),            // Transfer ownership of diagram pointer
       actions(std::move(other.actions)), // Move actions vector
-      reduction_max_nodes(other.reduction_max_nodes)
+      reduction_max_nodes(other.reduction_max_nodes),
+      diagram_is_abstract(other.diagram_is_abstract)
 {
     other.diagram = nullptr; // Leave other in a valid state (no longer owns diagram)
 }
@@ -44,6 +47,7 @@ QasmContext &QasmContext::operator=(QasmContext &&other) noexcept
         diagram = other.diagram;
         actions = std::move(other.actions);
         reduction_max_nodes = other.reduction_max_nodes;
+        diagram_is_abstract = other.diagram_is_abstract;
 
         // Leave other in a valid state
         other.diagram = nullptr;
@@ -115,6 +119,7 @@ void QasmContext::create_diagram(bool implicit)
     if (implicit)
         std::cout << "(Built the diagram)" << std::endl;
     diagram = diagram::Diagram::eig0(storage.get_qubit_count());
+    diagram_is_abstract = false;
 }
 
 void QasmContext::simulate()
@@ -125,6 +130,11 @@ void QasmContext::simulate()
     }
     for (const auto &a : actions)
     {
+        if (diagram_is_abstract)
+        {
+            reduction::enclose_unitary_image(diagram, a->gate.size);
+            continue;
+        }
         // Single-qubit Pauli gates
         if (a->gate.name == "x")
         {
@@ -251,9 +261,10 @@ void QasmContext::simulate()
             gateappliers::apply_gphase(diagram, theta);
         }
         // Phase gate (legacy)
-        else if (a->gate.name[0] == 'p')
+        else if (a->gate.name.starts_with("p("))
         {
-            gateappliers::apply_phase(diagram, a->qubits[0], a->gate.parameter.value_or(1));
+            const double theta = a->gate.float_parameters[0];
+            gateappliers::apply_phase(diagram, a->qubits[0], theta);
         }
         else
         {
@@ -261,7 +272,15 @@ void QasmContext::simulate()
         }
 
         if (reduction_max_nodes.has_value())
-            reduction::max_nodes_per_level(diagram, reduction_max_nodes.value());
+        {
+            // A runtime context exclusively owns its root. Gate rewrites may
+            // replace shared subgraphs, so rebuild the auxiliary parent index
+            // before reduction uses it for ownership decisions.
+            diagram->rebuild_parent_links();
+            diagram_is_abstract = diagram_is_abstract ||
+                                  reduction::max_nodes_per_level(
+                                      diagram, reduction_max_nodes.value()) > 0;
+        }
     }
     actions.clear();
 }
@@ -289,6 +308,28 @@ void QasmContext::print_evaluation()
         std::cout << "  ( " << amp.to_string() << " )\n";
     }
     std::cout << std::endl;
+}
+
+void QasmContext::print_interval_evaluation()
+{
+    simulate();
+    constexpr size_t max_output_qubits = 16;
+    if (diagram->height > max_output_qubits)
+        throw std::runtime_error(
+            "Machine-readable interval output is limited to " +
+            std::to_string(max_output_qubits) + " qubits");
+
+    const auto evaluation = diagram->evaluate();
+    std::cout << "~ intervals-v1 " << evaluation.size() << '\n';
+    std::cout << std::setprecision(std::numeric_limits<double>::max_digits10);
+    for (size_t index = 0; index < evaluation.size(); ++index)
+    {
+        const auto &interval = evaluation[index];
+        std::cout << "~ interval " << index << ' '
+                  << interval.min_real() << ' ' << interval.max_real() << ' '
+                  << interval.min_imag() << ' ' << interval.max_imag() << '\n';
+    }
+    std::cout << "~ intervals-end\n";
 }
 
 static void register_nodes(const diagram::Diagram *d, std::set<const diagram::Diagram *> &seen)
@@ -343,7 +384,11 @@ void QasmContext::set_reduction_max_nodes(size_t max_nodes)
         throw std::invalid_argument("The reduction node budget must be at least one");
     reduction_max_nodes = max_nodes;
     if (diagram != nullptr)
-        reduction::max_nodes_per_level(diagram, max_nodes);
+    {
+        diagram->rebuild_parent_links();
+        diagram_is_abstract = diagram_is_abstract ||
+                              reduction::max_nodes_per_level(diagram, max_nodes) > 0;
+    }
 }
 
 void QasmContext::disable_reduction() noexcept
@@ -383,6 +428,7 @@ void QasmContext::print_run_statements_help()
               << "  @build, @inst, @instantiate - create a new diagram\n"
               << "  @list, @actions - list the actions to be performed\n"
               << "  @display, @evaluate, @eval - display the evaluation of the current diagram\n"
+              << "  @intervals - emit bounded machine-readable interval amplitudes\n"
               << "  @describe, @desc - display the description of the current diagram\n"
               << "  @memory, @mem - display the memory usage of the current diagram\n"
               << "  @reduce(N) - cap every nonterminal level at N nodes after each gate\n"

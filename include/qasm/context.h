@@ -35,6 +35,8 @@ public:
 
     void print_evaluation();
 
+    void print_interval_evaluation();
+
     void print_diagram_description();
 
     void print_diagram_memory_usage();
@@ -55,4 +57,5 @@ private:
     std::vector<std::unique_ptr<struct action>> actions;
 
     std::optional<size_t> reduction_max_nodes;
+    bool diagram_is_abstract = false;
 };

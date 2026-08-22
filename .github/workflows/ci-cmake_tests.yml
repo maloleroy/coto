@@ -23,6 +23,12 @@ jobs:
       with:
         version: 1.12.1
 
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v7
+
+    - name: Install analysis dependencies
+      run: uv sync --project analysis --locked
+
     - name: Configure CMake
       run: cmake -S $GITHUB_WORKSPACE -B ${{github.workspace}}/build -GNinja
 

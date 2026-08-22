@@ -72,7 +72,22 @@ TEST(QasmTest, phase_gate)
     Runtime r = exec("qubit q;");
     EXPECT_NO_THROW(r.exec("p(pi/4) q;"));
     EXPECT_NO_THROW(r.exec("p(2pi/3) q;"));
+    EXPECT_NO_THROW(r.exec("p(pi*-0.5) q;"));
+    EXPECT_NO_THROW(r.exec("p(pi) q;"));
+    EXPECT_NO_THROW(r.exec("p(0.5) q;"));
     EXPECT_NO_THROW(r.exec("@display;"));
+}
+
+TEST(QasmTest, machine_readable_interval_state)
+{
+    Runtime runtime = exec("qubit[2] q;\nh q[0];\n@reduce(1);");
+    testing::internal::CaptureStdout();
+    runtime.exec("@intervals;");
+    const auto output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("~ intervals-v1 4"), std::string::npos);
+    EXPECT_NE(output.find("~ interval 0 "), std::string::npos);
+    EXPECT_NE(output.find("~ interval 3 "), std::string::npos);
+    EXPECT_NE(output.find("~ intervals-end"), std::string::npos);
 }
 
 TEST(QasmTest, apply_gate)
