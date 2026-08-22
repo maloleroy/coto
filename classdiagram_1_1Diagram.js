@@ -12,6 +12,7 @@ var classdiagram_1_1Diagram =
     [ "mark_modified", "classdiagram_1_1Diagram.html#a4e557319dc7b036084b7767ff64efb43", null ],
     [ "memory_usage", "classdiagram_1_1Diagram.html#aca5ee59e7d5771fefc9aeedfa57ea73d", null ],
     [ "populate", "classdiagram_1_1Diagram.html#ad87c7dc0be344c632b1a3e5817bc6a13", null ],
+    [ "rebuild_parent_links", "classdiagram_1_1Diagram.html#aca3b329f4a491bed4c232bfe0f6b5d15", null ],
     [ "remove_dead_children", "classdiagram_1_1Diagram.html#a2f5e09e0ea4eaeda58bf5e2318c547fb", null ],
     [ "replace_contents", "classdiagram_1_1Diagram.html#ad9069db885a295ae1996c9142a44f331", null ],
     [ "replace_nodes_at_height", "classdiagram_1_1Diagram.html#a718f39ff18800b9be28353dadfb87019", null ],
