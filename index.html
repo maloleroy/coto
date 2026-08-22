@@ -129,9 +129,11 @@ QASM interactive interpreter</h1>
 <li><code>@display</code>, <code>@evaluate</code>, <code>@eval</code> - display the evaluation of the current diagram</li>
 <li><code>@describe</code>, <code>@desc</code> - display the description of the current diagram</li>
 <li><code>@memory</code>, <code>@mem</code> - display the memory usage of the current diagram</li>
+<li><code>@reduce(N)</code> - enable approximate simulation and cap each nonterminal level at <code>N</code> nodes after every gate</li>
+<li><code>@exact</code> - disable automatic reduction (the default)</li>
 <li><code>@help</code>, <code>@man</code>, <code>@manual</code> - display a help message</li>
 </ul>
-<p>Applying gates to qubits is not performed immediately after the statement is entered, and should be triggered by a <code>@display;</code>.</p>
+<p>Applying gates to qubits is deferred until a statement needs the diagram. <code>@display</code>, <code>@describe</code>, and <code>@memory</code> all simulate every queued gate first.</p>
 <p>The <code>prompt</code> executable can also take a <code>.qasm</code> file path as an argument, in this case it quits after executing all statements in the file, without entering interactive mode.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
 Repository architecture</h1>

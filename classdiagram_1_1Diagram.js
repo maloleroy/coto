@@ -3,7 +3,7 @@ var classdiagram_1_1Diagram =
     [ "Diagram", "classdiagram_1_1Diagram.html#a85c80043f05936174e35ac4a76dd2c3f", null ],
     [ "children_of_side", "classdiagram_1_1Diagram.html#a1bcdc2d23b7778b92eb7f0c32c3b06ca", null ],
     [ "clone", "classdiagram_1_1Diagram.html#a90581448813b65051d32222e10e5a5f7", null ],
-    [ "count_nodes_at_height", "classdiagram_1_1Diagram.html#a2df8e766e664d7a799ec16b21e5c71ab", null ],
+    [ "count_nodes_at_height", "classdiagram_1_1Diagram.html#a7513f5a9e2a5f88d501ea40fd8b2ff3d", null ],
     [ "enclosure", "classdiagram_1_1Diagram.html#a526eeef7686212d737b8b6411a212267", null ],
     [ "evaluate", "classdiagram_1_1Diagram.html#a61be4c7bc2502073b1c1591f6d8a6ca9", null ],
     [ "forget_child", "classdiagram_1_1Diagram.html#a3b9f93629b237012cb9f3985164c002a", null ],

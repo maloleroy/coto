@@ -106,13 +106,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a0dc351ed24c429cbe0f8f381bc742994" id="r_a0dc351ed24c429cbe0f8f381bc742994"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacereduction.html#a0dc351ed24c429cbe0f8f381bc742994">cut_dead_branches</a> (<a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *d)</td></tr>
 <tr class="memdesc:a0dc351ed24c429cbe0f8f381bc742994"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cut dead branches from a diagram.  <br /></td></tr>
 <tr class="separator:a0dc351ed24c429cbe0f8f381bc742994"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a229e77b6462f29f4a7174f95941ca71d" id="r_a229e77b6462f29f4a7174f95941ca71d"><td class="memTemplParams" colspan="2">template&lt;std::size_t height&gt; </td></tr>
-<tr class="memitem:a229e77b6462f29f4a7174f95941ca71d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacereduction.html#a229e77b6462f29f4a7174f95941ca71d">max_nodes_level</a> (<a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *d, std::array&lt; size_t, height &gt; maxNodes, <a class="el" href="selection_8h.html#acc252c6649511c21e22b3ba732769528">selection::MergeesChoiceStrategy</a> strategy)</td></tr>
-<tr class="memdesc:a229e77b6462f29f4a7174f95941ca71d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reduces the number of nodes at each level of the QDD so that level i contains less than (or equal) <code>maxNodes[i]</code>.  <br /></td></tr>
-<tr class="separator:a229e77b6462f29f4a7174f95941ca71d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8306363579b13d3db4a7933dcdd6e85a" id="r_a8306363579b13d3db4a7933dcdd6e85a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classdiagram_1_1Diagram.html">Diagram</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacereduction.html#a8306363579b13d3db4a7933dcdd6e85a">force_merge</a> (<a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> &amp;a, <a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> &amp;b)</td></tr>
-<tr class="memdesc:a8306363579b13d3db4a7933dcdd6e85a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forces the merge of two diagrams.  <br /></td></tr>
-<tr class="separator:a8306363579b13d3db4a7933dcdd6e85a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af28a577a5ea3a2fb68805047cd8ae2bf" id="r_af28a577a5ea3a2fb68805047cd8ae2bf"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacereduction.html#af28a577a5ea3a2fb68805047cd8ae2bf">max_nodes_per_level</a> (<a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *d, size_t max_nodes, <a class="el" href="selection_8h.html#acc252c6649511c21e22b3ba732769528">selection::MergeesChoiceStrategy</a> strategy=<a class="el" href="selection_8h.html#acc252c6649511c21e22b3ba732769528af0f686d8422d197eb6d4eb3d46a43918">selection::MIN_IMPRECISION</a>)</td></tr>
+<tr class="memdesc:af28a577a5ea3a2fb68805047cd8ae2bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Caps every nonterminal level of a diagram at <code>max_nodes</code> nodes.  <br /></td></tr>
+<tr class="separator:af28a577a5ea3a2fb68805047cd8ae2bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56d56218596cc3d8090a2851d4d05aaf" id="r_a56d56218596cc3d8090a2851d4d05aaf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacereduction.html#a56d56218596cc3d8090a2851d4d05aaf">force_merge</a> (const <a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> &amp;a, const <a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> &amp;b)</td></tr>
+<tr class="memdesc:a56d56218596cc3d8090a2851d4d05aaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forces the merge of two diagrams.  <br /></td></tr>
+<tr class="separator:a56d56218596cc3d8090a2851d4d05aaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A module packaging multiple reduction methods for quantum decision diagrams. </p>
@@ -144,22 +143,22 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a8306363579b13d3db4a7933dcdd6e85a" name="a8306363579b13d3db4a7933dcdd6e85a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8306363579b13d3db4a7933dcdd6e85a">&#9670;&#160;</a></span>force_merge()</h2>
+<a id="a56d56218596cc3d8090a2851d4d05aaf" name="a56d56218596cc3d8090a2851d4d05aaf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56d56218596cc3d8090a2851d4d05aaf">&#9670;&#160;</a></span>force_merge()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> reduction::force_merge </td>
+          <td class="memname"><a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> * reduction::force_merge </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> &amp;&#160;</td>
           <td class="paramname"><em>a</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> &amp;&#160;</td>
           <td class="paramname"><em>b</em>&#160;</td>
         </tr>
         <tr>
@@ -179,20 +178,20 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The merged diagram. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The merged diagram. </dd>
+<dd>
+A heap-allocated merged node owned by the caller. </dd></dl>
 
 </div>
 </div>
-<a id="a229e77b6462f29f4a7174f95941ca71d" name="a229e77b6462f29f4a7174f95941ca71d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a229e77b6462f29f4a7174f95941ca71d">&#9670;&#160;</a></span>max_nodes_level()</h2>
+<a id="af28a577a5ea3a2fb68805047cd8ae2bf" name="af28a577a5ea3a2fb68805047cd8ae2bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af28a577a5ea3a2fb68805047cd8ae2bf">&#9670;&#160;</a></span>max_nodes_per_level()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<div class="memtemplate">
-template&lt;std::size_t height&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void reduction::max_nodes_level </td>
+          <td class="memname">size_t reduction::max_nodes_per_level </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classdiagram_1_1Diagram.html">Diagram</a> *&#160;</td>
           <td class="paramname"><em>d</em>, </td>
@@ -200,14 +199,14 @@ template&lt;std::size_t height&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::array&lt; size_t, height &gt;&#160;</td>
-          <td class="paramname"><em>maxNodes</em>, </td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>max_nodes</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="selection_8h.html#acc252c6649511c21e22b3ba732769528">selection::MergeesChoiceStrategy</a>&#160;</td>
-          <td class="paramname"><em>strategy</em>&#160;</td>
+          <td class="paramname"><em>strategy</em> = <code><a class="el" href="selection_8h.html#acc252c6649511c21e22b3ba732769528af0f686d8422d197eb6d4eb3d46a43918">selection::MIN_IMPRECISION</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -217,16 +216,16 @@ template&lt;std::size_t height&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Reduces the number of nodes at each level of the QDD so that level i contains less than (or equal) <code>maxNodes[i]</code>. </p>
-<p>This function reduces the number of nodes at each level of the Quantum Decision Diagram (QDD) such that level i contains less than or equal to the specified maximum number of nodes <code>maxNodes[i]</code>.</p>
+<p>Caps every nonterminal level of a diagram at <code>max_nodes</code> nodes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">d</td><td>The quantum diagram we want to reduce. </td></tr>
-    <tr><td class="paramname">maxNodes</td><td>A vector containing the maximum number of nodes for each level. </td></tr>
+    <tr><td class="paramname">max_nodes</td><td>The positive, uniform node budget. </td></tr>
+    <tr><td class="paramname">strategy</td><td>The merge-pair selection policy. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Nothing, the reduction is performed in-place. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of node merges performed in-place. </dd></dl>
 
 </div>
 </div>

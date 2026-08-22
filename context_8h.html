@@ -103,54 +103,56 @@ $(document).ready(function(){initNavTree('context_8h.html',''); initResizable();
 <div class="textblock"><code>#include &lt;<a class="el" href="gate_8h_source.html">qasm/gate.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="variables_8h_source.html">qasm/variables.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="diagram_8h_source.html">diagram.h</a>&gt;</code><br />
+<code>#include &lt;optional&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for context.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="context_8h__incl.png" border="0" usemap="#ainclude_2qasm_2context_8h" alt=""/></div>
 <map name="ainclude_2qasm_2context_8h" id="ainclude_2qasm_2context_8h">
-<area shape="rect" title="Interface between the QASM interpreter and diagrams." alt="" coords="129,5,303,31"/>
-<area shape="rect" href="gate_8h.html" title="Handling QASM gates." alt="" coords="15,79,118,104"/>
-<area shape="poly" title=" " alt="" coords="193,33,105,75,102,70,191,28"/>
-<area shape="rect" href="variables_8h.html" title="Handling QASM variables." alt="" coords="149,79,283,104"/>
-<area shape="poly" title=" " alt="" coords="219,31,219,65,213,65,213,31"/>
-<area shape="rect" href="diagram_8h.html" title="Abstract&#45;interpreted additive diagrams." alt="" coords="528,79,616,104"/>
-<area shape="poly" title=" " alt="" coords="274,28,515,76,514,81,273,33"/>
-<area shape="rect" title=" " alt="" coords="120,152,179,177"/>
-<area shape="poly" title=" " alt="" coords="82,102,127,141,124,145,78,106"/>
-<area shape="rect" title=" " alt="" coords="21,152,96,177"/>
-<area shape="poly" title=" " alt="" coords="68,105,64,139,59,138,63,104"/>
-<area shape="rect" title=" " alt="" coords="243,372,306,397"/>
-<area shape="poly" title=" " alt="" coords="51,106,34,120,18,138,9,157,12,176,32,210,58,242,87,270,118,295,181,336,236,364,233,369,179,341,115,299,83,274,54,245,28,213,7,178,4,156,14,135,30,116,48,102"/>
-<area shape="poly" title=" " alt="" coords="207,106,171,144,168,140,203,103"/>
-<area shape="poly" title=" " alt="" coords="221,104,272,358,267,359,216,105"/>
-<area shape="rect" title=" " alt="" coords="253,152,296,177"/>
-<area shape="poly" title=" " alt="" coords="228,103,259,140,255,143,224,106"/>
-<area shape="poly" title=" " alt="" coords="532,107,485,123,430,149,375,183,350,204,327,227,307,259,293,294,280,359,274,358,288,293,302,257,323,224,346,200,371,179,427,144,483,119,530,102"/>
-<area shape="rect" title=" " alt="" coords="660,152,719,177"/>
-<area shape="poly" title=" " alt="" coords="592,102,660,142,657,147,589,106"/>
-<area shape="rect" title=" " alt="" coords="743,152,830,177"/>
-<area shape="poly" title=" " alt="" coords="607,101,740,145,738,150,606,107"/>
-<area shape="rect" href="absi_8h.html" title="This file includes the necessary headers for working with ABStract Interpretation." alt="" coords="492,152,553,177"/>
-<area shape="poly" title=" " alt="" coords="566,106,541,142,536,139,562,103"/>
-<area shape="rect" href="amplitude_8h_source.html" title=" " alt="" coords="515,299,615,324"/>
-<area shape="poly" title=" " alt="" coords="580,104,599,167,604,209,600,251,584,288,579,286,595,250,599,209,594,168,575,105"/>
-<area shape="rect" href="polar_8h_source.html" title=" " alt="" coords="338,225,435,251"/>
-<area shape="poly" title=" " alt="" coords="502,180,422,221,420,217,500,175"/>
-<area shape="rect" href="cartesian_8h_source.html" title=" " alt="" coords="460,225,585,251"/>
-<area shape="poly" title=" " alt="" coords="525,178,525,212,520,212,520,178"/>
-<area shape="rect" title=" " alt="" coords="345,299,413,324"/>
-<area shape="poly" title=" " alt="" coords="388,251,384,285,379,285,383,251"/>
-<area shape="poly" title=" " alt="" coords="416,248,525,291,523,296,414,253"/>
-<area shape="poly" title=" " alt="" coords="519,327,320,375,319,370,518,321"/>
-<area shape="rect" title=" " alt="" coords="581,372,659,397"/>
-<area shape="poly" title=" " alt="" coords="576,323,605,360,601,363,572,326"/>
-<area shape="rect" href="powarray_8h_source.html" title=" " alt="" coords="463,372,556,397"/>
-<area shape="poly" title=" " alt="" coords="558,326,529,363,525,360,554,323"/>
-<area shape="rect" title=" " alt="" coords="471,445,548,471"/>
-<area shape="poly" title=" " alt="" coords="512,398,512,432,507,432,507,398"/>
-<area shape="poly" title=" " alt="" coords="532,250,554,286,549,288,527,252"/>
-<area shape="rect" title=" " alt="" coords="437,299,491,324"/>
-<area shape="poly" title=" " alt="" coords="515,253,484,290,480,287,511,249"/>
+<area shape="rect" title="Interface between the QASM interpreter and diagrams." alt="" coords="109,5,283,31"/>
+<area shape="rect" href="gate_8h.html" title="Handling QASM gates." alt="" coords="74,79,177,104"/>
+<area shape="poly" title=" " alt="" coords="186,33,148,71,144,67,182,29"/>
+<area shape="rect" title=" " alt="" coords="5,152,80,177"/>
+<area shape="poly" title=" " alt="" coords="143,33,100,51,80,64,63,80,50,108,45,138,40,137,45,107,59,77,77,60,97,46,141,28"/>
+<area shape="rect" href="variables_8h.html" title="Handling QASM variables." alt="" coords="201,79,335,104"/>
+<area shape="poly" title=" " alt="" coords="210,29,248,67,245,71,206,33"/>
+<area shape="rect" href="diagram_8h.html" title="Abstract&#45;interpreted additive diagrams." alt="" coords="443,79,531,104"/>
+<area shape="poly" title=" " alt="" coords="243,28,430,73,429,79,242,33"/>
+<area shape="rect" title=" " alt="" coords="159,152,217,177"/>
+<area shape="poly" title=" " alt="" coords="138,103,171,140,167,143,134,106"/>
+<area shape="poly" title=" " alt="" coords="114,106,68,145,65,141,110,102"/>
+<area shape="rect" title=" " alt="" coords="282,372,345,397"/>
+<area shape="poly" title=" " alt="" coords="129,104,135,137,149,176,182,232,221,283,293,360,289,364,217,287,178,235,144,178,130,139,124,105"/>
+<area shape="poly" title=" " alt="" coords="257,106,213,145,209,141,253,102"/>
+<area shape="poly" title=" " alt="" coords="272,104,283,177,312,358,307,359,277,178,267,105"/>
+<area shape="rect" title=" " alt="" coords="292,152,335,177"/>
+<area shape="poly" title=" " alt="" coords="278,103,301,139,296,142,273,106"/>
+<area shape="poly" title=" " alt="" coords="462,106,430,126,399,154,367,206,344,263,329,316,320,359,315,358,323,315,339,261,362,204,395,150,427,122,460,102"/>
+<area shape="rect" title=" " alt="" coords="409,152,468,177"/>
+<area shape="poly" title=" " alt="" coords="481,106,456,142,452,139,477,103"/>
+<area shape="rect" title=" " alt="" coords="493,152,579,177"/>
+<area shape="poly" title=" " alt="" coords="497,103,522,139,518,142,493,106"/>
+<area shape="rect" href="absi_8h.html" title="This file includes the necessary headers for working with ABStract Interpretation." alt="" coords="673,152,735,177"/>
+<area shape="poly" title=" " alt="" coords="522,101,661,146,659,152,521,107"/>
+<area shape="rect" href="amplitude_8h_source.html" title=" " alt="" coords="567,299,667,324"/>
+<area shape="poly" title=" " alt="" coords="525,102,562,120,580,134,594,151,611,184,620,221,622,285,617,285,614,221,606,186,590,153,576,138,559,125,522,106"/>
+<area shape="rect" href="polar_8h_source.html" title=" " alt="" coords="655,225,753,251"/>
+<area shape="poly" title=" " alt="" coords="707,178,707,212,701,212,701,178"/>
+<area shape="rect" href="cartesian_8h_source.html" title=" " alt="" coords="777,225,903,251"/>
+<area shape="poly" title=" " alt="" coords="727,175,807,217,805,221,725,180"/>
+<area shape="rect" title=" " alt="" coords="691,299,759,324"/>
+<area shape="poly" title=" " alt="" coords="710,250,721,285,715,286,705,252"/>
+<area shape="poly" title=" " alt="" coords="692,253,644,292,640,288,688,249"/>
+<area shape="poly" title=" " alt="" coords="569,327,358,376,357,370,568,321"/>
+<area shape="rect" title=" " alt="" coords="633,372,711,397"/>
+<area shape="poly" title=" " alt="" coords="628,323,657,360,653,363,624,326"/>
+<area shape="rect" href="powarray_8h_source.html" title=" " alt="" coords="515,372,608,397"/>
+<area shape="poly" title=" " alt="" coords="610,326,581,363,577,360,606,323"/>
+<area shape="rect" title=" " alt="" coords="523,445,600,471"/>
+<area shape="poly" title=" " alt="" coords="564,398,564,432,559,432,559,398"/>
+<area shape="poly" title=" " alt="" coords="805,253,667,297,665,292,803,248"/>
+<area shape="rect" title=" " alt="" coords="813,299,867,324"/>
+<area shape="poly" title=" " alt="" coords="843,251,843,285,837,285,837,251"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
