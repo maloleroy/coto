@@ -14,6 +14,12 @@
 
 Theoretical research, experiments and implementation of _abstract additive quantum decision diagrams_, as part of a student research project.
 
+## Scientific manuscript and artifacts
+
+The author-facing ACM manuscript, reproducibility commands, and known-limitations report are
+in [`paper/`](paper/). Checked-in raw benchmark/fidelity data and paper figures are under
+[`analysis/results/`](analysis/results/); the longer-form theoretical notes remain in [`doc/`](doc/).
+
 ## Building
 
 To build the project, you must have Clang, CMake and Ninja installed. The code uses some C++23 features, so a recent version of `clang++` is required. *Other versions probably work*, but I personally use the following on my machine:
