@@ -106,6 +106,11 @@ bool Interval::contains_interval(const Interval &other) const
     return contains(other.bottom_left) && contains(other.top_right);
 }
 
+ampl::Real Interval::min_real() const noexcept { return bottom_left.real(); }
+ampl::Real Interval::max_real() const noexcept { return top_right.real(); }
+ampl::Real Interval::min_imag() const noexcept { return bottom_left.imag(); }
+ampl::Real Interval::max_imag() const noexcept { return top_right.imag(); }
+
 ampl::Real Interval::norm() const noexcept
 {
     return abs(top_right - bottom_left);

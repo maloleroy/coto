@@ -34,6 +34,15 @@ namespace reduction
         selection::MergeesChoiceStrategy strategy = selection::MIN_IMPRECISION);
 
     /**
+     * @brief Soundly enclose an arbitrary unitary image of an abstract diagram.
+     *
+     * Once node merging has introduced additive uncertainty, structural gate
+     * rewriting can reintroduce invalid correlations. This replaces the state
+     * with a compact uniform enclosure using the unitary row-norm bound.
+     */
+    void enclose_unitary_image(Diagram *d, size_t gate_qubits);
+
+    /**
      * @brief Forces the merge of two diagrams.
      *
      * This function forces the merge of two diagrams `a` and `b` and returns the merged diagram.

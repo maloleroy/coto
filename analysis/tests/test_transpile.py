@@ -4,6 +4,14 @@ import transpile
 
 
 class TranspileTest(unittest.TestCase):
+    def test_comments_and_trailing_whitespace_are_removed(self):
+        self.assertEqual(transpile.remove_comments("x q[0];  // comment"), "x q[0];")
+
+    def test_qelib1_aliases_are_normalized(self):
+        source = "u1(pi/2) q[0];\nu3(pi/2,0,pi) q[0];\ncu1(pi/4) q[0],q[1];"
+        result = transpile.normalize_qelib1_aliases(source)
+        self.assertEqual(result, "p(pi/2) q[0];\nu(pi/2,0,pi) q[0];\ncp(pi/4) q[0],q[1];")
+
     def test_qasm_bench_subset(self):
         source = """OPENQASM 2.0;
 include \"qelib1.inc\";
@@ -37,6 +45,11 @@ measure q -> c;
         self.assertLess(result.index("@reduce(3);"), result.index("@memory;"))
         with self.assertRaisesRegex(ValueError, "positive"):
             transpile.transpile("OPENQASM 2.0;", reduction_max_nodes=0)
+
+    def test_custom_run_directive(self):
+        result = transpile.transpile("OPENQASM 2.0;\nqreg q[1];", run_directive="@intervals")
+        self.assertTrue(result.rstrip().endswith("@intervals;"))
+        self.assertNotIn("@memory", result)
 
 
 if __name__ == "__main__":

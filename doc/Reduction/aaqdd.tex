@@ -51,6 +51,16 @@ or $\gamma_k \sqcup \mathbf{0}$, rather than $\alpha_i$ or $\gamma_k$ alone. Thi
 necessary: retaining a unique coefficient exactly would force that contribution to be present
 and would therefore fail to contain the operand in which the branch is absent.
 
+The formula above assumes a non-additive context as well as non-additive operands. This condition
+matters for additive diagrams with interval coefficients. Separate edges are independent
+contributions in the interval evaluation; combining coefficients can reintroduce a correlation and
+cancel uncertainty that those contributions encode. The general additive implementation therefore
+uses a compact uniform enclosure: every amplitude of the merged node is bounded by the join of the
+two nodes' global enclosures. This is less precise than the formula above, but it is monotone under
+arbitrary additive parents and avoids an exponentially growing multiset of branches. Once a merge
+has occurred, subsequent unitary gates are enclosed using their row-norm bound rather than a
+correlation-sensitive structural rewrite.
+
 \noindent\underline{\textbf{Proof:}} Let $f : \mathcal{D}_n \times \mathcal{D}_n \rightarrow \mathcal{D}_n$ be our diagram transofrmation.
 Let $\alpha_0, \alpha_1, \beta_0, \beta_1 \in \mathcal{A}_0$ such that $\alpha_0 \subset \beta_0$ and $\alpha_1 \subset \beta_1$.
 \begin{align*}

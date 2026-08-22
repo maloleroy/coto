@@ -11,7 +11,7 @@ def openqasm_version(qasm: str) -> str:
 
 def remove_comments(qasm: str) -> str:
     """Remove comments from QASM code."""
-    return "\n".join(line.split("//", 1)[0] for line in qasm.splitlines())
+    return "\n".join(line.split("//", 1)[0].rstrip() for line in qasm.splitlines())
 
 
 def remove_barriers(qasm: str) -> str:
@@ -105,12 +105,26 @@ def split_gate_applications_on_arrays(qasm: str) -> str:
     return "\n".join(new_lines)
 
 
+def normalize_qelib1_aliases(qasm: str) -> str:
+    """Translate legacy qelib1 gate names to equivalent OpenQASM 3 names."""
+    import re
+
+    aliases = {"u1": "p", "u3": "u", "cu1": "cp"}
+    for old, new in aliases.items():
+        qasm = re.sub(rf"(?m)^(\s*){old}(?=\s*\()", rf"\1{new}", qasm)
+    return qasm
+
+
 def add_memory(qasm: str) -> str:
     """Add memory directive to QASM code."""
     return qasm + "\n@memory;\n"
 
 
-def transpile(qasm: str, reduction_max_nodes: int | None = None) -> str:
+def transpile(
+    qasm: str,
+    reduction_max_nodes: int | None = None,
+    run_directive: str = "@memory",
+) -> str:
     steps: list[TranspilingStep] = [
         openqasm_version,
         remove_comments,
@@ -121,6 +135,7 @@ def transpile(qasm: str, reduction_max_nodes: int | None = None) -> str:
         remove_classical_registers,
         rename_qreg_to_qubits,
         split_gate_applications_on_arrays,
+        normalize_qelib1_aliases,
     ]
     for step in steps:
         qasm = step(qasm)
@@ -128,4 +143,6 @@ def transpile(qasm: str, reduction_max_nodes: int | None = None) -> str:
         if reduction_max_nodes <= 0:
             raise ValueError("reduction_max_nodes must be positive")
         qasm += f"\n@reduce({reduction_max_nodes});\n"
-    return add_memory(qasm)
+    if not run_directive.startswith("@"):
+        raise ValueError("run_directive must start with @")
+    return qasm + f"\n{run_directive};\n"

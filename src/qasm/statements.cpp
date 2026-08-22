@@ -443,6 +443,10 @@ public:
         {
             context.print_evaluation(); // implicitely runs unexecuted actions
         }
+        else if (content == "@intervals")
+        {
+            context.print_interval_evaluation();
+        }
         else if (content == "@describe" || content == "@desc")
         {
             context.print_diagram_description();

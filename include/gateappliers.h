@@ -54,7 +54,7 @@ namespace gateappliers
     void apply_gphase(Diagram *d, double theta);
 
     // Phase gate
-    void apply_phase(Diagram *d, qubit q, int phaseDenominator);
+    void apply_phase(Diagram *d, qubit q, double theta);
 
     // Matrix application helper
     void apply_gate_matrix(Diagram *d, qubit q, const GateMatrix &m);

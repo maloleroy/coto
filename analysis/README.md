@@ -40,13 +40,34 @@ nonzero status if any row failed.
 
 To collect an approximate run, add `--reduction-max-nodes N`. Coto then applies its
 minimum-imprecision merge heuristic after every gate until every nonterminal level has at
-most `N` nodes. The CSV records the budget (or `exact`) in every row; use separate output
+most `N` nodes. A general additive merge uses a compact uniform amplitude enclosure. After
+the first merge, subsequent unitary gates use a conservative row-norm enclosure so the result
+remains sound even though structural correlations have been discarded. The CSV records the budget (or `exact`) in every row; use separate output
 files for each budget.
 
 The compatibility layer translates the supported QASM 2 subset without evaluating the
 full state vector. Measurements, barriers, identities, and classical registers are removed.
 Classically-controlled operations are rejected and recorded as failures rather than silently
 changing circuit semantics.
+
+## Validate soundness and fidelity
+
+The fidelity collector compares Coto's complex amplitude rectangles with a state vector
+computed by Qiskit Aer. It reports the amplitude containment rate (the primary soundness
+check), fidelity and L2 error of the rectangle midpoints, and aggregate rectangle radii.
+It includes deterministic contrived circuits and a small QASMBench selection:
+
+```sh
+uv run python collect_fidelity.py --prompt ../build/prompt \
+  --budget 1 --budget 2 --budget 4 --budget 8 --budget 16 \
+  --timeout 60 --output results/fidelity.csv
+```
+
+The exact run and every approximate budget are written as individual rows and flushed
+immediately. Package and platform versions are stored next to the CSV in
+`fidelity.metadata.json`. Coto indexes qubit 0 as the most-significant state bit, while
+Qiskit uses it as the least-significant bit; the collector explicitly reverses state indices
+before comparing amplitudes. Mid-circuit measurements and classical control are rejected.
 
 ## Validation
 

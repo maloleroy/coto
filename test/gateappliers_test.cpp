@@ -653,6 +653,16 @@ TEST(GateAppliersTest, rz_uses_conjugate_diagonal_phases)
     delete d;
 }
 
+TEST(GateAppliersTest, phase_uses_angle_in_radians)
+{
+    const ampl::Amplitude state[] = {0, 1};
+    auto *diagram = Diagram::from_state_vector(ampl::ConcreteState(1, state));
+    gateappliers::apply_phase(diagram, 0, M_PI / 4.0);
+    const auto evaluation = diagram->evaluate();
+    EXPECT_TRUE(evaluation[1].contains(ampl::Amplitude(std::cos(M_PI / 4.0), std::sin(M_PI / 4.0))));
+    delete diagram;
+}
+
 TEST(GateAppliersTest, matrix_quadrants_follow_row_column_order)
 {
     absi::Interval values[16];

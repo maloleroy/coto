@@ -86,9 +86,13 @@ gtest_discover_tests(selection_test)
 gtest_discover_tests(reduction_test)
 gtest_discover_tests(qasm_test)
 
+set(ANALYSIS_PYTHON ${Python3_EXECUTABLE})
+if(EXISTS "${CMAKE_SOURCE_DIR}/analysis/.venv/bin/python")
+  set(ANALYSIS_PYTHON "${CMAKE_SOURCE_DIR}/analysis/.venv/bin/python")
+endif()
 add_test(
   NAME analysis_test
   COMMAND ${CMAKE_COMMAND} -E env COTO_PROMPT=$<TARGET_FILE:prompt>
-          ${Python3_EXECUTABLE} -m unittest discover -s tests -v
+          ${ANALYSIS_PYTHON} -m unittest discover -s tests -v
 )
 set_tests_properties(analysis_test PROPERTIES WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/analysis)

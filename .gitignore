@@ -23,4 +23,6 @@ CMakeFiles/
 *.cmake
 Testing/
 __pycache__/
-analysis/results/
+analysis/results/*
+!analysis/results/fidelity.csv
+!analysis/results/fidelity.metadata.json

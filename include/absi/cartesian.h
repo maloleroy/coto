@@ -89,6 +89,11 @@ namespace cartesian
         /// @brief Checks whether another rectangular interval is included in this one.
         bool contains_interval(const Interval &other) const;
 
+        ampl::Real min_real() const noexcept;
+        ampl::Real max_real() const noexcept;
+        ampl::Real min_imag() const noexcept;
+        ampl::Real max_imag() const noexcept;
+
         std::string to_string() const noexcept;
 
         /// @brief Computes the norm of the interval.

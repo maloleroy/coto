@@ -4,7 +4,12 @@ version = "0.1.0"
 description = "Performance analysis of additive quantum decision diagrams"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "mqt-ddsim>=2.5.0",
+    "numpy>=2.5.2",
+    "qiskit>=2.5.2",
+    "qiskit-aer>=0.17.2",
+]
 
 [dependency-groups]
 dev = [
